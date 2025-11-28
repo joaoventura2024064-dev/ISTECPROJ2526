@@ -1,9 +1,10 @@
-# Projeto S.E.I.O.S - Simulador Epidémico Interativo de Observação Sistémica
+# Projeto S.E.I.O.S <br> Simulador Epidémico Interativo de Observação Sistémica #
 
-**Cadeira:** Sistemas Multimédia I
-**Curso:** Engenharia Informática
-**Instituição:** ISTEC Porto
-**Fase:** Sprint A (Análise e Desenho)
+**Instituição:** ISTEC Porto<br>
+**Curso:** Engenharia Informática<br>
+**Cadeira:** Sistemas Multimédia I<br>
+
+**Fase:** Sprint A (Análise e Desenho)<br>
 
 ## Sobre o Projeto
 
