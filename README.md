@@ -38,33 +38,33 @@ Com base nas User Stories iniciais, o sistema irá incluir:
 
 ### Sprint A
 
-| User Story | Descrição | Obrigatoriedade | Responsável |
-| :--- | :--- | :--- | :--- |
-| **US_A001** | *Como Gestor de Projeto, eu pretendo que a equipa faça o levantamento de requisitos funcionais e não funcionais, pelo método FURPS+.* | 1 | João |
-| **US_A002** | *Como Analista de Software, eu pretendo perceber as funcionalidades do sistema através do diagrama de Use Cases, claro e completo.* | 1 | João |
-| **US_A006** | *Como Programador, eu pretendo preparar, configurar e partilhar um repositório GitHub com a equipa de desenvolvimento e orientação.* | 2 | João |
-| **US_A005** | *Como Analista de Software, eu pretendo detalhar o cenário de sucesso principal do UC “Executar Simulação” através da descrição estruturada de UC.* | 4 | João |
-| **US_A008** | *Como Analista de Software, eu pretendo estruturar num fluxograma o processo detalhado do UC “Executar Simulação”.* | 4 | João |
-| **US_A003** | *Como Gestor de Bases de Dados, eu pretendo perceber a estrutura e a relação da informação necessária ao sistema através do Modelo Relacional de Dados.* | 1 | Zé |
-| **US_A004** | *Como Analista de Software, eu pretendo perceber o domínio do sistema, especificando os agregados, as entidades e os seus atributos, através do Modelo de Domínio.* | 1 | Zé |
-| **US_A009** | *Como Gestor de Projeto, eu pretendo preparar a sprint review para apresentação (PPT ou outro) no dia de avaliação (deadline da sprint).* | 2 | Zé |
-| **US_A010** | *Como Gestor de Projeto, eu pretendo compilar num relatório, todo o trabalho produzido.* | 3 | Zé |
-| **US_A007** | *Como Analista de Software, eu pretendo detalhar informação específica do Modelo Relacional de Dados, num Dicionário de Dados (DD).* | 3 | Zé |
+| User Story | Descrição | Obrigatoriedade | Responsável | Conclusão | 
+| :--- | :--- | :--- | :--- | :--- |
+| **US_A001** | *Como Gestor de Projeto, eu pretendo que a equipa faça o levantamento de requisitos funcionais e não funcionais, pelo método FURPS+.* | 1 | João | 100% |
+| **US_A002** | *Como Analista de Software, eu pretendo perceber as funcionalidades do sistema através do diagrama de Use Cases, claro e completo.* | 1 | João | 100% |
+| **US_A006** | *Como Programador, eu pretendo preparar, configurar e partilhar um repositório GitHub com a equipa de desenvolvimento e orientação.* | 2 | João | 100% |
+| **US_A005** | *Como Analista de Software, eu pretendo detalhar o cenário de sucesso principal do UC “Executar Simulação” através da descrição estruturada de UC.* | 4 | João | 100% |
+| **US_A008** | *Como Analista de Software, eu pretendo estruturar num fluxograma o processo detalhado do UC “Executar Simulação”.* | 4 | João | 100% |
+| **US_A003** | *Como Gestor de Bases de Dados, eu pretendo perceber a estrutura e a relação da informação necessária ao sistema através do Modelo Relacional de Dados.* | 1 | Zé | 100% |
+| **US_A004** | *Como Analista de Software, eu pretendo perceber o domínio do sistema, especificando os agregados, as entidades e os seus atributos, através do Modelo de Domínio.* | 1 | Zé | 100% |
+| **US_A009** | *Como Gestor de Projeto, eu pretendo preparar a sprint review para apresentação (PPT ou outro) no dia de avaliação (deadline da sprint).* | 2 | Zé | 100% |
+| **US_A010** | *Como Gestor de Projeto, eu pretendo compilar num relatório, todo o trabalho produzido.* | 3 | Zé | 100% |
+| **US_A007** | *Como Analista de Software, eu pretendo detalhar informação específica do Modelo Relacional de Dados, num Dicionário de Dados (DD).* | 3 | Zé | 100% |
 
 
 ### Sprint B
 
-| User Story | Descrição | Obrigatoriedade | Responsável |
-| :--- | :--- | :--- | :--- |
-| | | | |
-| | | | |
+| User Story | Descrição | Obrigatoriedade | Responsável | Conclusão |
+| :--- | :--- | :--- | :--- | :--- |
+| | | | | | 
+| | | | | | 
 
 ### Sprint C
 
-| User Story | Descrição | Obrigatoriedade | Responsável |
-| :--- | :--- | :--- | :--- |
-| | | | |
-| | | | |
+| User Story | Descrição | Obrigatoriedade | Responsável | Conclusão |
+| :--- | :--- | :--- | :--- | :--- |
+| | | | | | 
+| | | | | | 
 
 
 ## Equipa
