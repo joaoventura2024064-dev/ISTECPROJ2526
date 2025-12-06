@@ -34,6 +34,10 @@ Com base nas User Stories iniciais, o sistema irá incluir:
 - **Gestão de Dados**: Estrutura relacional para suportar a informação do sistema.
 - **Relatórios**: Geração de relatórios sobre o trabalho produzido e resultados das simulações.
 
+## Mockup e Guia de Estilos
+
+https://www.figma.com/design/sw3iULuP84DAQk1cRaNYcg/Medcei?node-id=0-1&t=d2eLfBD92OyiUZRc-1
+
 ## Planeamento
 
 ### Sprint A
@@ -56,9 +60,9 @@ Com base nas User Stories iniciais, o sistema irá incluir:
 
 | User Story | Descrição | Obrigatoriedade | Responsável | Conclusão | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **US_B001** | *Como Designer UI/UX, eu pretendo criar um protótipo (wireframes/mockups de alta fidelidade) da plataforma web com os ecrãs-chave, incluindo as páginas de registo, login, perfil do utilizador, configuração de simulação, visualização de resultados e histórico, respeitando os princípios de usabilidade e responsividade.* | 1 | João | 0% | Pending |
+| **US_B001** | *Como Designer UI/UX, eu pretendo criar um protótipo (wireframes/mockups de alta fidelidade) da plataforma web com os ecrãs-chave, incluindo as páginas de registo, login, perfil do utilizador, configuração de simulação, visualização de resultados e histórico, respeitando os princípios de usabilidade e responsividade.* | 1 | João | 20% | Working |
 | **US_B002** | *Como Designer UI/UX, eu pretendo definir e detalhar as personas dos utilizadores (mínimo duas, ex: investigador, profissional de saúde pública) e especificar os seus objetivos ao usar o simulador.* | 3 | João | 0% | Pending |
-| **US_B003** | *Como Designer UI/UX, eu pretendo criar um guia de estilo web que especifique os elementos gráficos (paleta de cores, tipografia, iconografia, componentes de UI) para garantir a consistência visual da plataforma.* | 4 | João | 0% | Pending |
+| **US_B003** | *Como Designer UI/UX, eu pretendo criar um guia de estilo web que especifique os elementos gráficos (paleta de cores, tipografia, iconografia, componentes de UI) para garantir a consistência visual da plataforma.* | 4 | João | 10% | Working |
 | **US_B004** | *Como Programador Frontend, eu pretendo configurar o ambiente de desenvolvimento React.js e criar a estrutura inicial da aplicação, incluindo os componentes básicos de layout (cabeçalho, rodapé, navegação).* | 1 | João | 0% | Pending |
 | **US_B005** | *Como Programador Frontend, eu pretendo implementar a página de registo de utilizadores, permitindo que novos utilizadores criem uma conta.* | 1 | João | 0% | Pending |
 | **US_B006** | *Como Programador Frontend, eu pretendo implementar a página de login para que os utilizadores registados possam aceder à plataforma.* | 1 | João | 0% | Pending |
