@@ -20,7 +20,7 @@ pip install -r requirements.txt
 
 ### 3. Configurar a Base de Dados
 A base de dados (`.db`) **não** está incluída no repositório. Tem de ser criada localmente.
-O seguinte script para criar as tabelas e insere os dados essenciais (tipos de utilizador, géneros, admin, etc.):
+O seguinte script cria as tabelas e insere os dados essenciais (tipos de utilizador, géneros, admin, etc.):
 
 ```bash
 python seed.py
@@ -54,4 +54,5 @@ Para verificar se tudo está a funcionar corretamente (Registo, Login, Uploads, 
 ```bash
 python test_api.py
 ```
+
 
