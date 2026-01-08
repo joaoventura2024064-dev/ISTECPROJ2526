@@ -24,8 +24,11 @@ Base URL: `http://localhost:5000/api`
     "user_id": 1
   }
   ```
+- **Errors**:
+    - `400 Bad Request`: Email/Password missing or Invalid Date Format (YYYY-MM-DD).
+    - `409 Conflict`: Email already registered.
 
-### Login
+### Login (JWT)
 - **URL**: `/auth/login`
 - **Method**: `POST`
 - **Body**:
@@ -39,6 +42,7 @@ Base URL: `http://localhost:5000/api`
   ```json
   {
     "message": "Login efetuado com sucesso",
+    "access_token": "eyJhbGciOiJIUzI1Ni...",
     "user": {
       "id": 1,
       "name": "John Doe",
@@ -47,23 +51,23 @@ Base URL: `http://localhost:5000/api`
     }
   }
   ```
+- **Note**: The `access_token` should be sent in the Authorization header for protected routes: `Authorization: Bearer <token>`.
 
 ## Users
 
 ### Get Profile
 - **URL**: `/users/<id>`
 - **Method**: `GET`
+
+### Upload Profile Image
+- **URL**: `/users/<id>/upload-image`
+- **Method**: `POST`
+- **Body**: `multipart/form-data` with key `file`.
 - **Response (200)**:
   ```json
   {
-    "id": 1,
-    "name": "John Doe",
-    "email": "john@example.com",
-    "birth_date": "1990-01-01",
-    "gender": "Male",
-    "role": "registered",
-    "status": "active",
-    "created_at": "2026-01-08T20:00:00"
+    "message": "Upload com sucesso",
+    "img_url": "/static/uploads/user_1_123456_image.jpg"
   }
   ```
 
@@ -86,6 +90,10 @@ Base URL: `http://localhost:5000/api`
     }
   }
   ```
+- **Validation**:
+    - `population_total` > 0
+    - `infected_initial` >= 0
+    - `beta`, `gamma` >= 0
 
 ### Get User Simulations
 - **URL**: `/simulations/user/<user_id>`
@@ -96,11 +104,3 @@ Base URL: `http://localhost:5000/api`
 ### Get Dashboard Stats
 - **URL**: `/stats/dashboard`
 - **Method**: `GET`
-- **Response (200)**:
-  ```json
-  {
-    "total_users": 10,
-    "total_simulations": 5,
-    "completed_simulations": 2
-  }
-  ```
