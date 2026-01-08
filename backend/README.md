@@ -1,13 +1,15 @@
 # Simulador - Backend
 
 Este projeto utiliza **Python (Flask)** e **SQLite**.
+---------------------------------------------------------
 
 ## Configuração Inicial
 
-Passos para configurar o ambiente de desenvolvimento pela primeira vez (ou após clonar o repositório).
+|| Passos para configurar o ambiente de desenvolvimento pela primeira vez (ou após clonar o repositório): 
+
 
 ### 1. Pré-requisitos
-Garantir que **Python 3.8+** instalado.
+**Python 3.8+** instalado.
 
 ### 2. Instalar Dependências
 Abrir o terminal na pasta `backend` e executar:
@@ -34,13 +36,22 @@ python app.py
 O servidor fica online em: `http://127.0.0.1:5000`
 
 ---
+## Autenticação (JWT)
+O sistema utiliza **JSON Web Tokens (JWT)** para autenticação.
+- O login retorna um `access_token`.
+- Futuramente este token deve ser enviado no header `Authorization: Bearer <token>` para rotas protegidas.
+
+## Uploads
+As imagens de perfil são guardadas na pasta `backend/static/uploads`.
+Necessário garantir que esta pasta tem permissões de escrita (o script cria-a automaticamente).
 
 ## Documentação API
-Consultar o ficheiro [API_DOCS.md] para ver a lista de endpoints disponíveis para o Frontend.
+Consultar o ficheiro [API_DOCS.md] para ver a lista de endpoints disponíveis para o Frontend, incluindo exemplos de payloads.
 
 ## Testes
-Script de teste:
+Para verificar se tudo está a funcionar corretamente (Registo, Login, Uploads, Validação), podemos correr o script de testes:
 
 ```bash
 python test_api.py
 ```
+
