@@ -1,0 +1,46 @@
+# Simulador - Backend
+
+Este projeto utiliza **Python (Flask)** e **SQLite**.
+
+## Configuração Inicial
+
+Passos para configurar o ambiente de desenvolvimento pela primeira vez (ou após clonar o repositório).
+
+### 1. Pré-requisitos
+Garantir que **Python 3.8+** instalado.
+
+### 2. Instalar Dependências
+Abrir o terminal na pasta `backend` e executar:
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Configurar a Base de Dados
+A base de dados (`.db`) **não** está incluída no repositório. Tem de ser criada localmente.
+O seguinte script para criar as tabelas e insere os dados essenciais (tipos de utilizador, géneros, admin, etc.):
+
+```bash
+python seed.py
+```
+> **Nota:** este script cria o ficheiro `projecto_integrador.db` na raiz da pasta backend.
+
+### 4. Iniciar o Servidor
+Para arrancar a API:
+
+```bash
+python app.py
+```
+O servidor fica online em: `http://127.0.0.1:5000`
+
+---
+
+## Documentação API
+Consultar o ficheiro [API_DOCS.md] para ver a lista de endpoints disponíveis para o Frontend.
+
+## Testes
+Script de teste:
+
+```bash
+python test_api.py
+```
