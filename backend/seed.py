@@ -1,6 +1,7 @@
 from app import create_app
 from models import db, UserType, UserStatus, Genders, SimulationStatus, User
 from werkzeug.security import generate_password_hash
+import constants as c
 
 app = create_app()
 
@@ -13,28 +14,28 @@ def seed_database():
         print("A iniciar povoamento da Base de Dados...")
 
         # 1. Tipos de Utilizador
-        types = ['registered', 'admin', 'researcher']
+        types = [c.USER_TYPE_REGISTERED, c.USER_TYPE_ADMIN, c.USER_TYPE_RESEARCHER]
         for t in types:
             if not UserType.query.filter_by(label=t).first():
                 db.session.add(UserType(label=t))
                 print(f"Adicionado UserType: {t}")
 
         # 2. Estados de Utilizador
-        statuses = ['active', 'pending', 'suspended']
+        statuses = [c.USER_STATUS_ACTIVE, c.USER_STATUS_PENDING, c.USER_STATUS_SUSPENDED]
         for s in statuses:
             if not UserStatus.query.filter_by(label=s).first():
                 db.session.add(UserStatus(label=s))
                 print(f"Adicionado UserStatus: {s}")
 
         # 3. Géneros
-        genders = ['Male', 'Female', 'Other', 'Prefer not to say']
+        genders = [c.GENDER_MALE, c.GENDER_FEMALE, c.GENDER_OTHER, c.GENDER_PREFER_NOT_TO_SAY]
         for g in genders:
             if not Genders.query.filter_by(label=g).first():
                 db.session.add(Genders(label=g))
                 print(f"Adicionado Gender: {g}")
 
         # 4. Estados de Simulação
-        sim_statuses = ['complete', 'running', 'paused', 'failed', 'deleted']
+        sim_statuses = [c.SIM_STATUS_COMPLETE, c.SIM_STATUS_RUNNING, c.SIM_STATUS_PAUSED, c.SIM_STATUS_FAILED, c.SIM_STATUS_DELETED]
         for ss in sim_statuses:
             if not SimulationStatus.query.filter_by(label=ss).first():
                 db.session.add(SimulationStatus(label=ss))
@@ -47,8 +48,8 @@ def seed_database():
         admin_email = "admin@istec.pt"
         if not User.query.filter_by(email=admin_email).first():
             # Precisamos dos IDs dos lookups
-            admin_type = UserType.query.filter_by(label='admin').first()
-            active_status = UserStatus.query.filter_by(label='active').first()
+            admin_type = UserType.query.filter_by(label=c.USER_TYPE_ADMIN).first()
+            active_status = UserStatus.query.filter_by(label=c.USER_STATUS_ACTIVE).first()
             
             admin = User(
                 name="Administrador Principal",

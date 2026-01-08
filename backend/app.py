@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager
 from config import Config
 from models import db
 
@@ -9,9 +10,18 @@ def create_app(config_class=Config):
     
     # Carregar configurações do ficheiro config.py
     app.config.from_object(config_class)
+    
+    # Configurar pasta de uploads (para imagens de perfil)
+    import os
+    UPLOAD_FOLDER = os.path.join(app.root_path, 'static', 'uploads')
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
     # Inicializar a Base de Dados com a app
     db.init_app(app)
+
+    # Inicializar JWT
+    jwt = JWTManager(app)
 
     # Ativar CORS (Cross-Origin Resource Sharing)
     # Isto permite que o frontend (React) noutra porta comunique com este backend

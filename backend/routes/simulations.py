@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from models import db, Simulation, SimulationParameters, SimulationStatus, User
 from datetime import datetime
+import constants as c
 
 simulations_bp = Blueprint('simulations', __name__)
 
@@ -16,10 +17,20 @@ def create_simulation():
     if not data.get('user_id') or not data.get('parameters'):
         return jsonify({'error': 'Dados incompletos'}), 400
 
+    params_data = data.get('parameters')
+    
+    # Validação de Negócio (QA Feedback)
+    if params_data.get('population_total', 0) <= 0:
+        return jsonify({'error': 'População total deve ser maior que 0'}), 400
+    if params_data.get('infected_initial', 0) < 0:
+        return jsonify({'error': 'Infetados iniciais não pode ser negativo'}), 400
+    if params_data.get('beta', 0) < 0 or params_data.get('gamma', 0) < 0:
+        return jsonify({'error': 'Taxas (beta/gamma) não podem ser negativas'}), 400
+
     try:
         # 1. Criar a Simulação
         # Por defeito, status é 'running' (ou 'pending')
-        initial_status = SimulationStatus.query.filter_by(label='running').first()
+        initial_status = SimulationStatus.query.filter_by(label=c.SIM_STATUS_RUNNING).first()
         
         new_sim = Simulation(
             user_id=data.get('user_id'),
@@ -31,7 +42,6 @@ def create_simulation():
         db.session.flush() # Para obter o ID da simulação antes do commit final
 
         # 2. Criar os Parâmetros associados
-        params_data = data.get('parameters')
         new_params = SimulationParameters(
             simulation_id=new_sim.id,
             population_total=params_data.get('population_total'),

@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify
 from models import db, User, Simulation, SimulationStatus
+import constants as c
 
 stats_bp = Blueprint('stats', __name__)
 
@@ -18,7 +19,7 @@ def get_dashboard_stats():
 
         # 3. Simulações por Estado (Exemplo de agregação simples)
         # Contar quantas simulações estão 'completed'
-        completed_status = SimulationStatus.query.filter_by(label='complete').first()
+        completed_status = SimulationStatus.query.filter_by(label=c.SIM_STATUS_COMPLETE).first()
         completed_sims = 0
         if completed_status:
             completed_sims = Simulation.query.filter_by(simulation_status_id=completed_status.id).count()

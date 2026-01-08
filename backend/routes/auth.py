@@ -1,7 +1,9 @@
 from flask import Blueprint, request, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_jwt_extended import create_access_token
 from models import db, User, UserType, UserStatus, Genders
 from datetime import datetime
+import constants as c
 
 # Criar um "Blueprint" para agrupar as rotas de autenticação
 # Isto ajuda a organizar o código, separando-o do app.py principal
@@ -26,14 +28,17 @@ def register():
     try:
         # 3. Obter valores predefinidos para novos utilizadores
         # Por defeito, um novo utilizador é 'registered' e 'active' (ou 'pending' se preferires validação)
-        user_type = UserType.query.filter_by(label='registered').first()
-        user_status = UserStatus.query.filter_by(label='active').first()
+        user_type = UserType.query.filter_by(label=c.USER_TYPE_REGISTERED).first()
+        user_status = UserStatus.query.filter_by(label=c.USER_STATUS_ACTIVE).first()
 
         # 4. Criar o novo utilizador
         # Converter data de nascimento se vier como string
         birth_date_val = data.get('birth_date')
         if birth_date_val and isinstance(birth_date_val, str):
-            birth_date_val = datetime.strptime(birth_date_val, '%Y-%m-%d').date()
+            try:
+                birth_date_val = datetime.strptime(birth_date_val, '%Y-%m-%d').date()
+            except ValueError:
+                return jsonify({'error': 'Data de nascimento inválida. Use YYYY-MM-DD'}), 400
 
         new_user = User(
             name=data.get('name'),
@@ -61,7 +66,7 @@ def login():
     """
     Rota para autenticação.
     Recebe: email, password
-    Retorna: Sucesso + dados do user (ou token num futuro upgrade)
+    Retorna: Sucesso + token JWT + dados do user
     """
     data = request.get_json()
 
@@ -76,17 +81,17 @@ def login():
         return jsonify({'error': 'Credenciais inválidas'}), 401
 
     # 3. Verificar se a conta está ativa
-    # Acede à relação user_status definida no model User
-    # Nota: Precisamos de garantir que a relação está carregada ou fazer query manual.
-    # Como definimos foreign keys, podemos fazer:
     status = UserStatus.query.get(user.user_status_id)
-    if status.label != 'active':
+    if status.label != c.USER_STATUS_ACTIVE:
         return jsonify({'error': 'Conta suspensa ou pendente'}), 403
 
-    # 4. Login com sucesso
-    # Retornamos os dados básicos para o frontend guardar (ex: no localStorage)
+    # 4. Login com sucesso - Gerar Token
+    # identity pode ser o ID do user ou o email
+    access_token = create_access_token(identity=str(user.id))
+
     return jsonify({
         'message': 'Login efetuado com sucesso',
+        'access_token': access_token,
         'user': {
             'id': user.id,
             'name': user.name,

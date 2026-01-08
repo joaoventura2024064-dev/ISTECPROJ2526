@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from models import db, User, UserType, UserStatus, Genders
+from datetime import datetime
 
 users_bp = Blueprint('users', __name__)
 
@@ -56,3 +57,43 @@ def update_user_profile(user_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+
+import os
+from werkzeug.utils import secure_filename
+from flask import current_app
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@users_bp.route('/<int:user_id>/upload-image', methods=['POST'])
+def upload_image(user_id):
+    """
+    Upload da imagem de perfil.
+    """
+    if 'file' not in request.files:
+        return jsonify({'error': 'Sem ficheiro'}), 400
+    
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'Sem ficheiro selecionado'}), 400
+        
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        # Adicionar timestamp ou ID para evitar conflitos
+        filename = f"user_{user_id}_{int(datetime.utcnow().timestamp())}_{filename}"
+        
+        filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+        
+        # Atualizar DB
+        user = User.query.get_or_404(user_id)
+        # Guardar caminho relativo para servir via static
+        user.img_url = f"/static/uploads/{filename}"
+        db.session.commit()
+        
+        return jsonify({'message': 'Upload com sucesso', 'img_url': user.img_url}), 200
+    
+    return jsonify({'error': 'Tipo de ficheiro não permitido'}), 400
