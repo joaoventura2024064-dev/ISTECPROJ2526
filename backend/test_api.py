@@ -8,6 +8,7 @@ BASE_URL = "http://127.0.0.1:5000/api"
 ACCESS_TOKEN = None
 USER_ID = None
 
+
 def test_register():
     print("\n--- Testing Register ---")
     url = f"{BASE_URL}/auth/register"
@@ -34,6 +35,7 @@ def test_register():
         print(f"Error: {e}")
         return False, None
 
+
 def test_login(email):
     print("\n--- Testing Login (JWT) ---")
     url = f"{BASE_URL}/auth/login"
@@ -45,7 +47,7 @@ def test_login(email):
         response = requests.post(url, json=payload)
         print(f"Status: {response.status_code}")
         print(f"Response: {response.json()}")
-        
+
         if response.status_code == 200:
             global ACCESS_TOKEN
             ACCESS_TOKEN = response.json().get('access_token')
@@ -56,6 +58,7 @@ def test_login(email):
         print(f"Error: {e}")
         return False
 
+
 def test_validation():
     print("\n--- Testing Validation (QA) ---")
     # 1. Data Inválida
@@ -64,14 +67,15 @@ def test_validation():
         "name": "Bad Date",
         "email": "baddate@example.com",
         "password": "123",
-        "birth_date": "01-01-1990", # Formato errado
+        "birth_date": "01-01-1990",  # Formato errado
         "gender_id": 1
     }
     res = requests.post(url, json=payload)
     print(f"Invalid Date Test: {res.status_code} (Expected 400)")
-    
+
     # 2. População Negativa
-    if not USER_ID: return
+    if not USER_ID:
+        return
     url_sim = f"{BASE_URL}/simulations/"
     payload_sim = {
         "user_id": USER_ID,
@@ -87,16 +91,18 @@ def test_validation():
     res_sim = requests.post(url_sim, json=payload_sim)
     print(f"Negative Pop Test: {res_sim.status_code} (Expected 400)")
 
+
 def test_upload():
     print("\n--- Testing Image Upload (End User) ---")
-    if not USER_ID: return
-    
+    if not USER_ID:
+        return
+
     url = f"{BASE_URL}/users/{USER_ID}/upload-image"
-    
+
     # Criar um ficheiro dummy
     with open("test_image.jpg", "wb") as f:
         f.write(b"fake image content")
-        
+
     try:
         with open('test_image.jpg', 'rb') as f_img:
             files = {'file': ('test_image.jpg', f_img)}
@@ -112,6 +118,7 @@ def test_upload():
                 os.remove("test_image.jpg")
             except PermissionError:
                 print("Warning: Could not remove test_image.jpg (file in use)")
+
 
 if __name__ == "__main__":
     success, email = test_register()
