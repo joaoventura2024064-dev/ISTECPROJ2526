@@ -1,0 +1,196 @@
+import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEnvelope, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
+
+export default function RegisterCard() {
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [birthDate, setBirthDate] = useState('');
+    const [gender, setGender] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [error, setError] = useState('');
+    const { register } = useAuth();
+    const navigate = useNavigate();
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+
+        if (!name || !email || !birthDate || !gender || !password || !confirmPassword) {
+            setError("Por favor, preencha todos os campos.");
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            setError("As password não coincidem.");
+            return;
+        }
+
+        if (password.length < 8) {
+            setError("A password deve ter pelo menos 8 caracteres.");
+            return;
+        }
+
+        const result = await register(email, password);
+
+        if (result.success) {
+            navigate('/');
+        } else {
+            setError(result.error || 'Erro ao iniciar sessão.');
+        }
+    };
+
+    return (
+        <div className="w-full max-w-[550px] bg-white rounded-xl shadow-[0px_20px_25px_-5px_rgba(0,0,0,0.1),0px_10px_10px_-5px_rgba(0,0,0,0.04)] px-10 py-8 flex flex-col items-center gap-6">
+
+            <div className="text-center space-y-2">
+                <h2 className="font-roboto font-bold text-[20px] text-neutral-500 leading-7">
+                    Criar Conta
+                </h2>
+                <p className="font-montserrat text-[14px] text-neutral-200 leading-5">
+                    Preencha os dados abaixo para se registar
+                </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="w-full flex flex-col gap-5">
+
+                {error && (
+                    <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg border border-red-100 font-montserrat">
+                        {error}
+                    </div>
+                )}
+
+                <div className="flex flex-col gap-2.5">
+                    <label htmlFor="name" className="font-montserrat font-medium text-[14px] text-neutral-500">
+                        Nome
+                    </label>
+                    <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-neutral-200">
+                            <FontAwesomeIcon icon={faUser} />
+                        </div>
+                        <input
+                            id="name"
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder="John Doe"
+                            className="w-full pl-10 pr-4 py-3 border border-neutral-100 rounded-lg text-neutral-500 placeholder-neutral-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 font-montserrat text-[14px] transition-colors bg-white shadow-sm"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <div className="flex gap-4 w-full">
+                    <div className="flex flex-col gap-2.5 flex-1">
+                        <label htmlFor="birthDate" className="font-montserrat font-medium text-[14px] text-neutral-500">
+                            Data de Nascimento
+                        </label>
+                        <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-neutral-200">
+                                <FontAwesomeIcon icon={faEnvelope} />
+                            </div>
+                            <input
+                                id="birthDate"
+                                type="date"
+                                value={birthDate}
+                                onChange={(e) => setBirthDate(e.target.value)}
+                                className="w-full pl-10 pr-4 py-3 border border-neutral-100 rounded-lg text-neutral-500 placeholder-neutral-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 font-montserrat text-[14px] transition-colors bg-white shadow-sm"
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-2.5 flex-1">
+                        <label htmlFor="gender" className="font-montserrat font-medium text-[14px] text-neutral-500">
+                            Genero
+                        </label>
+                        <div className="relative">
+                            <select
+                                id="gender"
+                                value={gender}
+                                onChange={(e) => setGender(e.target.value)}
+                                className="w-full pl-4 pr-4 py-3 border border-neutral-100 rounded-lg text-neutral-500 placeholder-neutral-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 font-montserrat text-[14px] transition-colors bg-white shadow-sm appearance-none"
+                                required
+                            >
+                                <option value="" disabled>Insira o seu genero</option>
+                                <option value="1">Masculino</option>
+                                <option value="2">Feminino</option>
+                                <option value="3">Prefiro não dizer</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex flex-col gap-2.5">
+                    <label htmlFor="email" className="font-montserrat font-medium text-[14px] text-neutral-500">
+                        Email
+                    </label>
+                    <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-neutral-200">
+                            <FontAwesomeIcon icon={faEnvelope} />
+                        </div>
+                        <input
+                            id="email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="exemplo@email.com"
+                            className="w-full pl-10 pr-4 py-3 border border-neutral-100 rounded-lg text-neutral-500 placeholder-neutral-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 font-montserrat text-[14px] transition-colors bg-white shadow-sm"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <div className="flex flex-col gap-2.5">
+                    <label htmlFor="password" className="font-montserrat font-medium text-[14px] text-neutral-500">
+                        Password
+                    </label>
+                    <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-neutral-200">
+                            <FontAwesomeIcon icon={faLock} />
+                        </div>
+                        <input
+                            id="password"
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="**********"
+                            className="w-full pl-10 pr-4 py-3 border border-neutral-100 rounded-lg text-neutral-500 placeholder-neutral-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 font-montserrat text-[14px] transition-colors bg-white shadow-sm"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <div className="flex flex-col gap-2.5">
+                    <label htmlFor="confirmPassword" className="font-montserrat font-medium text-[14px] text-neutral-500">
+                        Confirmar Password
+                    </label>
+                    <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-neutral-200">
+                            <FontAwesomeIcon icon={faLock} />
+                        </div>
+                        <input
+                            id="confirmPassword"
+                            type="password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            placeholder="**********"
+                            className="w-full pl-10 pr-4 py-3 border border-neutral-100 rounded-lg text-neutral-500 placeholder-neutral-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 font-montserrat text-[14px] transition-colors bg-white shadow-sm"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <button
+                    type="submit"
+                    className="w-full bg-primary-500 hover:bg-primary-600 text-white font-montserrat font-medium text-[14px] py-3 rounded-lg shadow-lg shadow-primary-500/20 transition-all duration-200 mt-2"
+                >
+                    Registar
+                </button>
+            </form>
+        </div>
+    );
+}

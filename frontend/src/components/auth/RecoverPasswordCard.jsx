@@ -1,0 +1,80 @@
+import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
+
+export default function RecoverPasswordCard() {
+    const [email, setEmail] = useState('');
+    const [error, setError] = useState('');
+    const { recoverPassword } = useAuth();
+    const navigate = useNavigate();
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+
+        if (!email) {
+            setError("Por favor, preencha todos os campos.");
+            return;
+        }
+
+        const result = await recoverPassword(email);
+
+        if (result.success) {
+            navigate('/');
+        } else {
+            setError(result.error || 'Erro ao iniciar sessão.');
+        }
+    };
+
+    return (
+        <div className="w-full max-w-[550px] bg-white rounded-xl shadow-[0px_20px_25px_-5px_rgba(0,0,0,0.1),0px_10px_10px_-5px_rgba(0,0,0,0.04)] px-10 py-8 flex flex-col items-center gap-6">
+
+            <div className="text-center space-y-2">
+                <h2 className="font-roboto font-bold text-[20px] text-neutral-500 leading-7">
+                    Recuperar senha
+                </h2>
+                <p className="font-montserrat text-[14px] text-neutral-200 leading-5">
+                    Insira o seu email para recuperar a palavra-passe
+                </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="w-full flex flex-col gap-5">
+
+                {error && (
+                    <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg border border-red-100 font-montserrat">
+                        {error}
+                    </div>
+                )}
+
+                <div className="flex flex-col gap-2.5">
+                    <label htmlFor="email" className="font-montserrat font-medium text-[14px] text-neutral-500">
+                        Email
+                    </label>
+                    <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-neutral-200">
+                            <FontAwesomeIcon icon={faEnvelope} />
+                        </div>
+                        <input
+                            id="email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="exemplo@email.com"
+                            className="w-full pl-10 pr-4 py-3 border border-neutral-100 rounded-lg text-neutral-500 placeholder-neutral-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 font-montserrat text-[14px] transition-colors bg-white shadow-sm"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <button
+                    type="submit"
+                    className="w-full bg-primary-500 hover:bg-primary-600 text-white font-montserrat font-medium text-[14px] py-3 rounded-lg shadow-lg shadow-primary-500/20 transition-all duration-200 mt-2"
+                >
+                    Enviar
+                </button>
+            </form>
+        </div>
+    );
+}
