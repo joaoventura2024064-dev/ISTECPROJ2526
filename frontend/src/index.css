@@ -1,0 +1,158 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  /* Primary */
+  --color-primary-50: #EFF8F4;
+  --color-primary-100: #CEE8DE;
+  --color-primary-200: #B6DDCE;
+  --color-primary-300: #95CEB8;
+  --color-primary-400: #81C5AA;
+  --color-primary-500: #61B695;
+  --color-primary-600: #58A688;
+  --color-primary-700: #45816A;
+  --color-primary-800: #356452;
+  --color-primary-900: #294C3F;
+
+  /* Secondary */
+  --color-secondary-50: #FDF9EC;
+  --color-secondary-100: #F9EDC4;
+  --color-secondary-500: #ECC440;
+  --color-secondary-700: #A88B2D;
+
+  /* Neutral */
+  --color-neutral-50: #EAEAEA;
+  --color-neutral-100: #BCBCBC;
+  --color-neutral-200: #9C9C9C;
+  --color-neutral-300: #6F6F6F;
+  --color-neutral-400: #535353;
+  --color-neutral-500: #282828;
+  --color-neutral-700: #1C1C1C;
+  --color-neutral-900: #111111;
+
+  /* Base */
+  --color-base-50: #FFFFFF;
+  --color-base-200: #FFFFFF;
+  --color-base-600: #E8E8E8;
+  --color-base-700: #B5B5B5;
+  --color-base-900: #6B6B6B;
+
+  /* Background */
+  --color-background-50: #FDFEFE;
+  --color-background-200: #F4F9FA;
+  --color-background-300: #EEF6F8;
+  --color-background-600: #D1DCDF;
+  --color-background-800: #7F8587;
+
+  --font-roboto: "Roboto", sans-serif;
+  --font-montserrat: "Montserrat", sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+:root {
+  font-family: var(--font-montserrat);
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light;
+  color: var(--color-neutral-500);
+  background-color: var(--color-base-50);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* Figma Text Styles */
+.text-h1 {
+  font-family: var(--font-roboto);
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 32px;
+}
+
+.text-h2 {
+  font-family: var(--font-roboto);
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 28px;
+}
+
+.text-body-main {
+  font-family: var(--font-montserrat);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.text-body-medium {
+  font-family: var(--font-montserrat);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.text-body-strong {
+  font-family: var(--font-montserrat);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.text-body-header {
+  font-family: var(--font-montserrat);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.text-caption-main {
+  font-family: var(--font-montserrat);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.text-caption-strong {
+  font-family: var(--font-montserrat);
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.text-ui-button {
+  font-family: var(--font-montserrat);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1;
+  /* 100% */
+}
+
+.text-label-caption {
+  font-family: var(--font-montserrat);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1;
+  /* 100% */
+}
+
+.text-display-numbers {
+  font-family: var(--font-montserrat);
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 32px;
+}
