@@ -70,19 +70,38 @@ export default function CustomScrollDiv({ children, className, ...props }) {
         [isDragging, lastScrollThumbPosition]
     );
 
+    const contentRef = useRef();
+
+    const updateScrollMetrics = useCallback(() => {
+        if (!scrollHostRef.current) return;
+        const { clientHeight, scrollHeight } = scrollHostRef.current;
+        const scrollThumbPercentage = clientHeight / scrollHeight;
+        const scrollThumbHeight = Math.max(
+            scrollThumbPercentage * clientHeight,
+            SCROLL_BOX_MIN_HEIGHT
+        );
+        setScrollBoxHeight(scrollThumbHeight);
+        setHasScroll(scrollHeight > clientHeight);
+    }, []);
+
     useEffect(() => {
-        // Initial calculation
-        if (scrollHostRef.current) {
-            const { clientHeight, scrollHeight } = scrollHostRef.current;
-            const scrollThumbPercentage = clientHeight / scrollHeight;
-            const scrollThumbHeight = Math.max(
-                scrollThumbPercentage * clientHeight,
-                SCROLL_BOX_MIN_HEIGHT
-            );
-            setScrollBoxHeight(scrollThumbHeight);
-            setHasScroll(scrollHeight > clientHeight);
-        }
-    });
+        const scrollHost = scrollHostRef.current;
+        const content = contentRef.current;
+
+        if (!scrollHost || !content) return;
+
+        const observer = new ResizeObserver(() => {
+            updateScrollMetrics();
+        });
+
+        observer.observe(scrollHost);
+        observer.observe(content);
+
+        // Initial check
+        updateScrollMetrics();
+
+        return () => observer.disconnect();
+    }, [updateScrollMetrics]);
 
     useEffect(() => {
         document.addEventListener("mousemove", handleDocumentMouseMove);
@@ -118,7 +137,9 @@ export default function CustomScrollDiv({ children, className, ...props }) {
                 display: none; 
             } 
         `}</style>
-                {children}
+                <div ref={contentRef} className="min-h-full w-full">
+                    {children}
+                </div>
             </div>
 
             {/* Scrollbar Track/Thumb */}
