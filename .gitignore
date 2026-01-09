@@ -42,5 +42,6 @@ pnpm-debug.log*
 
 dist-ssr/
 coverage/
+.vite/
 
 .eslintcache
