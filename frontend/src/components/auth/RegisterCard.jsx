@@ -118,7 +118,8 @@ export default function RegisterCard() {
                                 <option value="" disabled>Insira o seu genero</option>
                                 <option value="1">Masculino</option>
                                 <option value="2">Feminino</option>
-                                <option value="3">Prefiro não dizer</option>
+                                <option value="3">Outro</option>
+                                <option value="4">Prefiro não dizer</option>
                             </select>
                         </div>
                     </div>
