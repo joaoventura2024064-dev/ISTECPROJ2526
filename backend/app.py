@@ -42,7 +42,10 @@ def create_app(config_class=Config):
     # Contexto da aplicação para operações de base de dados
     with app.app_context():
         # Importar modelos para garantir que o SQLAlchemy os conhece antes de criar as tabelas
-        from models import User, Simulation  # e outros...
+        from models import (
+            User, Simulation, SimulationParameters, SimulationSteps,
+            UserType, UserStatus, Genders, SimulationStatus
+        )
 
         # Criar todas as tabelas definidas no models.py se não existirem
         db.create_all()
