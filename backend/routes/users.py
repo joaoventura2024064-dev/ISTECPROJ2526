@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from models import db, User, UserType, UserStatus, Genders
+from models import db, User, UserType, UserStatus, Genders, Simulation, SimulationStatus
 from datetime import datetime
 
 users_bp = Blueprint('users', __name__)
@@ -97,3 +97,26 @@ def upload_image(user_id):
         return jsonify({'message': 'Upload com sucesso', 'img_url': user.img_url}), 200
     
     return jsonify({'error': 'Tipo de ficheiro não permitido'}), 400
+
+@users_bp.route('/<int:user_id>/simulations', methods=['GET'])
+def get_user_simulations(user_id):
+    """
+    Lista todas as simulações de um utilizador.
+    """
+    # Verificar se o user existe
+    user = User.query.get_or_404(user_id)
+    
+    sims = Simulation.query.filter_by(user_id=user_id).order_by(Simulation.created_at.desc()).all()
+    
+    results = []
+    for s in sims:
+        status = SimulationStatus.query.get(s.simulation_status_id)
+        results.append({
+            'id': s.id,
+            'date': s.created_at.isoformat(),
+            'description': s.description,
+            'status': status.label,
+            'pinned': s.pinned
+        })
+    
+    return jsonify(results), 200
