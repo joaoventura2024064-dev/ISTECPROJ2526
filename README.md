@@ -35,8 +35,8 @@ A organização do projeto é a seguinte:
     - `Relatorio.docx`: Relatório de progresso e documentação geral.
     - `Sprint_A_Apresentacao_v0.pptx`: Apresentação da Sprint A.
 - **`resources/`**: Recursos fornecidos pelo professor.
-- **`frontend/`**: Diretoria reservada para o código da aplicação cliente (a ser implementado).
-- **`backend/`**: Diretoria reservada para o código do servidor/API (a ser implementado).
+- **`frontend/`**: Diretoria reservada para o código da aplicação cliente (em implementação).
+- **`backend/`**: Diretoria reservada para o código do servidor/API (em implementação).
 
 ## Funcionalidades Planeadas
 
