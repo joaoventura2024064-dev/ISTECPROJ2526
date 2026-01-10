@@ -29,6 +29,7 @@ Atualmente, o projeto encontra-se na fase de levantamento de requisitos, modela�
 A organização do projeto é a seguinte:
 
 - **`docs/`**: Contém toda a documentação do projeto.
+    - **`Documentação Técnica/`**: Pasta que contém documentação técnica, e.g. documentação de API.
     - `LEI-A2-S1-SMUL1-PI-UML.drawio`: Diagramas UML (Use Cases, Classes, etc.).
     - `DicionarioDados.xlsx`: Dicionário de Dados.
     - `FURPS.xlsx`: Levantamento de Requisitos Não Funcionais (FURPS+).
