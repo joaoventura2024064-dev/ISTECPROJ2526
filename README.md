@@ -4,7 +4,19 @@
 **Curso:** Engenharia Informática<br>
 **Cadeira:** Sistemas Multimédia I<br>
 
-**Fase:** Sprint A (Análise e Desenho)<br>
+**Fase:** Sprint C (Desenvolvimento)<br>
+
+## Índice
+- [Sobre o Projeto](#sobre-o-projeto)
+- [Estrutura do Repositório](#estrutura-do-repositório)
+- [Funcionalidades Planeadas](#funcionalidades-planeadas)
+- [Mockup e Guia de Estilos](#mockup-e-guia-de-estilos)
+- [Planeamento](#planeamento)
+    - [GANT](#gant)
+    - [Sprint A](#sprint-a)
+    - [Sprint B](#sprint-b)
+    - [Sprint C](#sprint-c)
+- [Equipa](#equipa)
 
 ## Sobre o Projeto
 
@@ -73,7 +85,7 @@ gantt
     Sprint Review B                         :active,  milestone, 2026-01-10, 0d
 
     section Simulador e Lógica
-    Implementação Modelo SIR (Python)       :active,  c1, 2026-01-10, 7d
+    Implementação Modelo SIR (Python)       :         c1, 2026-01-10, 7d
     Algoritmos Probabilísticos/Estocásticos :         c2, after c1, 5d
     API de Simulação (Endpoints)            :         c3, after c2, 5d
     
