@@ -63,26 +63,6 @@ def create_simulation():
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
-@simulations_bp.route('/user/<int:user_id>', methods=['GET'])
-def get_user_simulations(user_id):
-    """
-    Lista todas as simulações de um utilizador.
-    """
-    sims = Simulation.query.filter_by(user_id=user_id).order_by(Simulation.created_at.desc()).all()
-    
-    results = []
-    for s in sims:
-        status = SimulationStatus.query.get(s.simulation_status_id)
-        results.append({
-            'id': s.id,
-            'date': s.created_at.isoformat(),
-            'description': s.description,
-            'status': status.label,
-            'pinned': s.pinned
-        })
-    
-    return jsonify(results), 200
-
 @simulations_bp.route('/<int:sim_id>', methods=['GET'])
 def get_simulation_details(sim_id):
     """
