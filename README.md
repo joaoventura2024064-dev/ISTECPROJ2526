@@ -57,7 +57,6 @@ https://www.figma.com/design/sw3iULuP84DAQk1cRaNYcg/Medcei?node-id=0-1&t=d2eLfBD
 
 ```mermaid
 gantt
-    title Gant Projeto S.E.I.O.S
     dateFormat  YYYY-MM-DD
     axisFormat  %d/%m
 

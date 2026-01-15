@@ -3,7 +3,6 @@
 @import "tailwindcss";
 
 @theme {
-  /* Primary */
   --color-primary-50: #EFF8F4;
   --color-primary-100: #CEE8DE;
   --color-primary-200: #B6DDCE;
@@ -15,13 +14,11 @@
   --color-primary-800: #356452;
   --color-primary-900: #294C3F;
 
-  /* Secondary */
   --color-secondary-50: #FDF9EC;
   --color-secondary-100: #F9EDC4;
   --color-secondary-500: #ECC440;
   --color-secondary-700: #A88B2D;
 
-  /* Neutral */
   --color-neutral-50: #EAEAEA;
   --color-neutral-100: #BCBCBC;
   --color-neutral-200: #9C9C9C;
@@ -31,14 +28,12 @@
   --color-neutral-700: #1C1C1C;
   --color-neutral-900: #111111;
 
-  /* Base */
   --color-base-50: #FFFFFF;
   --color-base-200: #FFFFFF;
   --color-base-600: #E8E8E8;
   --color-base-700: #B5B5B5;
   --color-base-900: #6B6B6B;
 
-  /* Background */
   --color-background-50: #FDFEFE;
   --color-background-200: #F4F9FA;
   --color-background-300: #EEF6F8;
@@ -77,7 +72,6 @@ button {
   cursor: pointer;
 }
 
-/* Figma Text Styles */
 .text-h1 {
   font-family: var(--font-roboto);
   font-weight: 700;
@@ -139,7 +133,6 @@ button {
   font-weight: 500;
   font-size: 14px;
   line-height: 1;
-  /* 100% */
 }
 
 .text-label-caption {
@@ -147,7 +140,6 @@ button {
   font-weight: 400;
   font-size: 12px;
   line-height: 1;
-  /* 100% */
 }
 
 .text-display-numbers {

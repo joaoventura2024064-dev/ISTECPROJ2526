@@ -7,6 +7,9 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import RecoverPassword from './pages/RecoverPassword';
+import NewSimulation from './pages/NewSimulation';
+import SimulationResult from './pages/SimulationResult';
+import Profile from './pages/Profile';
 
 function App() {
   return (
@@ -22,6 +25,9 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />
+              <Route path="simulador" element={<NewSimulation />} />
+              <Route path="simulador/:id" element={<SimulationResult />} />
+              <Route path="perfil" element={<Profile />} />
             </Route>
           </Route>
         </Routes>

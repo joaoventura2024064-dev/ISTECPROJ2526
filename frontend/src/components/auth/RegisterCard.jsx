@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEnvelope, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faCalendar, faEnvelope, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 
 export default function RegisterCard() {
     const [name, setName] = useState('');
@@ -90,7 +90,7 @@ export default function RegisterCard() {
                         </label>
                         <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-neutral-200">
-                                <FontAwesomeIcon icon={faEnvelope} />
+                                <FontAwesomeIcon icon={faCalendar} />
                             </div>
                             <input
                                 id="birthDate"
@@ -185,12 +185,11 @@ export default function RegisterCard() {
                     </div>
                 </div>
 
-                <button
-                    type="submit"
-                    className="w-full bg-primary-500 hover:bg-primary-600 text-white font-montserrat font-medium text-[14px] py-3 rounded-lg shadow-lg shadow-primary-500/20 transition-all duration-200 mt-2"
-                >
-                    Registar
-                </button>
+                <Button
+                    text="Registar"
+                    variant="secondary"
+                    width='fill'
+                />
             </form>
         </div>
     );

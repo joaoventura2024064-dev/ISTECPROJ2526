@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
+import Button from '../common/Button';
 
 export default function LoginCard() {
     const [email, setEmail] = useState('');
@@ -95,12 +96,11 @@ export default function LoginCard() {
                     </div>
                 </div>
 
-                <button
-                    type="submit"
-                    className="w-full bg-primary-500 hover:bg-primary-600 text-white font-montserrat font-medium text-[14px] py-3 rounded-lg shadow-lg shadow-primary-500/20 transition-all duration-200 mt-2"
-                >
-                    Entrar
-                </button>
+                <Button
+                    text="Entrar"
+                    variant="primary"
+                    width='fill'
+                />
             </form>
 
             <div className="w-full flex items-center gap-4">
@@ -112,12 +112,11 @@ export default function LoginCard() {
             </div>
 
             <Link to="/registar" className="w-full">
-                <button
-                    type="button"
-                    className="w-full bg-white border border-primary-500 text-primary-500 hover:bg-primary-50 font-montserrat font-medium text-[14px] py-3 rounded-lg transition-all duration-200"
-                >
-                    Registar
-                </button>
+                <Button
+                    text="Registar"
+                    variant="secondary"
+                    width='fill'
+                />
             </Link>
 
         </div>

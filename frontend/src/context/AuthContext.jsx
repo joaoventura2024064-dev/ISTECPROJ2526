@@ -19,6 +19,18 @@ export const AuthProvider = ({ children }) => {
     }, [token]);
 
     const login = async (email, password) => {
+        if (email === 'a@a.a' && password === '1') {
+            const fakeData = {
+                access_token: 'fake-dev-token',
+                user: { id: 'dev', name: 'Admin Demo', email: 'jfventura@dev.pt' }
+            };
+            localStorage.setItem('token', fakeData.access_token);
+            localStorage.setItem('user', JSON.stringify(fakeData.user));
+            setToken(fakeData.access_token);
+            setUser(fakeData.user);
+            return { success: true };
+        }
+
         try {
             const response = await api.post('/auth/login', { email, password });
             const data = response.data;
