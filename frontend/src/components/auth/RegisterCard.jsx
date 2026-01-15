@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendar, faEnvelope, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
+import Button from '../common/Button';
 
 export default function RegisterCard() {
     const [name, setName] = useState('');
@@ -184,13 +185,13 @@ export default function RegisterCard() {
                         />
                     </div>
                 </div>
-
-                <Button
-                    text="Registar"
-                    variant="secondary"
-                    width='fill'
-                />
             </form>
+            <Button className='mt-4'
+                onClick={handleSubmit}
+                text="Registar"
+                variant="primary"
+                width='fill'
+            />
         </div>
     );
 }

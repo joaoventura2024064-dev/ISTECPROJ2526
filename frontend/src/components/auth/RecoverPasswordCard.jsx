@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
+import Button from '../common/Button';
 
 export default function RecoverPasswordCard() {
     const [email, setEmail] = useState('');
@@ -67,14 +68,13 @@ export default function RecoverPasswordCard() {
                         />
                     </div>
                 </div>
-
-                <button
-                    type="submit"
-                    className="w-full bg-primary-500 hover:bg-primary-600 text-white font-montserrat font-medium text-[14px] py-3 rounded-lg shadow-lg shadow-primary-500/20 transition-all duration-200 mt-2"
-                >
-                    Enviar
-                </button>
             </form>
+            <Button
+                onClick={handleSubmit}
+                text="Enviar"
+                variant="primary"
+                width='fill'
+            />
         </div>
     );
 }
