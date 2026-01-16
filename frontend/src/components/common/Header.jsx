@@ -1,8 +1,9 @@
+import { memo } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 
-export default function Header() {
+function Header() {
     const { user, logout } = useAuth();
     const userName = user?.name || 'Utilizador';
     const userRole = 'Administrador';
@@ -108,3 +109,5 @@ export default function Header() {
         </header>
     );
 }
+
+export default memo(Header);

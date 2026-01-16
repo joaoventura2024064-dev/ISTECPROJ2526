@@ -1,8 +1,9 @@
+import { memo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-export default function Button({ text, onClick, variant = 'primary', width = 'hug', icon = null, className = '' }) {
+function Button({ text, onClick, variant = 'primary', width = 'hug', icon = null, className = '' }) {
 
-    const baseStyles = "flex items-center justify-center gap-2 font-montserrat font-medium text-sm py-2 rounded-lg transition-all duration-200";
+    const base = "flex items-center justify-center gap-2 font-montserrat font-medium text-sm py-2 rounded-lg transition-all duration-200";
 
     const variants = {
         primary: "  px-4 bg-primary-500 border border-primary-600 text-white hover:bg-primary-600 hover:shadow-lg hover:shadow-primary-300/20",
@@ -18,9 +19,11 @@ export default function Button({ text, onClick, variant = 'primary', width = 'hu
     return (
         <button
             onClick={onClick}
-            className={`${baseStyles} ${variants[variant]} ${widthStyles[width]} ${className}`}        >
+            className={`${base} ${variants[variant]} ${widthStyles[width]} ${className}`}        >
             {icon && <FontAwesomeIcon icon={icon} />}
             {text}
         </button>
     );
 }
+
+export default memo(Button);

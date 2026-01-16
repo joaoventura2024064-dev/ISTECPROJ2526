@@ -2,7 +2,9 @@ import { useNavigate } from 'react-router-dom';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import Button from './Button';
 
-export default function PageHeader({ title, subTitle, backButton = false, primaryActionButton = null, secondaryActionButton = null, align = 'left' }) {
+import { memo } from 'react';
+
+function PageHeader({ title, subTitle, backButton = false, primaryActionButton = null, secondaryActionButton = null, align = 'left' }) {
     const navigate = useNavigate();
 
     return (
@@ -55,3 +57,5 @@ export default function PageHeader({ title, subTitle, backButton = false, primar
         </div>
     );
 }
+
+export default memo(PageHeader);
