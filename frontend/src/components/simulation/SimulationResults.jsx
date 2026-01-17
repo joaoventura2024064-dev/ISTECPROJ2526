@@ -4,7 +4,7 @@ import Card from '../common/Card/Card';
 
 export default function SimulationResults({
     results,
-    status = 'loading',
+    status = 'idle',
     onSave
 }) {
 
@@ -14,13 +14,13 @@ export default function SimulationResults({
             variant="secondary"
             icon={faFloppyDisk}
             onClick={onSave}
-            className="!py-1 !text-xs !gap-1"
+            className="!text-xs "
         />
     );
 
     return (
-        <Card title="Resultados da Evolução" icon={faChartLine} actions={actions} className="h-full">
-            <div className="flex-1 flex flex-col justify-center h-full">
+        <Card title="Resultados da Simulação" icon={faChartLine} actions={actions} className="h-full">
+            <div className="flex-1 flex flex-col justify-center h-full select-none">
                 {status === 'idle' || status === 'loading' ? (
                     <div className="flex flex-col items-center justify-center gap-4 text-neutral-400 opacity-60 h-full">
 

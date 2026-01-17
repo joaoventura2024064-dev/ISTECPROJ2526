@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, useContext } from 'react';
-import api from '../services/api';
+import { loginService, registerService, recoverPasswordService } from '../services/api';
 
 const AuthContext = createContext(null);
 
@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
     }, [token]);
 
     const login = async (email, password) => {
-        if (email === 'a@a.a' && password === '1') {
+        /*if (email === 'a@a.a' && password === '1') {
             const fakeData = {
                 access_token: 'fake-dev-token',
                 user: { id: 'dev', name: 'Admin Demo', email: 'jfventura@dev.pt' }
@@ -29,11 +29,10 @@ export const AuthProvider = ({ children }) => {
             setToken(fakeData.access_token);
             setUser(fakeData.user);
             return { success: true };
-        }
+        }*/
 
         try {
-            const response = await api.post('/auth/login', { email, password });
-            const data = response.data;
+            const data = await loginService(email, password);
 
             localStorage.setItem('token', data.access_token);
             localStorage.setItem('user', JSON.stringify(data.user));
@@ -47,6 +46,28 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const register = async (name, email, password, birth_date, gender_id) => {
+        try {
+            const data = await registerService(name, email, password, birth_date, gender_id);
+            return { success: true };
+        } catch (error) {
+            console.error("Register error:", error);
+            const errorMessage = error.response?.data?.error || error.message || 'Erro ao registar';
+            return { success: false, error: errorMessage };
+        }
+    };
+
+    const recoverPassword = async (email) => {
+        try {
+            await recoverPasswordService(email);
+            return { success: true };
+        } catch (error) {
+            console.error("Recover password error:", error);
+            const errorMessage = error.response?.data?.error || error.message || 'Erro ao recuperar password';
+            return { success: false, error: errorMessage };
+        }
+    };
+
     const logout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
@@ -55,10 +76,12 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, token, login, logout, loading }}>
+        <AuthContext.Provider value={{ user, token, login, logout, register, recoverPassword, loading }}>
             {!loading && children}
         </AuthContext.Provider>
     );
 };
 
 export const useAuth = () => useContext(AuthContext);
+
+

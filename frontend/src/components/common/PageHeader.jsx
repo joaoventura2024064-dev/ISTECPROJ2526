@@ -8,7 +8,7 @@ function PageHeader({ title, subTitle, backButton = false, primaryActionButton =
     const navigate = useNavigate();
 
     return (
-        <div className="w-full h-24 flex items-center justify-between">
+        <div className="w-full h-24 flex items-center justify-between select-none">
             <div className="flex-1 flex items-center gap-4">
                 {backButton && (
                     <Button

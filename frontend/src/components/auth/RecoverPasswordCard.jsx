@@ -6,6 +6,7 @@ import { faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
 import Button from '../common/Button';
 
 export default function RecoverPasswordCard() {
+    const [status, setStatus] = useState('idle');
     const [email, setEmail] = useState('');
     const [error, setError] = useState('');
     const { recoverPassword } = useAuth();
@@ -20,12 +21,19 @@ export default function RecoverPasswordCard() {
             return;
         }
 
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            setError("Email inválido.");
+            return;
+        }
+        setStatus('loading');
         const result = await recoverPassword(email);
 
         if (result.success) {
             navigate('/');
         } else {
             setError(result.error || 'Erro ao iniciar sessão.');
+            setStatus('idle');
         }
     };
 
@@ -49,8 +57,8 @@ export default function RecoverPasswordCard() {
                     </div>
                 )}
 
-                <div className="flex flex-col gap-2.5">
-                    <label htmlFor="email" className="font-montserrat font-medium text-[14px] text-neutral-500">
+                <div className="flex flex-col gap-2.5 group">
+                    <label htmlFor="email" className="font-montserrat font-medium text-[14px] text-neutral-500 group-focus-within:text-primary-500">
                         Email
                     </label>
                     <div className="relative">

@@ -1,11 +1,12 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendar, faEnvelope, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faCalendar, faEnvelope, faLock, faUser, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import Button from '../common/Button';
 
 export default function RegisterCard() {
+    const [loading, setLoading] = useState(false);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [birthDate, setBirthDate] = useState('');
@@ -35,12 +36,19 @@ export default function RegisterCard() {
             return;
         }
 
-        const result = await register(email, password);
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            setError("Email inválido.");
+            return;
+        }
+        setLoading(true);
+        const result = await register(name, email, password, birthDate, gender);
 
         if (result.success) {
-            navigate('/');
+            navigate('/login');
         } else {
             setError(result.error || 'Erro ao iniciar sessão.');
+            setLoading(false);
         }
     };
 
@@ -64,8 +72,8 @@ export default function RegisterCard() {
                     </div>
                 )}
 
-                <div className="flex flex-col gap-2.5">
-                    <label htmlFor="name" className="font-montserrat font-medium text-[14px] text-neutral-500">
+                <div className="flex flex-col gap-2.5 group">
+                    <label htmlFor="name" className="font-montserrat font-medium text-[14px] text-neutral-500 group-focus-within:text-primary-500">
                         Nome
                     </label>
                     <div className="relative">
@@ -85,8 +93,8 @@ export default function RegisterCard() {
                 </div>
 
                 <div className="flex gap-4 w-full">
-                    <div className="flex flex-col gap-2.5 flex-1">
-                        <label htmlFor="birthDate" className="font-montserrat font-medium text-[14px] text-neutral-500">
+                    <div className="flex flex-col gap-2.5 flex-1 group">
+                        <label htmlFor="birthDate" className="font-montserrat font-medium text-[14px] text-neutral-500 group-focus-within:text-primary-500">
                             Data de Nascimento
                         </label>
                         <div className="relative">
@@ -104,8 +112,8 @@ export default function RegisterCard() {
                         </div>
                     </div>
 
-                    <div className="flex flex-col gap-2.5 flex-1">
-                        <label htmlFor="gender" className="font-montserrat font-medium text-[14px] text-neutral-500">
+                    <div className="flex flex-col gap-2.5 flex-1 group">
+                        <label htmlFor="gender" className="font-montserrat font-medium text-[14px] text-neutral-500 group-focus-within:text-primary-500">
                             Genero
                         </label>
                         <div className="relative">
@@ -126,8 +134,8 @@ export default function RegisterCard() {
                     </div>
                 </div>
 
-                <div className="flex flex-col gap-2.5">
-                    <label htmlFor="email" className="font-montserrat font-medium text-[14px] text-neutral-500">
+                <div className="flex flex-col gap-2.5 group">
+                    <label htmlFor="email" className="font-montserrat font-medium text-[14px] text-neutral-500 group-focus-within:text-primary-500">
                         Email
                     </label>
                     <div className="relative">
@@ -146,8 +154,8 @@ export default function RegisterCard() {
                     </div>
                 </div>
 
-                <div className="flex flex-col gap-2.5">
-                    <label htmlFor="password" className="font-montserrat font-medium text-[14px] text-neutral-500">
+                <div className="flex flex-col gap-2.5 group">
+                    <label htmlFor="password" className="font-montserrat font-medium text-[14px] text-neutral-500 group-focus-within:text-primary-500">
                         Password
                     </label>
                     <div className="relative">
@@ -166,8 +174,8 @@ export default function RegisterCard() {
                     </div>
                 </div>
 
-                <div className="flex flex-col gap-2.5">
-                    <label htmlFor="confirmPassword" className="font-montserrat font-medium text-[14px] text-neutral-500">
+                <div className="flex flex-col gap-2.5 group">
+                    <label htmlFor="confirmPassword" className="font-montserrat font-medium text-[14px] text-neutral-500 group-focus-within:text-primary-500">
                         Confirmar Password
                     </label>
                     <div className="relative">
@@ -186,11 +194,14 @@ export default function RegisterCard() {
                     </div>
                 </div>
             </form>
-            <Button className='mt-4'
+            <Button className="mt-4"
                 onClick={handleSubmit}
-                text="Registar"
+                text={loading ? "A registar..." : "Registar"}
                 variant="primary"
-                width='fill'
+                width="fill"
+                icon={loading ? faSpinner : ""}
+                spin={loading}
+                disabled={loading}
             />
         </div>
     );

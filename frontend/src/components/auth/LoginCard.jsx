@@ -2,10 +2,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
+import { faEnvelope, faLock, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import Button from '../common/Button';
 
 export default function LoginCard() {
+    const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -14,19 +15,27 @@ export default function LoginCard() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError('');
+        setError("");
 
         if (!email || !password) {
             setError("Por favor, preencha todos os campos.");
             return;
         }
 
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            setError("Email inválido.");
+            return;
+        }
+
+        setLoading(true);
         const result = await login(email, password);
 
         if (result.success) {
             navigate('/');
         } else {
-            setError(result.error || 'Erro ao iniciar sessão.');
+            setError(result.error || "Erro ao iniciar sessão.");
+            setLoading(false);
         }
     };
 
@@ -50,8 +59,8 @@ export default function LoginCard() {
                     </div>
                 )}
 
-                <div className="flex flex-col gap-2.5">
-                    <label htmlFor="email" className="font-montserrat font-medium text-[14px] text-neutral-500">
+                <div className="flex flex-col gap-2.5 group">
+                    <label htmlFor="email" className="font-montserrat font-medium text-[14px] text-neutral-500 group-focus-within:text-primary-500">
                         Email
                     </label>
                     <div className="relative">
@@ -70,8 +79,8 @@ export default function LoginCard() {
                     </div>
                 </div>
 
-                <div className="flex flex-col gap-2.5">
-                    <label htmlFor="password" className="font-montserrat font-medium text-[14px] text-neutral-500">
+                <div className="flex flex-col gap-2.5 group">
+                    <label htmlFor="password" className="font-montserrat font-medium text-[14px] text-neutral-500 group-focus-within:text-primary-500">
                         Password
                     </label>
                     <div className="relative">
@@ -95,11 +104,13 @@ export default function LoginCard() {
                         </Link>
                     </div>
                 </div>
-
                 <Button
-                    text="Entrar"
-                    variant="primary"
-                    width='fill'
+                    text={loading ? "A entrar..." : "Entrar"}
+                    width="fill"
+                    icon={loading ? faSpinner : ""}
+                    spin={loading}
+                    disabled={loading}
+                    onClick={handleSubmit}
                 />
             </form>
 
@@ -115,7 +126,8 @@ export default function LoginCard() {
                 <Button
                     text="Registar"
                     variant="secondary"
-                    width='fill'
+                    width="fill"
+                    disabled={loading}
                 />
             </Link>
 

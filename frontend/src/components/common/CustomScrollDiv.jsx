@@ -132,11 +132,6 @@ export default function CustomScrollDiv({ children, className, ...props }) {
                     width: '100%'
                 }}
             >
-                <style jsx>{`
-            div::-webkit-scrollbar { 
-                display: none; 
-            } 
-        `}</style>
                 <div ref={contentRef} className="min-h-full w-full">
                     {children}
                 </div>
