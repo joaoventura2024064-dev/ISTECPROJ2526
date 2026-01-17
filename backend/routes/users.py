@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from werkzeug.security import generate_password_hash
 from models import db, User, UserType, UserStatus, Genders, Simulation, SimulationStatus
 from datetime import datetime
 
@@ -75,8 +76,13 @@ def update_user_profile(user_id):
               type: string
             gender_id:
               type: integer
+            gender_id:
+              type: integer
             birth_date:
               type: string
+            password:
+              type: string
+              description: Nova password (opcional)
     responses:
       200:
         description: Perfil atualizado
@@ -100,6 +106,9 @@ def update_user_profile(user_id):
 
         if 'gender_id' in data:
             user.gender_id = data['gender_id']
+
+        if 'password' in data and data['password']:
+            user.password_hash = generate_password_hash(data['password'])
 
         db.session.commit()
         return jsonify({'message': 'Perfil atualizado com sucesso'}), 200
