@@ -1,7 +1,10 @@
-from flask import Blueprint, request, jsonify
-from models import db, Simulation, SimulationParameters, SimulationStatus, User
+from flask import Blueprint, request, jsonify, make_response
+import csv
+import io
+from models import db, Simulation, SimulationParameters, SimulationStatus, SimulationSteps, User
 from datetime import datetime
 import constants as c
+from simulation_engine import run_simulation
 
 simulations_bp = Blueprint('simulations', __name__)
 
@@ -52,12 +55,33 @@ def create_simulation():
         )
         db.session.add(new_params)
 
-        # 3. Confirmar tudo
-        db.session.commit()
+       
+        # 3. Executar a Simulação (Sprint C)
+        # Calcular os passos usando o motor estocástico
+        simulation_results = run_simulation(
+            N=new_params.population_total,
+            I0=new_params.infected_initial,
+            beta=new_params.beta,
+            gamma=new_params.gamma,
+            duration=new_params.duration
+        )
 
-        # TODO: Aqui poderíamos disparar o processo de cálculo da simulação (Sprint C)
+        # 4. Guardar os Resultados (Steps)
+        for step_data in simulation_results:
+            new_step = SimulationSteps(
+                simulation_id=new_sim.id,
+                step_number=step_data['step'],
+                susceptible=step_data['S'],
+                infected=step_data['I'],
+                recovered=step_data['R'],
+                rt_value=step_data['Rt']
+            )
+            db.session.add(new_step)
+
+        # 5. Confirmar tudo (Simulação + Parâmetros + Steps)
+        db.session.commit()
         
-        return jsonify({'message': 'Simulação criada', 'id': new_sim.id}), 201
+        return jsonify({'message': 'Simulação criada com sucesso', 'id': new_sim.id}), 201
 
     except Exception as e:
         db.session.rollback()
@@ -86,7 +110,40 @@ def get_simulation_details(sim_id):
             'gamma': params.gamma,
             'duration': params.duration
         },
-        'steps': [] # Sprint C: Aqui iríamos buscar os SimulationSteps
+        'steps': [
+            {
+                'step': step.step_number,
+                'S': step.susceptible,
+                'I': step.infected,
+                'R': step.recovered,
+                'Rt': step.rt_value
+            } for step in sim.steps
+        ]
     }
     
     return jsonify(response), 200
+
+@simulations_bp.route('/<int:sim_id>/export', methods=['GET'])
+def export_simulation_csv(sim_id):
+    """
+    Exporta os dados da simulação para CSV (US_C011).
+    """
+    sim = Simulation.query.get_or_404(sim_id)
+    
+    # Criar CSV em memória
+    si = io.StringIO()
+    cw = csv.writer(si)
+    
+    # Cabeçalho
+    cw.writerow(['Day', 'Susceptible', 'Infected', 'Recovered', 'Rt'])
+    
+    # Dados
+    # Ordenar por step_number para garantir ordem cronológica
+    steps = sorted(sim.steps, key=lambda x: x.step_number)
+    for step in steps:
+        cw.writerow([step.step_number, step.susceptible, step.infected, step.recovered, step.rt_value])
+        
+    output = make_response(si.getvalue())
+    output.headers["Content-Disposition"] = f"attachment; filename=simulation_{sim_id}.csv"
+    output.headers["Content-type"] = "text/csv"
+    return output

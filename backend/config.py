@@ -9,6 +9,7 @@ class Config:
     # Configuração da porta e host do servidor
     PORT = int(os.getenv("PORT", 5000))
     HOST = os.getenv("HOST", "0.0.0.0")
+    DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
     # Configuração da Base de Dados SQLite
     # O ficheiro .db será criado na pasta 'instance' ou na raiz, dependendo da configuração
