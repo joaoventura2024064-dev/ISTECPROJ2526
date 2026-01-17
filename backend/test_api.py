@@ -7,6 +7,7 @@ BASE_URL = "http://127.0.0.1:5000/api"
 # Variável global para guardar o token
 ACCESS_TOKEN = None
 USER_ID = None
+SIM_ID = None
 
 
 def test_register():
@@ -120,9 +121,103 @@ def test_upload():
                 print("Warning: Could not remove test_image.jpg (file in use)")
 
 
+
+def test_simulation():
+    print("\n--- Testing Simulation Creation (Sprint C) ---")
+    if not USER_ID:
+        print("Skipping simulation test (No User ID)")
+        return
+
+    url = f"{BASE_URL}/simulations/"
+    payload = {
+        "user_id": USER_ID,
+        "description": "Test Simulation SIR",
+        "parameters": {
+            "population_total": 1000,
+            "infected_initial": 10,
+            "beta": 0.5,
+            "gamma": 0.1,
+            "duration": 50
+        }
+    }
+    
+    try:
+        # 1. Criar Simulação
+        response = requests.post(url, json=payload)
+        print(f"Create Status: {response.status_code}")
+        print(f"Create Response: {response.json()}")
+        
+        if response.status_code == 201:
+            global SIM_ID
+            SIM_ID = response.json().get('id')
+            sim_id = SIM_ID
+            
+            # 2. Verificar Detalhes e Passos
+            url_get = f"{BASE_URL}/simulations/{sim_id}"
+            res_get = requests.get(url_get)
+            print(f"Get Status: {res_get.status_code}")
+            data = res_get.json()
+            
+            steps = data.get('steps', [])
+            print(f"Steps generated: {len(steps)}")
+            
+            if len(steps) == 51: # Dia 0 + 50 dias
+                print("SUCCESS: Simulation steps generated correctly.")
+                # Verificar se o último passo tem lógica (S+I+R = N)
+                last_step = steps[-1]
+                total = last_step['S'] + last_step['I'] + last_step['R']
+                print(f"Last Step Total Population: {total} (Expected 1000)")
+            else:
+                print(f"FAILURE: Expected 51 steps, got {len(steps)}")
+                
+    except Exception as e:
+        print(f"Error: {e}")
+
+
+
+def test_export_csv():
+    print("\n--- Testing CSV Export (US_C011) ---")
+    if not SIM_ID:
+        print("Skipping CSV test (No Sim ID)")
+        return
+
+    url = f"{BASE_URL}/simulations/{SIM_ID}/export"
+    
+    try:
+        response = requests.get(url)
+        print(f"Status: {response.status_code}")
+        
+        if response.status_code == 200:
+            content = response.text
+            lines = content.strip().split('\n')
+            print(f"CSV Lines received: {len(lines)}")
+            
+            # Verificar cabeçalho
+            if "Day,Susceptible,Infected,Recovered,Rt" in lines[0]:
+                print("SUCCESS: CSV Header is correct.")
+            else:
+                print(f"FAILURE: Invalid header: {lines[0]}")
+                
+            # Verificar se tem linhas de dados
+            if len(lines) > 1:
+                print("SUCCESS: CSV contains data.")
+            else:
+                print("FAILURE: CSV is empty.")
+        else:
+            print(f"FAILURE: Status {response.status_code}")
+            
+    except Exception as e:
+        print(f"Error: {e}")
+
+
 if __name__ == "__main__":
     success, email = test_register()
     if success:
         test_login(email)
         test_validation()
         test_upload()
+        test_simulation()
+        test_export_csv()
+        test_export_csv()
+
+
