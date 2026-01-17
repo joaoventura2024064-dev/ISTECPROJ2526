@@ -9,7 +9,7 @@ const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
 const RecoverPassword = lazy(() => import('./pages/RecoverPassword'));
 const NewSimulation = lazy(() => import('./pages/NewSimulation'));
-const SimulationResult = lazy(() => import('./pages/SimulationResult'));
+const SimulationView = lazy(() => import('./pages/SimulationView'));
 const Profile = lazy(() => import('./pages/Profile'));
 
 function App() {
@@ -30,7 +30,7 @@ function App() {
               <Route path="/" element={<Layout />}>
                 <Route index element={<Home />} />
                 <Route path="simulador" element={<NewSimulation />} />
-                <Route path="simulador/:id" element={<SimulationResult />} />
+                <Route path="simulador/:id" element={<SimulationView />} />
                 <Route path="perfil" element={<Profile />} />
               </Route>
             </Route>

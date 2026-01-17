@@ -1,14 +1,17 @@
 import { faFloppyDisk, faChartLine } from '@fortawesome/free-solid-svg-icons';
 import Button from '../common/Button';
 import Card from '../common/Card/Card';
+import ChartSIR from './ChartSIR';
+import CountUp from 'react-countup';
+import { memo } from 'react';
 
-export default function SimulationResults({
+const SimulationResults = memo(function SimulationResults({
     results,
     status = 'idle',
     onSave
 }) {
 
-    const actions = status === 'success' && (
+    const actions = status === 'success' && onSave && (
         <Button
             text="Guardar Simulação"
             variant="secondary"
@@ -33,24 +36,24 @@ export default function SimulationResults({
                         <div className="grid grid-cols-3 gap-4">
                             <div className="bg-secondary-50 border border-secondary-100 rounded-lg p-4 flex flex-col gap-1 items-start">
                                 <span className="text-secondary-500 font-montserrat font-semibold text-xs uppercase">Pico Infetados</span>
-                                <span className="text-secondary-700 font-montserrat font-bold text-2xl">{results?.peakInfected || 0}</span>
+                                <span className="text-secondary-700 font-montserrat font-bold text-2xl"><CountUp start={0} end={Math.max(...results.map(data => data.I)) || 0} duration={2.5} /></span>
                             </div>
                             <div className="bg-primary-50 border border-primary-200 rounded-lg p-4 flex flex-col gap-1 items-start">
                                 <span className="text-primary-600 font-montserrat font-semibold text-xs uppercase">Total Recuperados</span>
-                                <span className="text-primary-700 font-montserrat font-bold text-2xl">{results?.totalRecovered || 0}</span>
+                                <span className="text-primary-700 font-montserrat font-bold text-2xl"><CountUp start={0} end={results[results.length - 1].R || 0} duration={2.5} /></span>
                             </div>
                             <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4 flex flex-col gap-1 items-start">
                                 <span className="text-neutral-400 font-montserrat font-semibold text-xs uppercase">R₀ Estimado</span>
-                                <span className="text-neutral-600 font-montserrat font-bold text-2xl">{results?.r0 || 0}</span>
+                                <span className="text-neutral-600 font-montserrat font-bold text-2xl"><CountUp start={0} end={results[0].Rt || 0} duration={2.5} /></span>
                             </div>
                         </div>
 
-                        <div className="flex-1 bg-neutral-50 border border-dashed border-neutral-200 rounded-xl flex items-center justify-center relative min-h-[250px]">
-                            <p className="text-neutral-400 text-sm font-montserrat">Área do Gráfico (Chart.js)</p>
-                        </div>
+                        <ChartSIR simulationData={results} />
                     </div>
                 )}
             </div>
         </Card>
     );
-}
+});
+
+export default SimulationResults;

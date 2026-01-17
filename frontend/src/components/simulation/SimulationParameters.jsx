@@ -60,8 +60,9 @@ export default function SimulationParameters({
                 <div className="grid grid-cols-2 gap-4">
                     {/* Input Populacao */}
                     <div className="group flex flex-col gap-1">
-                        <label className="text-neutral-500 text-xs font-montserrat font-semibold group-focus-within:text-primary-500">População Total (N)</label>
+                        <label htmlFor="population" className="text-neutral-500 text-xs font-montserrat font-semibold group-focus-within:text-primary-500">População Total (N)</label>
                         <input
+                            id="population"
                             type="number"
                             name="population"
                             min="1"
@@ -74,8 +75,9 @@ export default function SimulationParameters({
 
                     {/* Input Infetados Iniciais */}
                     <div className="group flex flex-col gap-1">
-                        <label className="text-neutral-500 text-xs font-montserrat font-semibold group-focus-within:text-primary-500">Infetados Iniciais (I₀)</label>
+                        <label htmlFor="initialInfected" className="text-neutral-500 text-xs font-montserrat font-semibold group-focus-within:text-primary-500">Infetados Iniciais (I₀)</label>
                         <input
+                            id="initialInfected"
                             type="number"
                             name="initialInfected"
                             min="1"
@@ -90,8 +92,9 @@ export default function SimulationParameters({
                 {/* Input Taca Contacto */}
                 <div className="grid grid-cols-2 gap-4" >
                     <div className="group flex flex-col gap-1">
-                        <label className="text-neutral-500 text-xs font-montserrat font-semibold group-focus-within:text-primary-500">Taxa Contacto (β)</label>
+                        <label htmlFor="contactRate" className="text-neutral-500 text-xs font-montserrat font-semibold group-focus-within:text-primary-500">Taxa Contacto (β)</label>
                         <input
+                            id="contactRate"
                             type="number"
                             step="0.01"
                             min="0"
@@ -106,8 +109,9 @@ export default function SimulationParameters({
 
                     {/* Input Taxa Recuperacao */}
                     <div className="group flex flex-col gap-1">
-                        <label className="text-neutral-500 text-xs font-montserrat font-semibold group-focus-within:text-primary-500">Taxa Recup. (γ)</label>
+                        <label htmlFor="recoveryRate" className="text-neutral-500 text-xs font-montserrat font-semibold group-focus-within:text-primary-500">Taxa Recup. (γ)</label>
                         <input
+                            id="recoveryRate"
                             type="number"
                             step="0.01"
                             min="0.01"
@@ -124,10 +128,11 @@ export default function SimulationParameters({
                 {/* Slider Duracao */}
                 <div className="flex flex-col gap-2 group">
                     <div className="flex justify-between items-center">
-                        <label className="text-neutral-500 text-xs font-montserrat font-semibold group-focus-within:text-primary-500">Duração (Dias)</label>
-                        <span className="text-primary-500 text-xs font-montserrat font-bold">{durationValue}</span>
+                        <label htmlFor="duration" className="text-neutral-500 text-xs font-montserrat font-semibold group-focus-within:text-primary-500">Duração (Dias)</label>
+                        <span htmlFor="duration" className="text-primary-500 text-xs font-montserrat font-bold">{durationValue}</span>
                     </div>
                     <input
+                        id="duration"
                         type="range"
                         name="duration"
                         min="1"

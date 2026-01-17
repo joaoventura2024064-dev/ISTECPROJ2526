@@ -19,3 +19,13 @@ export const resetPasswordService = async (token, newPassword) => {
     const response = await axios.post('https://apiseios.onrender.com/api/auth/reset-password', { token, newPassword });
     return response.data;
 };
+
+export const runSimulationService = async (params) => {
+    const response = await axios.post('https://apiseios.onrender.com/api/simulation/run', params);
+    return response.data;
+};
+
+export const getSimulationService = async (id) => {
+    const response = await axios.get(`https://apiseios.onrender.com/api/simulation/${id}`);
+    return response.data;
+};
