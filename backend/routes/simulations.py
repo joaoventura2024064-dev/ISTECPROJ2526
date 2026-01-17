@@ -11,8 +11,71 @@ simulations_bp = Blueprint('simulations', __name__)
 @simulations_bp.route('/', methods=['POST'])
 def create_simulation():
     """
-    Cria uma nova simulação e os seus parâmetros.
-    Recebe JSON com: user_id, description, parameters: { population_total, ... }
+    Criar nova simulação.
+    ---
+    tags:
+      - Simulations
+    parameters:
+      - in: body
+        name: body
+        schema:
+          type: object
+          required:
+            - user_id
+            - parameters
+          properties:
+            user_id:
+              type: integer
+            description:
+              type: string
+            parameters:
+              type: object
+              required:
+                - population_total
+                - infected_initial
+                - beta
+                - gamma
+                - duration
+              properties:
+                population_total:
+                  type: integer
+                infected_initial:
+                  type: integer
+                beta:
+                  type: number
+                gamma:
+                  type: number
+                duration:
+                  type: integer
+    responses:
+      201:
+        description: Simulação criada e executada
+        schema:
+          type: object
+          properties:
+            id:
+              type: integer
+            status:
+              type: string
+            parameters:
+              type: object
+            steps:
+              type: array
+              items:
+                type: object
+                properties:
+                  step:
+                    type: integer
+                  S:
+                    type: integer
+                  I:
+                    type: integer
+                  R:
+                    type: integer
+                  Rt:
+                    type: number
+      400:
+        description: Parâmetros inválidos
     """
     data = request.get_json()
     
@@ -81,7 +144,24 @@ def create_simulation():
         # 5. Confirmar tudo (Simulação + Parâmetros + Steps)
         db.session.commit()
         
-        return jsonify({'message': 'Simulação criada com sucesso', 'id': new_sim.id}), 201
+        # Construir resposta completa (igual ao GET details)
+        response = {
+            'id': new_sim.id,
+            'user_id': new_sim.user_id,
+            'created_at': new_sim.created_at.isoformat(),
+            'description': new_sim.description,
+            'status': initial_status.label,
+            'parameters': {
+                'population_total': new_params.population_total,
+                'infected_initial': new_params.infected_initial,
+                'beta': new_params.beta,
+                'gamma': new_params.gamma,
+                'duration': new_params.duration
+            },
+            'steps': simulation_results # Já está no formato correto (lista de dicts)
+        }
+        
+        return jsonify(response), 201
 
     except Exception as e:
         db.session.rollback()
@@ -90,7 +170,42 @@ def create_simulation():
 @simulations_bp.route('/<int:sim_id>', methods=['GET'])
 def get_simulation_details(sim_id):
     """
-    Obtém detalhes completos de uma simulação, incluindo parâmetros e resultados (steps).
+    Obter detalhes da simulação.
+    ---
+    tags:
+      - Simulations
+    parameters:
+      - in: path
+        name: sim_id
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Detalhes completos e passos
+        schema:
+          type: object
+          properties:
+            id:
+              type: integer
+            status:
+              type: string
+            parameters:
+              type: object
+            steps:
+              type: array
+              items:
+                type: object
+                properties:
+                  step:
+                    type: integer
+                  S:
+                    type: integer
+                  I:
+                    type: integer
+                  R:
+                    type: integer
+                  Rt:
+                    type: number
     """
     sim = Simulation.query.get_or_404(sim_id)
     params = SimulationParameters.query.get(sim.id)
@@ -126,7 +241,22 @@ def get_simulation_details(sim_id):
 @simulations_bp.route('/<int:sim_id>/export', methods=['GET'])
 def export_simulation_csv(sim_id):
     """
-    Exporta os dados da simulação para CSV (US_C011).
+    Exportar simulação para CSV.
+    ---
+    tags:
+      - Simulations
+    produces:
+      - text/csv
+    parameters:
+      - in: path
+        name: sim_id
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Ficheiro CSV para download
+        schema:
+          type: file
     """
     sim = Simulation.query.get_or_404(sim_id)
     

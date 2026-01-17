@@ -145,30 +145,40 @@ def test_simulation():
         # 1. Criar Simulação
         response = requests.post(url, json=payload)
         print(f"Create Status: {response.status_code}")
-        print(f"Create Response: {response.json()}")
+        # print(f"Create Response: {response.json()}") # Verbose
         
         if response.status_code == 201:
+            data = response.json()
             global SIM_ID
-            SIM_ID = response.json().get('id')
+            SIM_ID = data.get('id')
             sim_id = SIM_ID
             
-            # 2. Verificar Detalhes e Passos
+            # Verificar se os passos vêm logo na resposta (Sprint C Update)
+            steps = data.get('steps', [])
+            print(f"Steps returned immediately: {len(steps)}")
+            
+            if len(steps) == 51:
+                print("SUCCESS: Steps returned in Create response.")
+            else:
+                print("FAILURE: Steps missing in Create response.")
+
+            # 2. Verificar Detalhes (GET) - Apenas para confirmar persistência
             url_get = f"{BASE_URL}/simulations/{sim_id}"
             res_get = requests.get(url_get)
             print(f"Get Status: {res_get.status_code}")
-            data = res_get.json()
+            data_get = res_get.json()
             
-            steps = data.get('steps', [])
-            print(f"Steps generated: {len(steps)}")
+            steps_get = data_get.get('steps', [])
+            print(f"Steps persisted: {len(steps_get)}")
             
-            if len(steps) == 51: # Dia 0 + 50 dias
-                print("SUCCESS: Simulation steps generated correctly.")
+            if len(steps_get) == 51: # Dia 0 + 50 dias
+                print("SUCCESS: Simulation steps persisted correctly.")
                 # Verificar se o último passo tem lógica (S+I+R = N)
-                last_step = steps[-1]
+                last_step = steps_get[-1]
                 total = last_step['S'] + last_step['I'] + last_step['R']
                 print(f"Last Step Total Population: {total} (Expected 1000)")
             else:
-                print(f"FAILURE: Expected 51 steps, got {len(steps)}")
+                print(f"FAILURE: Expected 51 steps, got {len(steps_get)}")
                 
     except Exception as e:
         print(f"Error: {e}")

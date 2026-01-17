@@ -12,8 +12,49 @@ auth_bp = Blueprint('auth', __name__)
 @auth_bp.route('/register', methods=['POST'])
 def register():
     """
-    Rota para registar novos utilizadores.
-    Recebe JSON com: name, email, password, birth_date, gender_id
+    Registar novo utilizador.
+    ---
+    tags:
+      - Auth
+    parameters:
+      - in: body
+        name: body
+        schema:
+          type: object
+          required:
+            - name
+            - email
+            - password
+          properties:
+            name:
+              type: string
+              example: John Doe
+            email:
+              type: string
+              example: john@example.com
+            password:
+              type: string
+              example: secret123
+            birth_date:
+              type: string
+              example: "1990-01-01"
+            gender_id:
+              type: integer
+              example: 1
+    responses:
+      201:
+        description: Utilizador criado com sucesso
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+            user_id:
+              type: integer
+      400:
+        description: Dados inválidos
+      409:
+        description: Email já existe
     """
     data = request.get_json()
 
@@ -64,9 +105,48 @@ def register():
 @auth_bp.route('/login', methods=['POST'])
 def login():
     """
-    Rota para autenticação.
-    Recebe: email, password
-    Retorna: Sucesso + token JWT + dados do user
+    Autenticação de utilizador (Login).
+    ---
+    tags:
+      - Auth
+    parameters:
+      - in: body
+        name: body
+        schema:
+          type: object
+          required:
+            - email
+            - password
+          properties:
+            email:
+              type: string
+              example: john@example.com
+            password:
+              type: string
+              example: secret123
+    responses:
+      200:
+        description: Login com sucesso
+        schema:
+          type: object
+          properties:
+            access_token:
+              type: string
+            user:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+                email:
+                  type: string
+                role:
+                  type: string
+      401:
+        description: Credenciais inválidas
+      403:
+        description: Conta suspensa
     """
     data = request.get_json()
 

@@ -1,5 +1,6 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
+from flasgger import Swagger
 from flask_jwt_extended import JWTManager
 from config import Config
 from models import db
@@ -27,6 +28,49 @@ def create_app(config_class=Config):
     # Ativar CORS (Cross-Origin Resource Sharing)
     # Isto permite que o frontend (React) noutra porta comunique com este backend
     CORS(app)
+
+    # Configuração do Flasgger (OpenAPI/Swagger)
+    swagger_config = {
+        "headers": [],
+        "specs": [
+            {
+                "endpoint": 'apispec_1',
+                "route": '/apispec_1.json',
+                "rule_filter": lambda rule: True,  # all in
+                "model_filter": lambda tag: True,  # all in
+            }
+        ],
+        "static_url_path": "/flasgger_static",
+        "swagger_ui": True,
+        "specs_route": "/apidocs/"
+    }
+    
+    swagger = Swagger(app, config=swagger_config)
+
+    # Rota para a documentação Scalar (Interface Moderna)
+    @app.route('/docs')
+    def scalar_docs():
+        html = """
+        <!doctype html>
+        <html>
+          <head>
+            <title>API Documentation</title>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <style>
+              body { margin: 0; }
+            </style>
+          </head>
+          <body>
+            <script
+              id="api-reference"
+              data-url="/apispec_1.json">
+            </script>
+            <script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
+          </body>
+        </html>
+        """
+        return html
 
     # Registar Blueprints (Rotas)
     from routes.auth import auth_bp

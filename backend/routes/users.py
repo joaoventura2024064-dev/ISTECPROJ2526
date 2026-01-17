@@ -7,7 +7,33 @@ users_bp = Blueprint('users', __name__)
 @users_bp.route('/<int:user_id>', methods=['GET'])
 def get_user_profile(user_id):
     """
-    Obtém os detalhes do perfil de um utilizador.
+    Obter perfil do utilizador.
+    ---
+    tags:
+      - Users
+    parameters:
+      - in: path
+        name: user_id
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Detalhes do perfil
+        schema:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            email:
+              type: string
+            role:
+              type: string
+            status:
+              type: string
+      404:
+        description: Utilizador não encontrado
     """
     user = User.query.get_or_404(user_id)
     
@@ -31,7 +57,31 @@ def get_user_profile(user_id):
 @users_bp.route('/<int:user_id>', methods=['PUT'])
 def update_user_profile(user_id):
     """
-    Atualiza dados do perfil (Nome, Data de Nascimento, Género).
+    Atualizar perfil do utilizador.
+    ---
+    tags:
+      - Users
+    parameters:
+      - in: path
+        name: user_id
+        type: integer
+        required: true
+      - in: body
+        name: body
+        schema:
+          type: object
+          properties:
+            name:
+              type: string
+            gender_id:
+              type: integer
+            birth_date:
+              type: string
+    responses:
+      200:
+        description: Perfil atualizado
+      400:
+        description: Dados inválidos
     """
     user = User.query.get_or_404(user_id)
     data = request.get_json()
@@ -71,7 +121,32 @@ def allowed_file(filename):
 @users_bp.route('/<int:user_id>/upload-image', methods=['POST'])
 def upload_image(user_id):
     """
-    Upload da imagem de perfil.
+    Upload de imagem de perfil.
+    ---
+    tags:
+      - Users
+    consumes:
+      - multipart/form-data
+    parameters:
+      - in: path
+        name: user_id
+        type: integer
+        required: true
+      - in: formData
+        name: file
+        type: file
+        required: true
+        description: Imagem de perfil (jpg, png)
+    responses:
+      200:
+        description: Upload com sucesso
+        schema:
+          type: object
+          properties:
+            img_url:
+              type: string
+      400:
+        description: Ficheiro inválido ou em falta
     """
     if 'file' not in request.files:
         return jsonify({'error': 'Sem ficheiro'}), 400
@@ -101,7 +176,31 @@ def upload_image(user_id):
 @users_bp.route('/<int:user_id>/simulations', methods=['GET'])
 def get_user_simulations(user_id):
     """
-    Lista todas as simulações de um utilizador.
+    Listar simulações do utilizador.
+    ---
+    tags:
+      - Users
+    parameters:
+      - in: path
+        name: user_id
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Lista de simulações
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              description:
+                type: string
+              status:
+                type: string
+              date:
+                type: string
     """
     # Verificar se o user existe
     user = User.query.get_or_404(user_id)

@@ -7,8 +7,22 @@ stats_bp = Blueprint('stats', __name__)
 @stats_bp.route('/dashboard', methods=['GET'])
 def get_dashboard_stats():
     """
-    Retorna estatísticas gerais para o dashboard.
-    Calculadas em tempo real (on-the-fly) para evitar tabelas redundantes.
+    Estatísticas do Dashboard.
+    ---
+    tags:
+      - Stats
+    responses:
+      200:
+        description: Estatísticas gerais
+        schema:
+          type: object
+          properties:
+            total_users:
+              type: integer
+            total_simulations:
+              type: integer
+            completed_simulations:
+              type: integer
     """
     try:
         # 1. Total de Utilizadores
