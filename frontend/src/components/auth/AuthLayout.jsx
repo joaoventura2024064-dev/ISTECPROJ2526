@@ -107,9 +107,9 @@ export default function AuthLayout() {
         <div className="relative h-screen w-full overflow-hidden">
             {init && <Particles id="tsparticles" options={options} />}
             <CustomScrollDiv className="relative z-10 w-full h-full">
-                <div className="flex justify-center items-start pt-[35px] pb-10 min-h-full">
+                <main className="flex justify-center items-start pt-[35px] pb-10 min-h-full">
                     <Outlet />
-                </div>
+                </main>
             </CustomScrollDiv>
         </div>
     );

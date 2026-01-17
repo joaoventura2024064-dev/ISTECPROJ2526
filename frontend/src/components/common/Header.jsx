@@ -26,7 +26,7 @@ function Header() {
     return (
         <header className="select-none bg-white shadow-[0px_3px_5px_-5px_rgba(0,0,0,0.1),0px_7px_20px_-5px_rgba(0,0,0,0.1)] h-[60px] flex items-center px-10 justify-between sticky top-0 z-50">
             <Link to="/" className="h-10 flex items-center">
-                <img src="/medcei_nav_logo.png" alt="Medcei Logo" className="h-full object-contain" />
+                <img src="/medcei_nav_logo.webp" alt="Medcei Logo" className="h-full object-contain" fetchpriority="high" />
             </Link>
 
             <div className="flex items-center h-full gap-8">
