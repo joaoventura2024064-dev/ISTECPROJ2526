@@ -1,36 +1,41 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import Layout from './components/common/Layout';
 import AuthLayout from './components/auth/AuthLayout';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import RecoverPassword from './pages/RecoverPassword';
-import NewSimulation from './pages/NewSimulation';
-import SimulationResult from './pages/SimulationResult';
-import Profile from './pages/Profile';
+const Home = lazy(() => import('./pages/Home'));
+const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
+const RecoverPassword = lazy(() => import('./pages/RecoverPassword'));
+const NewSimulation = lazy(() => import('./pages/NewSimulation'));
+const SimulationResult = lazy(() => import('./pages/SimulationResult'));
+const Profile = lazy(() => import('./pages/Profile'));
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Routes>
-          <Route element={<AuthLayout />}>
-            <Route path="/login" element={<Login />} />
-            <Route path="/registar" element={<Register />} />
-            <Route path="/recuperar-password" element={<RecoverPassword />} />
-          </Route>
-
-          <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<Layout />}>
-              <Route index element={<Home />} />
-              <Route path="simulador" element={<NewSimulation />} />
-              <Route path="simulador/:id" element={<SimulationResult />} />
-              <Route path="perfil" element={<Profile />} />
+        <Suspense fallback={
+          <div className="flex items-center justify-center h-screen w-screen bg-primary-500">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-base-50"></div>
+          </div>}>
+          <Routes>
+            <Route element={<AuthLayout />}>
+              <Route path="/login" element={<Login />} />
+              <Route path="/registar" element={<Register />} />
+              <Route path="/recuperar-password" element={<RecoverPassword />} />
             </Route>
-          </Route>
-        </Routes>
+            <Route element={<ProtectedRoute />}>
+              <Route path="/" element={<Layout />}>
+                <Route index element={<Home />} />
+                <Route path="simulador" element={<NewSimulation />} />
+                <Route path="simulador/:id" element={<SimulationResult />} />
+                <Route path="perfil" element={<Profile />} />
+              </Route>
+            </Route>
+          </Routes>
+        </Suspense>
       </BrowserRouter>
     </AuthProvider>
   );
