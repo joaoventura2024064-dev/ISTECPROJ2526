@@ -5,11 +5,11 @@ import PageHeader from '../components/common/PageHeader';
 
 // Mock Data
 const simulations = [
-    { id: 'SIM-2024-001', name: 'Simulação Hospital Central', type: 'Completa', date: '14/01/2026', status: 'Concluída' },
-    { id: 'SIM-2024-002', name: 'Simulação Ala Pediátrica', type: 'Rápida', date: '13/01/2026', status: 'Em progresso' },
-    { id: 'SIM-2024-003', name: 'Teste de Carga', type: 'Completa', date: '10/01/2026', status: 'Concluída' },
-    { id: 'SIM-2024-004', name: 'Simulação Emergência', type: 'Rápida', date: '08/01/2026', status: 'Erro' },
-    { id: 'SIM-2024-005', name: 'Rotina Manutenção', type: 'Completa', date: '05/01/2026', status: 'Concluída' },
+    { id: '1', name: 'Simulação Hospital Central', type: 'Completa', date: '14/01/2026', status: 'Concluída' },
+    { id: '2', name: 'Simulação Ala Pediátrica', type: 'Rápida', date: '13/01/2026', status: 'Em progresso' },
+    { id: '3', name: 'Teste de Carga', type: 'Completa', date: '10/01/2026', status: 'Concluída' },
+    { id: '4', name: 'Simulação Emergência', type: 'Rápida', date: '08/01/2026', status: 'Erro' },
+    { id: '5', name: 'Rotina Manutenção', type: 'Completa', date: '05/01/2026', status: 'Concluída' },
 ];
 
 const StatusBadge = ({ status }) => {
