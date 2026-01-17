@@ -2,9 +2,11 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 from flasgger import Swagger
 from flask_jwt_extended import JWTManager
+from flask_mail import Mail
 from config import Config
 from models import db
 
+mail = Mail()
 
 def create_app(config_class=Config):
     # Inicializar a aplicação Flask
@@ -24,6 +26,9 @@ def create_app(config_class=Config):
 
     # Inicializar JWT
     jwt = JWTManager(app)
+    
+    # Inicializar Mail
+    mail.init_app(app)
 
     # Ativar CORS (Cross-Origin Resource Sharing)
     # Isto permite que o frontend (React) noutra porta comunique com este backend
@@ -42,7 +47,15 @@ def create_app(config_class=Config):
         ],
         "static_url_path": "/flasgger_static",
         "swagger_ui": True,
-        "specs_route": "/apidocs/"
+        "specs_route": "/apidocs/",
+        "securityDefinitions": {
+            "Bearer": {
+                "type": "apiKey",
+                "name": "Authorization",
+                "in": "header",
+                "description": "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\""
+            }
+        }
     }
     
     swagger = Swagger(app, config=swagger_config)

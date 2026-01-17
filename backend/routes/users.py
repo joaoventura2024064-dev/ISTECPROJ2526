@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from werkzeug.security import generate_password_hash
 from models import db, User, UserType, UserStatus, Genders, Simulation, SimulationStatus
 from datetime import datetime
@@ -134,6 +135,8 @@ def upload_image(user_id):
     ---
     tags:
       - Users
+    security:
+      - Bearer: []
     consumes:
       - multipart/form-data
     parameters:
@@ -157,6 +160,12 @@ def upload_image(user_id):
       400:
         description: Ficheiro inválido ou em falta
     """
+    @jwt_required()
+    def upload_image_wrapper(user_id):
+        return upload_image_impl(user_id)
+    return upload_image_wrapper(user_id)
+
+def upload_image_impl(user_id):
     if 'file' not in request.files:
         return jsonify({'error': 'Sem ficheiro'}), 400
     
@@ -211,6 +220,12 @@ def get_user_simulations(user_id):
               date:
                 type: string
     """
+    @jwt_required()
+    def get_user_simulations_wrapper(user_id):
+        return get_user_simulations_impl(user_id)
+    return get_user_simulations_wrapper(user_id)
+
+def get_user_simulations_impl(user_id):
     # Verificar se o user existe
     user = User.query.get_or_404(user_id)
     

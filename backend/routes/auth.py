@@ -2,8 +2,11 @@ from flask import Blueprint, request, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token
 from models import db, User, UserType, UserStatus, Genders
-from datetime import datetime
+from datetime import datetime, timedelta
 import constants as c
+from flask_mail import Message
+from app import mail
+import jwt # Usar pyjwt para gerar tokens de reset seguros
 
 # Criar um "Blueprint" para agrupar as rotas de autenticação
 # Isto ajuda a organizar o código, separando-o do app.py principal
@@ -179,3 +182,118 @@ def login():
             'role': UserType.query.get(user.user_type_id).label
         }
     }), 200
+
+
+@auth_bp.route('/recover-password', methods=['POST'])
+def recover_password():
+    """
+    Recuperar password (enviar email).
+    ---
+    tags:
+      - Auth
+    parameters:
+      - in: body
+        name: body
+        schema:
+          type: object
+          required:
+            - email
+          properties:
+            email:
+              type: string
+    responses:
+      200:
+        description: Email enviado (ou simulado por segurança)
+    """
+    data = request.get_json()
+    email = data.get('email')
+    
+    if not email:
+        return jsonify({'error': 'Email é obrigatório'}), 400
+        
+    user = User.query.filter_by(email=email).first()
+    
+    # Por segurança, respondemos sempre 200 mesmo que o email não exista
+    if not user:
+        return jsonify({'message': 'Se o email existir, receberá instruções.'}), 200
+        
+    # Gerar token de reset (válido por 1 hora)
+    from flask import current_app
+    reset_token = jwt.encode(
+        {'reset_password': user.id, 'exp': datetime.utcnow() + timedelta(hours=1)},
+        current_app.config['SECRET_KEY'],
+        algorithm='HS256'
+    )
+    
+    # URL do Frontend para reset
+    # TODO: Ajustar URL base conforme ambiente (dev/prod)
+    reset_url = f"https://seios-frontend.onrender.com/reset-password?token={reset_token}"
+    
+    # Enviar Email
+    try:
+        msg = Message(
+            subject="Recuperação de Password - SEIOS",
+            recipients=[user.email],
+            body=f"Olá {user.name},\n\nPara redefinir a sua password, clique no link abaixo:\n{reset_url}\n\nEste link expira em 1 hora.\n\nSe não pediu isto, ignore este email."
+        )
+        mail.send(msg)
+    except Exception as e:
+        print(f"Erro ao enviar email: {e}")
+        return jsonify({'error': f'Erro ao enviar email: {str(e)}'}), 500
+        
+    return jsonify({'message': 'Se o email existir, receberá instruções.'}), 200
+
+
+@auth_bp.route('/reset-password', methods=['POST'])
+def reset_password():
+    """
+    Redefinir password com token.
+    ---
+    tags:
+      - Auth
+    parameters:
+      - in: body
+        name: body
+        schema:
+          type: object
+          required:
+            - token
+            - newPassword
+          properties:
+            token:
+              type: string
+            newPassword:
+              type: string
+    responses:
+      200:
+        description: Password alterada com sucesso
+      400:
+        description: Token inválido ou expirado
+    """
+    data = request.get_json()
+    token = data.get('token')
+    new_password = data.get('newPassword')
+    
+    if not token or not new_password:
+        return jsonify({'error': 'Token e nova password são obrigatórios'}), 400
+        
+    try:
+        from flask import current_app
+        # Descodificar token
+        payload = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
+        user_id = payload.get('reset_password')
+        
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({'error': 'Utilizador inválido'}), 400
+            
+        # Atualizar Password
+        user.password_hash = generate_password_hash(new_password)
+        db.session.commit()
+        
+        return jsonify({'message': 'Password alterada com sucesso'}), 200
+        
+    except jwt.ExpiredSignatureError:
+        return jsonify({'error': 'O link expirou. Peça um novo.'}), 400
+    except jwt.InvalidTokenError:
+        return jsonify({'error': 'Link inválido.'}), 400

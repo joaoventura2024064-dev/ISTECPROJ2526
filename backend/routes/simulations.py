@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify, make_response
+from flask_jwt_extended import jwt_required, get_jwt_identity
 import csv
 import io
 from models import db, Simulation, SimulationParameters, SimulationStatus, SimulationSteps, User
@@ -15,6 +16,8 @@ def create_simulation():
     ---
     tags:
       - Simulations
+    security:
+      - Bearer: []
     parameters:
       - in: body
         name: body
@@ -77,6 +80,13 @@ def create_simulation():
       400:
         description: Parâmetros inválidos
     """
+    @jwt_required()
+    def create_simulation_wrapper():
+        return create_simulation_impl()
+
+    return create_simulation_wrapper()
+
+def create_simulation_impl():
     data = request.get_json()
     
     # Validação básica
@@ -174,6 +184,8 @@ def get_simulation_details(sim_id):
     ---
     tags:
       - Simulations
+    security:
+      - Bearer: []
     parameters:
       - in: path
         name: sim_id
@@ -245,6 +257,8 @@ def export_simulation_csv(sim_id):
     ---
     tags:
       - Simulations
+    security:
+      - Bearer: []
     produces:
       - text/csv
     parameters:

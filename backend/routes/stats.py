@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify
+from flask_jwt_extended import jwt_required
 from models import db, User, Simulation, SimulationStatus
 import constants as c
 
@@ -11,6 +12,8 @@ def get_dashboard_stats():
     ---
     tags:
       - Stats
+    security:
+      - Bearer: []
     responses:
       200:
         description: Estatísticas gerais
@@ -24,6 +27,12 @@ def get_dashboard_stats():
             completed_simulations:
               type: integer
     """
+    @jwt_required()
+    def get_dashboard_stats_wrapper():
+        return get_dashboard_stats_impl()
+    return get_dashboard_stats_wrapper()
+
+def get_dashboard_stats_impl():
     try:
         # 1. Total de Utilizadores
         total_users = User.query.count()

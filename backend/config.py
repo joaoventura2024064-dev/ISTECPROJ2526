@@ -11,6 +11,14 @@ class Config:
     HOST = os.getenv("HOST", "0.0.0.0")
     DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
+    # Email Configuration
+    MAIL_SERVER = 'smtp.gmail.com'
+    MAIL_PORT = 587
+    MAIL_USE_TLS = True
+    MAIL_USERNAME = os.getenv('MAIL_USERNAME')
+    MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
+    MAIL_DEFAULT_SENDER = os.getenv('MAIL_USERNAME')
+
     # Configuração da Base de Dados SQLite
     # O ficheiro .db será criado na pasta 'instance' ou na raiz, dependendo da configuração
     # Aqui defino para ficar na raiz do backend para ser mais fácil de encontrar
