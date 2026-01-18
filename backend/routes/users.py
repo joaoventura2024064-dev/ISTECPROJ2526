@@ -368,23 +368,26 @@ def get_user_simulations(user_id):
               pinned:
                 type: boolean
                 example: true
-              population_total:
-                type: integer
-                example: 1000
-              infected_initial:
-                type: integer
-                example: 10
-              beta:
-                type: number
-                format: float
-                example: 0.5
-              gamma:
-                type: number
-                format: float
-                example: 0.1
-              duration:
-                type: integer
-                example: 30
+              parameters:
+                type: object
+                properties:
+                  population_total:
+                    type: integer
+                    example: 1000
+                  infected_initial:
+                    type: integer
+                    example: 10
+                  beta:
+                    type: number
+                    format: float
+                    example: 0.5
+                  gamma:
+                    type: number
+                    format: float
+                    example: 0.1
+                  duration:
+                    type: integer
+                    example: 30
       403:
         description: Acesso não autorizado
     """
@@ -413,11 +416,13 @@ def get_user_simulations_impl(user_id):
             'description': s.description,
             'status': status.label,
             'pinned': s.pinned,
-            'population_total': params.population_total if params else None,
-            'infected_initial': params.infected_initial if params else None,
-            'beta': params.beta if params else None,
-            'gamma': params.gamma if params else None,
-            'duration': params.duration if params else None
+            'parameters': {
+                'population_total': params.population_total if params else None,
+                'infected_initial': params.infected_initial if params else None,
+                'beta': params.beta if params else None,
+                'gamma': params.gamma if params else None,
+                'duration': params.duration if params else None
+            }
         })
     
     return jsonify(results), 200
