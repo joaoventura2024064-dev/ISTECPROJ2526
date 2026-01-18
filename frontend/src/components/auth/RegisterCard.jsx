@@ -1,9 +1,10 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendar, faEnvelope, faLock, faUser, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import Button from '../common/Button';
+import { toast } from 'sonner';
 
 export default function RegisterCard() {
     const [loading, setLoading] = useState(false);
@@ -13,41 +14,43 @@ export default function RegisterCard() {
     const [gender, setGender] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [error, setError] = useState('');
     const { register } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError('');
 
         if (!name || !email || !birthDate || !gender || !password || !confirmPassword) {
-            setError("Por favor, preencha todos os campos.");
+            toast.error("Por favor, preencha todos os campos.");
             return;
         }
 
         if (password !== confirmPassword) {
-            setError("As password não coincidem.");
+            toast.error("As password não coincidem.");
             return;
         }
 
         if (password.length < 8) {
-            setError("A password deve ter pelo menos 8 caracteres.");
+            toast.error("A password deve ter pelo menos 8 caracteres.");
             return;
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            setError("Email inválido.");
+            toast.error("Email inválido.");
             return;
         }
-        setLoading(true);
-        const result = await register(name, email, password, birthDate, gender);
+        try {
+            setLoading(true);
+            const result = await register(name, email, password, birthDate, gender);
 
-        if (result.success) {
-            navigate('/login');
-        } else {
-            setError(result.error || 'Erro ao iniciar sessão.');
+            if (result.success) {
+                navigate('/login');
+            } else {
+                toast.error(result.error || 'Erro ao iniciar sessão.');
+            }
+        }
+        finally {
             setLoading(false);
         }
     };
@@ -65,12 +68,6 @@ export default function RegisterCard() {
             </div>
 
             <form onSubmit={handleSubmit} className="w-full flex flex-col gap-5">
-
-                {error && (
-                    <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg border border-red-100 font-montserrat">
-                        {error}
-                    </div>
-                )}
 
                 <div className="flex flex-col gap-2.5 group">
                     <label htmlFor="name" className="font-montserrat font-medium text-[14px] text-neutral-500 group-focus-within:text-primary-500">
@@ -203,6 +200,7 @@ export default function RegisterCard() {
                 spin={loading}
                 disabled={loading}
             />
+            <div className="font-montserrat text-[14px] text-neutral-500">Já tem uma conta? <Link to="/login" className="font-montserrat font-medium text-[14px] text-primary-500">Inicie sessão aqui</Link></div>
         </div>
     );
 }

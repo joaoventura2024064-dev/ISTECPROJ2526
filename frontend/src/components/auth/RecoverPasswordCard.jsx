@@ -4,26 +4,25 @@ import { useAuth } from '../../context/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
 import Button from '../common/Button';
+import { toast } from 'sonner';
 
 export default function RecoverPasswordCard() {
     const [status, setStatus] = useState('idle');
     const [email, setEmail] = useState('');
-    const [error, setError] = useState('');
     const { recoverPassword } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError('');
 
         if (!email) {
-            setError("Por favor, preencha todos os campos.");
+            toast.error("Por favor, preencha todos os campos.");
             return;
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            setError("Email inválido.");
+            toast.error("Email inválido.");
             return;
         }
         setStatus('loading');
@@ -32,7 +31,7 @@ export default function RecoverPasswordCard() {
         if (result.success) {
             navigate('/');
         } else {
-            setError(result.error || 'Erro ao iniciar sessão.');
+            toast.error(result.error || 'Erro ao iniciar sessão.');
             setStatus('idle');
         }
     };
@@ -50,12 +49,6 @@ export default function RecoverPasswordCard() {
             </div>
 
             <form onSubmit={handleSubmit} className="w-full flex flex-col gap-5">
-
-                {error && (
-                    <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg border border-red-100 font-montserrat">
-                        {error}
-                    </div>
-                )}
 
                 <div className="flex flex-col gap-2.5 group">
                     <label htmlFor="email" className="font-montserrat font-medium text-[14px] text-neutral-500 group-focus-within:text-primary-500">
