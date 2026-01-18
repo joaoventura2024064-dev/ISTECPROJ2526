@@ -24,6 +24,27 @@ def get_all_users():
           type: array
           items:
             type: object
+            properties:
+              id:
+                type: integer
+                example: 15
+              name:
+                type: string
+                example: John Doe
+              email:
+                type: string
+                example: john@example.com
+              role:
+                type: string
+                example: registered
+              status:
+                type: string
+                example: active
+              created_at:
+                type: string
+                example: "2023-10-27T10:00:00"
+      403:
+        description: Acesso restrito a Administradores
     """
     @admin_required()
     def get_all_users_wrapper():
@@ -64,11 +85,14 @@ def get_user_profile(user_id):
     ---
     tags:
       - Users
+    security:
+      - Bearer: []
     parameters:
       - in: path
         name: user_id
         type: integer
         required: true
+        description: ID do utilizador
     responses:
       200:
         description: Detalhes do perfil
@@ -77,14 +101,33 @@ def get_user_profile(user_id):
           properties:
             id:
               type: integer
+              example: 15
             name:
               type: string
+              example: John Doe
             email:
               type: string
+              example: john@example.com
+            birth_date:
+              type: string
+              example: "1990-01-01"
+            gender:
+              type: string
+              example: Male
             role:
               type: string
+              example: registered
             status:
               type: string
+              example: active
+            img_url:
+              type: string
+              example: /static/uploads/user_15_123456_pic.jpg
+            created_at:
+              type: string
+              example: "2023-10-27T10:00:00"
+      403:
+        description: Acesso não autorizado (apenas o próprio ou admin)
       404:
         description: Utilizador não encontrado
     """
@@ -127,32 +170,46 @@ def update_user_profile(user_id):
     ---
     tags:
       - Users
+    security:
+      - Bearer: []
     parameters:
       - in: path
         name: user_id
         type: integer
         required: true
+        description: ID do utilizador
       - in: body
         name: body
+        description: Campos a atualizar
         schema:
           type: object
           properties:
             name:
               type: string
+              example: John Doe Updated
             gender_id:
               type: integer
-            gender_id:
-              type: integer
+              example: 2
             birth_date:
               type: string
+              example: "1990-01-01"
             password:
               type: string
               description: Nova password (opcional)
+              example: newsecret123
     responses:
       200:
         description: Perfil atualizado
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: Perfil atualizado com sucesso
       400:
-        description: Dados inválidos
+        description: Dados inválidos ou sem dados
+      403:
+        description: Acesso não autorizado
     """
     user = User.query.get_or_404(user_id)
     data = request.get_json()
@@ -215,6 +272,7 @@ def upload_image(user_id):
         name: user_id
         type: integer
         required: true
+        description: ID do utilizador
       - in: formData
         name: file
         type: file
@@ -226,10 +284,16 @@ def upload_image(user_id):
         schema:
           type: object
           properties:
+            message:
+              type: string
+              example: Upload com sucesso
             img_url:
               type: string
+              example: /static/uploads/user_15_123456_pic.jpg
       400:
         description: Ficheiro inválido ou em falta
+      403:
+        description: Acesso não autorizado
     """
     @jwt_required()
     def upload_image_wrapper(user_id):
@@ -273,11 +337,14 @@ def get_user_simulations(user_id):
     ---
     tags:
       - Users
+    security:
+      - Bearer: []
     parameters:
       - in: path
         name: user_id
         type: integer
         required: true
+        description: ID do utilizador
     responses:
       200:
         description: Lista de simulações
@@ -288,12 +355,38 @@ def get_user_simulations(user_id):
             properties:
               id:
                 type: integer
+                example: 101
               description:
                 type: string
+                example: Simulação de Teste
               status:
                 type: string
+                example: completed
               date:
                 type: string
+                example: "2023-10-27T10:00:00"
+              pinned:
+                type: boolean
+                example: true
+              population_total:
+                type: integer
+                example: 1000
+              infected_initial:
+                type: integer
+                example: 10
+              beta:
+                type: number
+                format: float
+                example: 0.5
+              gamma:
+                type: number
+                format: float
+                example: 0.1
+              duration:
+                type: integer
+                example: 30
+      403:
+        description: Acesso não autorizado
     """
     @jwt_required()
     def get_user_simulations_wrapper(user_id):
@@ -313,12 +406,18 @@ def get_user_simulations_impl(user_id):
     results = []
     for s in sims:
         status = SimulationStatus.query.get(s.simulation_status_id)
+        params = s.parameters
         results.append({
             'id': s.id,
             'date': s.created_at.isoformat(),
             'description': s.description,
             'status': status.label,
-            'pinned': s.pinned
+            'pinned': s.pinned,
+            'population_total': params.population_total if params else None,
+            'infected_initial': params.infected_initial if params else None,
+            'beta': params.beta if params else None,
+            'gamma': params.gamma if params else None,
+            'duration': params.duration if params else None
         })
     
     return jsonify(results), 200
