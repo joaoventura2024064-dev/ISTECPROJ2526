@@ -125,6 +125,95 @@ def create_simulation():
     return create_simulation_wrapper()
 
 
+@simulations_bp.route('/preview', methods=['POST'])
+@jwt_required()
+def preview_simulation():
+    """
+    Pré-visualizar simulação (sem gravar).
+    ---
+    tags:
+      - Simulations
+    security:
+      - Bearer: []
+    parameters:
+      - in: body
+        name: body
+        schema:
+          type: object
+          required:
+            - parameters
+          properties:
+            parameters:
+              type: object
+              required:
+                - population_total
+                - infected_initial
+                - beta
+                - gamma
+                - duration
+              properties:
+                population_total:
+                  type: integer
+                infected_initial:
+                  type: integer
+                beta:
+                  type: number
+                gamma:
+                  type: number
+                duration:
+                  type: integer
+    responses:
+      200:
+        description: Resultados da pré-visualização
+        schema:
+          type: object
+          properties:
+            seed:
+              type: integer
+            results:
+              type: array
+              items:
+                type: object
+      400:
+        description: Parâmetros inválidos
+    """
+    data = request.get_json()
+    params_data = data.get('parameters')
+
+    if not params_data:
+        return jsonify({'error': 'Parâmetros em falta'}), 400
+
+    # Validação de Negócio
+    if params_data.get('population_total', 0) <= 0:
+        return jsonify({'error': 'População total deve ser maior que 0'}), 400
+    if params_data.get('infected_initial', 0) < 0:
+        return jsonify({'error': 'Infetados iniciais não pode ser negativo'}), 400
+    if params_data.get('beta', 0) < 0 or params_data.get('gamma', 0) < 0:
+        return jsonify({'error': 'Taxas (beta/gamma) não podem ser negativas'}), 400
+
+    try:
+        # Executar simulação (gera seed se não for passada, mas aqui queremos gerar sempre nova se não vier)
+        # Opcional: aceitar seed no preview também para "replay"
+        seed_in = data.get('seed') 
+        
+        simulation_results, seed_out = run_simulation(
+            N=params_data.get('population_total'),
+            I0=params_data.get('infected_initial'),
+            beta=params_data.get('beta'),
+            gamma=params_data.get('gamma'),
+            duration=params_data.get('duration'),
+            seed=seed_in
+        )
+
+        return jsonify({
+            'seed': seed_out,
+            'results': simulation_results
+        }), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 def create_simulation_impl():
     data = request.get_json()
 
@@ -176,12 +265,16 @@ def create_simulation_impl():
 
         # 3. Executar a Simulação (Sprint C)
         # Calcular os passos usando o motor estocástico
-        simulation_results = run_simulation(
+        # Receber seed do body se existir
+        seed_val = data.get('seed')
+        
+        simulation_results, used_seed = run_simulation(
             N=new_params.population_total,
             I0=new_params.infected_initial,
             beta=new_params.beta,
             gamma=new_params.gamma,
-            duration=new_params.duration
+            duration=new_params.duration,
+            seed=seed_val
         )
 
         # 4. Guardar os Resultados (Steps)
@@ -311,7 +404,7 @@ def get_simulation_details(sim_id):
 
     return jsonify(response), 200
 
-
+""" Exportar simulação - Página Simulações """
 @simulations_bp.route('/<int:sim_id>/export', methods=['GET'])
 @jwt_required()
 def export_simulation_csv(sim_id):
@@ -361,11 +454,96 @@ def export_simulation_csv(sim_id):
     output.headers["Content-type"] = "text/csv"
     return output
 
+""" Exportar simulações em bulk- Página Historico """
+@simulations_bp.route('/export', methods=['POST'])
+@jwt_required()
+def export_simulations_bulk():
+    """
+    Exportar múltiplas simulações para CSV.
+    Se 'ids' for fornecido, exporta apenas essas.
+    Se 'ids' for vazio ou não existir, exporta todas (do user ou todas se admin).
+    ---
+    tags:
+      - Simulations
+    security:
+      - Bearer: []
+    parameters:
+      - in: body
+        name: body
+        schema:
+          type: object
+          properties:
+            ids:
+              type: array
+              items:
+                type: integer
+    responses:
+      200:
+        description: Ficheiro CSV para download
+        schema:
+          type: file
+    """
+    current_user_id = get_jwt_identity()
+    data = request.get_json() or {}
+    ids = data.get('ids', [])
+
+    # Verificar se é admin
+    is_admin = False
+    curr_user = User.query.get(current_user_id)
+    if curr_user:
+        user_type = UserType.query.get(curr_user.user_type_id)
+        if user_type and user_type.label == 'admin':
+            is_admin = True
+
+    query = Simulation.query
+
+    # Filtro de IDs (se fornecido)
+    if ids:
+        query = query.filter(Simulation.id.in_(ids))
+    
+    # Filtro de Permissões (Se não for admin, só vê as suas)
+    if not is_admin:
+        query = query.filter_by(user_id=current_user_id)
+
+    # Ordenar
+    sims = query.order_by(Simulation.created_at.desc()).all()
+
+    if not sims:
+        return jsonify({'error': 'Nenhuma simulação encontrada para exportar'}), 404
+
+    # Criar CSV
+    si = io.StringIO()
+    cw = csv.writer(si)
+
+    # Cabeçalho (Inclui ID e Descrição para distinguir)
+    cw.writerow(['Simulation ID', 'Description', 'Day', 'Susceptible', 'Infected', 'Recovered', 'Rt'])
+
+    for sim in sims:
+        # Ordenar passos
+        steps = sorted(sim.steps, key=lambda x: x.step_number)
+        
+        for step in steps:
+            cw.writerow([
+                sim.id,
+                sim.description,
+                step.step_number,
+                step.susceptible,
+                step.infected,
+                step.recovered,
+                step.rt_value
+            ])
+
+    output = make_response(si.getvalue())
+    filename = "simulations_export.csv"
+    output.headers["Content-Disposition"] = f"attachment; filename={filename}"
+    output.headers["Content-type"] = "text/csv"
+    return output
+
 
 @simulations_bp.route('/<int:sim_id>', methods=['DELETE'])
 def delete_simulation(sim_id):
     """
-    Apagar simulação (Admin Only).
+    Apagar simulação (Admin Only ou criador da simulação).
     ---
     tags:
       - Simulations

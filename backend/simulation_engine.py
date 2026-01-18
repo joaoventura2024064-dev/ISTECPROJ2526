@@ -1,6 +1,6 @@
 import numpy as np
 
-def run_simulation(N, I0, beta, gamma, duration):
+def run_simulation(N, I0, beta, gamma, duration, seed=None):
     """
     Executa uma simulação SIR Estocástica usando NumPy.
     
@@ -15,6 +15,13 @@ def run_simulation(N, I0, beta, gamma, duration):
         list: Lista de dicionários com os resultados por dia.
     """
     
+    # 0. Configurar Seed
+    if seed is None:
+        seed = np.random.randint(0, 2**32 - 1)
+    
+    # Definir a seed para garantir reprodutibilidade
+    np.random.seed(seed)
+
     # 1. Estado Inicial
     S = N - I0
     I = I0
@@ -68,4 +75,4 @@ def run_simulation(N, I0, beta, gamma, duration):
             "Rt": round(float(rt), 2)
         })
         
-    return results
+    return results, seed
