@@ -1,6 +1,4 @@
-import React from 'react';
 import { Line } from 'react-chartjs-2';
-import colors from 'tailwindcss/colors';
 
 import {
     Chart as ChartJS,
@@ -31,7 +29,7 @@ const ChartSIR = ({ simulationData }) => {
     const delayBetweenPoints = totalDuration / (simulationData ? simulationData.length : 1);
 
     const data = {
-        labels: simulationData.map(item => `Dia ${item.step + 1}`),
+        labels: simulationData.map(item => `Dia ${item.step}`),
         datasets: [
             {
                 label: 'Suscetíveis',

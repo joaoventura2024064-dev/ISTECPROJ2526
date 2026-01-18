@@ -1,42 +1,60 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary-50: #EFF8F4;
-  --color-primary-100: #CEE8DE;
-  --color-primary-200: #B6DDCE;
-  --color-primary-300: #95CEB8;
-  --color-primary-400: #81C5AA;
-  --color-primary-500: #61B695;
-  --color-primary-600: #58A688;
-  --color-primary-700: #45816A;
-  --color-primary-800: #356452;
-  --color-primary-900: #294C3F;
+  --color-primary-50: oklch(97.13% 0.0109 167.61deg);
+  --color-primary-100: oklch(90.91% 0.0306 170.45deg);
+  --color-primary-200: oklch(86.53% 0.0458 169.86deg);
+  --color-primary-300: oklch(80.59% 0.0667 168.75deg);
+  --color-primary-400: oklch(77.03% 0.0795 167.34deg);
+  --color-primary-500: oklch(71.33% 0.0970 166.36deg);
+  --color-primary-600: oklch(66.64% 0.0903 166.58deg);
+  --color-primary-700: oklch(55.56% 0.0730 166.85deg);
+  --color-primary-800: oklch(46.40% 0.0600 166.98deg);
+  --color-primary-900: oklch(38.56% 0.0469 167.99deg);
 
-  --color-secondary-50: #FDF9EC;
-  --color-secondary-100: #F9EDC4;
-  --color-secondary-500: #ECC440;
-  --color-secondary-700: #A88B2D;
+  --color-secondary-50: oklch(98.17% 0.0177 92.63deg);
+  --color-secondary-100: oklch(94.54% 0.0548 93.62deg);
+  --color-secondary-200: oklch(91.91% 0.0804 93.60deg);
+  --color-secondary-300: oklch(88.31% 0.1122 92.85deg);
+  --color-secondary-400: oklch(86.41% 0.1301 92.71deg);
+  --color-secondary-500: oklch(83.29% 0.1499 91.43deg);
+  --color-secondary-600: oklch(77.58% 0.1392 91.16deg);
+  --color-secondary-700: oklch(64.66% 0.1149 91.26deg);
+  --color-secondary-800: oklch(53.84% 0.0942 91.84deg);
+  --color-secondary-900: oklch(44.44% 0.0758 91.63deg);
 
-  --color-neutral-50: #EAEAEA;
-  --color-neutral-100: #BCBCBC;
-  --color-neutral-200: #9C9C9C;
-  --color-neutral-300: #6F6F6F;
-  --color-neutral-400: #535353;
-  --color-neutral-500: #282828;
-  --color-neutral-700: #1C1C1C;
-  --color-neutral-900: #111111;
+  --color-neutral-50: oklch(93.7% 0 none);
+  --color-neutral-100: oklch(79.52% 0 none);
+  --color-neutral-200: oklch(69.28% 0 none);
+  --color-neutral-300: oklch(54.17% 0 none);
+  --color-neutral-400: oklch(44.23% 0 none);
+  --color-neutral-500: oklch(27.68% 0 none);
+  --color-neutral-600: oklch(26.03% 0 none);
+  --color-neutral-700: oklch(22.65% 0 none);
+  --color-neutral-800: oklch(20.02% 0 none);
+  --color-neutral-900: oklch(17.76% 0 none);
 
-  --color-base-50: #FFFFFF;
-  --color-base-200: #FFFFFF;
-  --color-base-600: #E8E8E8;
-  --color-base-700: #B5B5B5;
-  --color-base-900: #6B6B6B;
+  --color-background-50: oklch(99.63% 0.0010 195.38deg);
+  --color-background-100: oklch(98.54% 0.0044 214.02deg);
+  --color-background-200: oklch(97.86% 0.0055 210.77deg);
+  --color-background-300: oklch(96.77% 0.0089 214.19deg);
+  --color-background-400: oklch(96.32% 0.0109 210.90deg);
+  --color-background-500: oklch(95.30% 0.0134 214.26deg);
+  --color-background-600: oklch(88.70% 0.0126 215.73deg);
+  --color-background-700: oklch(73.79% 0.0106 212.43deg);
+  --color-background-800: oklch(61.23% 0.0077 219.50deg);
+  --color-background-900: oklch(50.62% 0.0064 210.92deg);
 
-  --color-background-50: #FDFEFE;
-  --color-background-200: #F4F9FA;
-  --color-background-300: #EEF6F8;
-  --color-background-600: #D1DCDF;
-  --color-background-800: #7F8587;
+  --color-base-50: oklch(100% 0 none);
+  --color-base-100: oklch(100% 0 none);
+  --color-base-200: oklch(100% 0 none);
+  --color-base-300: oklch(100% 0 none);
+  --color-base-400: oklch(100% 0 none);
+  --color-base-500: oklch(100% 0 none);
+  --color-base-600: oklch(93.1% 0 none);
+  --color-base-700: oklch(77.31% 0 none);
+  --color-base-800: oklch(64.01% 0 none);
+  --color-base-900: oklch(52.78% 0 none);
 
   --font-roboto: "Roboto", sans-serif;
   --font-montserrat: "Montserrat", sans-serif;
@@ -70,74 +88,64 @@ button {
   cursor: pointer;
 }
 
-.text-h1 {
-  font-family: var(--font-roboto);
-  font-weight: 700;
-  font-size: 24px;
-  line-height: 32px;
+@utility headings-h1 {
+  @apply font-roboto text-2xl font-bold leading-[1.3333];
 }
 
-.text-h2 {
-  font-family: var(--font-roboto);
-  font-weight: 700;
-  font-size: 20px;
-  line-height: 28px;
+@utility headings-h2 {
+  @apply font-roboto text-xl font-bold leading-[1.4];
 }
 
-.text-body-main {
-  font-family: var(--font-montserrat);
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
+@utility headings-h3 {
+  @apply font-roboto text-lg font-semibold leading-[1.5556];
 }
 
-.text-body-medium {
-  font-family: var(--font-montserrat);
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 20px;
+@utility body-large {
+  @apply font-montserrat text-base font-normal leading-[1.5];
 }
 
-.text-body-strong {
-  font-family: var(--font-montserrat);
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 20px;
+@utility body-header {
+  @apply font-montserrat text-base font-semibold leading-[1.5];
 }
 
-.text-body-header {
-  font-family: var(--font-montserrat);
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 24px;
+@utility body-main {
+  @apply font-montserrat text-sm font-normal leading-[1.4286];
 }
 
-.text-caption-main {
-  font-family: var(--font-montserrat);
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 16px;
+@utility body-medium {
+  @apply font-montserrat text-sm font-medium leading-[1.4286];
 }
 
-.text-caption-strong {
-  font-family: var(--font-montserrat);
-  font-weight: 600;
-  font-size: 12px;
-  line-height: 16px;
+@utility body-strong {
+  @apply font-montserrat text-sm font-semibold leading-[1.4286];
 }
 
-.text-ui-button {
-  font-family: var(--font-montserrat);
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 1;
+@utility caption-main {
+  @apply font-montserrat text-xs font-normal leading-[1.3333];
 }
 
-.text-label-caption {
-  font-family: var(--font-montserrat);
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 1;
+@utility caption-strong {
+  @apply font-montserrat text-xs font-semibold leading-[1.3333];
+}
+
+@utility label-input {
+  @apply font-montserrat text-sm font-medium leading-[1.4286];
+}
+
+@utility label-caption {
+  @apply font-montserrat text-xs font-normal;
+}
+
+@utility ui-button {
+  @apply font-montserrat text-sm font-medium;
+}
+
+@utility menu-item {
+  @apply font-montserrat text-sm font-semibold capitalize;
+}
+
+@utility display-numbers {
+  @apply font-montserrat text-2xl font-bold leading-[1.3333];
 }
 
 .text-display-numbers {

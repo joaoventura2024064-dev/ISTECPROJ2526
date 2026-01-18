@@ -6,8 +6,6 @@ import SimulationResults from '../components/simulation/SimulationResults';
 import { faRotateRight } from '@fortawesome/free-solid-svg-icons';
 import { getSimulationService } from '../services/api';
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
 export default function SimulationView() {
     const { id } = useParams();
     const [loading, setLoading] = useState(true);
@@ -27,7 +25,7 @@ export default function SimulationView() {
         const fetchSimulation = async () => {
             try {
                 setLoading(true);
-                //await sleep(5000)
+                //await new Promise(resolve => setTimeout(resolve, 2000));
                 const data = await getSimulationService(id);
 
                 if (data) {
@@ -59,17 +57,17 @@ export default function SimulationView() {
 
     if (loading) {
         return (
-            <div className="flex flex-col gap-6 animate-pulse">
+            <div className="flex flex-col gap-7 animate-pulse mt-4">
                 <div className="flex justify-between items-center h-[76px]">
-                    <div className="flex flex-col gap-2 items-end flex-1">
-                        <div className="h-8 w-64 bg-background-600 rounded"></div>
-                        <div className="h-4 w-96 bg-background-600 rounded"></div>
+                    <div className="flex flex-col gap-1 items-end flex-1">
+                        <div className="h-[32px] w-64 bg-background-600 rounded opacity-40"></div>
+                        <div className="h-[20px] w-96 bg-background-600 rounded opacity-40"></div>
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-10 animate-pulse">
-                    <div className="rounded-xl h-[400px] bg-background-600"></div>
-                    <div className="rounded-xl h-[500px] bg-background-600"></div>
+                    <div className="rounded-xl h-[323px] bg-background-600 opacity-40"></div>
+                    <div className="rounded-xl h-[629px] bg-background-600 opacity-40"></div>
                 </div>
             </div>
         );
