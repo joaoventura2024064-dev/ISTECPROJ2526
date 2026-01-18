@@ -117,7 +117,7 @@ export default function SimulationsTable({ data = [], isLoading = false, onDelet
                                                     onDelete(id);
                                                 }}
                                             >
-                                                <TrashSolid className="h-5 w-5 text-neutral-100 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 group-hover/delete:text-red-500" />
+                                                <TrashSolid className="h-5 w-5 text-neutral-100 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 group-hover/delete:text-red-500 group-hover/delete:transition-colors group-hover/delete:duration-200" />
                                             </td>
                                         </tr>
                                     );

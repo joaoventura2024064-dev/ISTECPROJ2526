@@ -200,7 +200,7 @@ export default function RegisterCard() {
                 spin={loading}
                 disabled={loading}
             />
-            <div className="font-montserrat text-[14px] text-neutral-500">Já tem uma conta? <Link to="/login" className="font-montserrat font-medium text-[14px] text-primary-500">Inicie sessão aqui</Link></div>
+            <div className="font-montserrat text-[12px] text-neutral-500">Já tem uma conta? <Link to="/login" className="font-montserrat font-medium text-primary-500 hover:text-primary-800 transition-colors">Inicie sessão aqui</Link></div>
         </div>
     );
 }
