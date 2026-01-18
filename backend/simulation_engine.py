@@ -17,7 +17,7 @@ def run_simulation(N, I0, beta, gamma, duration, seed=None):
     
     # 0. Configurar Seed
     if seed is None:
-        seed = np.random.randint(0, 2**32 - 1)
+        seed = np.random.randint(0, 2**31 - 1)
     
     # Definir a seed para garantir reprodutibilidade
     np.random.seed(seed)
