@@ -4,12 +4,13 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from decorators import admin_required
 import csv
 import io
-from models import db, Simulation, SimulationParameters, SimulationStatus, SimulationSteps, User
+from models import db, Simulation, SimulationParameters, SimulationStatus, SimulationSteps, User, UserType
 from datetime import datetime
 import constants as c
 from simulation_engine import run_simulation
 
 simulations_bp = Blueprint('simulations', __name__)
+
 
 @simulations_bp.route('/', methods=['GET'])
 def get_all_simulations():
@@ -44,6 +45,7 @@ def get_all_simulations():
             })
         return jsonify(results), 200
     return get_all_simulations_wrapper()
+
 
 @simulations_bp.route('/', methods=['POST'])
 def create_simulation():
@@ -122,21 +124,22 @@ def create_simulation():
 
     return create_simulation_wrapper()
 
+
 def create_simulation_impl():
     data = request.get_json()
-    
+
     # Verificar autorização
     current_user_id = get_jwt_identity()
     # Se o user_id vier no body, tem de bater certo com o token
     if data.get('user_id') and str(current_user_id) != str(data.get('user_id')):
         return jsonify({'error': 'Acesso não autorizado'}), 403
-    
+
     # Validação básica
     if not data.get('user_id') or not data.get('parameters'):
         return jsonify({'error': 'Dados incompletos'}), 400
 
     params_data = data.get('parameters')
-    
+
     # Validação de Negócio (QA Feedback)
     if params_data.get('population_total', 0) <= 0:
         return jsonify({'error': 'População total deve ser maior que 0'}), 400
@@ -148,8 +151,9 @@ def create_simulation_impl():
     try:
         # 1. Criar a Simulação
         # Por defeito, status é 'running' (ou 'pending')
-        initial_status = SimulationStatus.query.filter_by(label=c.SIM_STATUS_RUNNING).first()
-        
+        initial_status = SimulationStatus.query.filter_by(
+            label=c.SIM_STATUS_RUNNING).first()
+
         new_sim = Simulation(
             user_id=data.get('user_id'),
             description=data.get('description', ''),
@@ -157,7 +161,7 @@ def create_simulation_impl():
             created_at=datetime.utcnow()
         )
         db.session.add(new_sim)
-        db.session.flush() # Para obter o ID da simulação antes do commit final
+        db.session.flush()  # Para obter o ID da simulação antes do commit final
 
         # 2. Criar os Parâmetros associados
         new_params = SimulationParameters(
@@ -170,7 +174,6 @@ def create_simulation_impl():
         )
         db.session.add(new_params)
 
-       
         # 3. Executar a Simulação (Sprint C)
         # Calcular os passos usando o motor estocástico
         simulation_results = run_simulation(
@@ -195,7 +198,7 @@ def create_simulation_impl():
 
         # 5. Confirmar tudo (Simulação + Parâmetros + Steps)
         db.session.commit()
-        
+
         # Construir resposta completa (igual ao GET details)
         response = {
             'id': new_sim.id,
@@ -210,14 +213,16 @@ def create_simulation_impl():
                 'gamma': new_params.gamma,
                 'duration': new_params.duration
             },
-            'steps': simulation_results # Já está no formato correto (lista de dicts)
+            # Já está no formato correto (lista de dicts)
+            'steps': simulation_results
         }
-        
+
         return jsonify(response), 201
 
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+
 
 @simulations_bp.route('/<int:sim_id>', methods=['GET'])
 @jwt_required()
@@ -263,11 +268,11 @@ def get_simulation_details(sim_id):
                     type: number
     """
     sim = Simulation.query.get_or_404(sim_id)
-    
+
     # Verificar autorização (Próprio ou Admin)
     current_user_id = get_jwt_identity()
     is_admin = False
-    
+
     curr_user = User.query.get(current_user_id)
     if curr_user:
         user_type = UserType.query.get(curr_user.user_type_id)
@@ -278,7 +283,7 @@ def get_simulation_details(sim_id):
         return jsonify({'error': 'Acesso não autorizado'}), 403
     params = SimulationParameters.query.get(sim.id)
     status = SimulationStatus.query.get(sim.simulation_status_id)
-    
+
     # Construir resposta
     response = {
         'id': sim.id,
@@ -303,8 +308,9 @@ def get_simulation_details(sim_id):
             } for step in sim.steps
         ]
     }
-    
+
     return jsonify(response), 200
+
 
 @simulations_bp.route('/<int:sim_id>/export', methods=['GET'])
 @jwt_required()
@@ -330,29 +336,31 @@ def export_simulation_csv(sim_id):
           type: file
     """
     sim = Simulation.query.get_or_404(sim_id)
-    
+
     # Verificar autorização
     current_user_id = get_jwt_identity()
     if str(sim.user_id) != str(current_user_id):
         return jsonify({'error': 'Acesso não autorizado'}), 403
-    
+
     # Criar CSV em memória
     si = io.StringIO()
     cw = csv.writer(si)
-    
+
     # Cabeçalho
     cw.writerow(['Day', 'Susceptible', 'Infected', 'Recovered', 'Rt'])
-    
+
     # Dados
     # Ordenar por step_number para garantir ordem cronológica
     steps = sorted(sim.steps, key=lambda x: x.step_number)
     for step in steps:
-        cw.writerow([step.step_number, step.susceptible, step.infected, step.recovered, step.rt_value])
-        
+        cw.writerow([step.step_number, step.susceptible,
+                    step.infected, step.recovered, step.rt_value])
+
     output = make_response(si.getvalue())
     output.headers["Content-Disposition"] = f"attachment; filename=simulation_{sim_id}.csv"
     output.headers["Content-type"] = "text/csv"
     return output
+
 
 @simulations_bp.route('/<int:sim_id>', methods=['DELETE'])
 def delete_simulation(sim_id):
@@ -375,11 +383,11 @@ def delete_simulation(sim_id):
     @jwt_required()
     def delete_simulation_wrapper(sim_id):
         sim = Simulation.query.get_or_404(sim_id)
-        
+
         # Verificar autorização (Próprio ou Admin)
         current_user_id = get_jwt_identity()
         is_admin = False
-        
+
         curr_user = User.query.get(current_user_id)
         if curr_user:
             user_type = UserType.query.get(curr_user.user_type_id)
