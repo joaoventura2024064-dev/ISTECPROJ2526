@@ -1,4 +1,5 @@
-import { faFloppyDisk, faChartLine } from '@fortawesome/free-solid-svg-icons';
+import { faFloppyDisk, faChartLine, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Button from '../common/Button';
 import Card from '../common/Card/Card';
@@ -33,6 +34,23 @@ const SimulationResults = memo(function SimulationResults({
                             <p className="font-montserrat font-bold text-2xl text-neutral-600">
                                 {status === 'loading' ? 'A Processar...' : 'A Aguardar Execução...'}
                             </p>
+                            <p className="font-montserrat text-neutral-400 mt-2">
+                                {status === 'loading' ? 'Estamos a gerar o seu gráfico...' : 'Estamos a aguardar os seus dados.'}
+                            </p>
+                        </div>
+                    </div>
+                ) : status === 'error' ? (
+                    < div className="flex flex-col items-center justify-center gap-4 text-neutral-400  h-full">
+                        <div className="flex flex-col items-center justify-center text-neutral-400  h-full">
+                            <img src={imagem} className="w-[222px] h-[222px] grayscale-[1]"></img>
+                            <div className="text-center">
+                                <p className="font-montserrat font-bold text-2xl text-neutral-600">
+                                    Ocorreu um erro
+                                </p>
+                                <p className="font-montserrat text-neutral-400 mt-2">
+                                    Não foi possível executar a simulação.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 ) : (
@@ -56,7 +74,7 @@ const SimulationResults = memo(function SimulationResults({
                     </div>
                 )}
             </div>
-        </Card>
+        </Card >
     );
 });
 

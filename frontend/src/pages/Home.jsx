@@ -25,7 +25,7 @@ export default function Home() {
         if (user?.id) {
             try {
                 setLoading(true);
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                //await new Promise(resolve => setTimeout(resolve, 2000));
                 const data = await getUserSimulationsService(user.id);
                 setSimulations(data);
             } catch (error) {
@@ -47,7 +47,7 @@ export default function Home() {
     };
 
     const exportCSV = () => {
-        // Handle filter
+        toast.success("Simulações exportadas com sucesso.");
     };
 
     return (

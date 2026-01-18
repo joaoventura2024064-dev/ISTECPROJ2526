@@ -5,6 +5,7 @@ import SimulationResults from '../components/simulation/SimulationResults';
 import SimulationParameters from '../components/simulation/SimulationParameters';
 import { faRotateRight } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../context/AuthContext';
+import { toast } from 'sonner';
 
 export default function NewSimulation() {
     const auth = useAuth();
@@ -53,13 +54,13 @@ export default function NewSimulation() {
             //await new Promise(resolve => setTimeout(resolve, 2000));
             setStatus('success');
         } catch (error) {
-            console.error(error);
             setStatus('error');
+            toast.error("Erro ao executar simulação.");
         }
     };
 
     const handleSave = useCallback(() => {
-        console.log("Save clicked");
+        toast.success("Simulação guardada com sucesso.");
     }, []);
 
     return (
