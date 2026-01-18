@@ -28,6 +28,41 @@ def get_all_simulations():
           type: array
           items:
             type: object
+            properties:
+              id:
+                type: integer
+                example: 101
+              user_email:
+                type: string
+                example: user@example.com
+              date:
+                type: string
+                example: "2023-10-27T10:00:00"
+              description:
+                type: string
+                example: Simulação Global
+              status:
+                type: string
+                example: completed
+              population_total:
+                type: integer
+                example: 1000
+              infected_initial:
+                type: integer
+                example: 10
+              beta:
+                type: number
+                format: float
+                example: 0.5
+              gamma:
+                type: number
+                format: float
+                example: 0.1
+              duration:
+                type: integer
+                example: 30
+      403:
+        description: Acesso restrito a Administradores
     """
     @admin_required()
     def get_all_simulations_wrapper():
@@ -36,12 +71,18 @@ def get_all_simulations():
         for s in sims:
             status = SimulationStatus.query.get(s.simulation_status_id)
             user = User.query.get(s.user_id)
+            params = s.parameters
             results.append({
                 'id': s.id,
                 'user_email': user.email if user else 'Unknown',
                 'date': s.created_at.isoformat(),
                 'description': s.description,
-                'status': status.label
+                'status': status.label,
+                'population_total': params.population_total if params else None,
+                'infected_initial': params.infected_initial if params else None,
+                'beta': params.beta if params else None,
+                'gamma': params.gamma if params else None,
+                'duration': params.duration if params else None
             })
         return jsonify(results), 200
     return get_all_simulations_wrapper()
@@ -59,6 +100,8 @@ def create_simulation():
     parameters:
       - in: body
         name: body
+        description: Dados da simulação
+        required: true
         schema:
           type: object
           required:
@@ -67,8 +110,10 @@ def create_simulation():
           properties:
             user_id:
               type: integer
+              example: 15
             description:
               type: string
+              example: Simulação de Teste
             parameters:
               type: object
               required:
@@ -80,14 +125,19 @@ def create_simulation():
               properties:
                 population_total:
                   type: integer
+                  example: 1000
                 infected_initial:
                   type: integer
+                  example: 10
                 beta:
                   type: number
+                  example: 0.5
                 gamma:
                   type: number
+                  example: 0.1
                 duration:
                   type: integer
+                  example: 30
     responses:
       201:
         description: Simulação criada e executada
@@ -96,10 +146,16 @@ def create_simulation():
           properties:
             id:
               type: integer
+              example: 101
             status:
               type: string
+              example: running
             parameters:
               type: object
+              properties:
+                population_total:
+                  type: integer
+                  example: 1000
             steps:
               type: array
               items:
@@ -107,22 +163,142 @@ def create_simulation():
                 properties:
                   step:
                     type: integer
+                    example: 1
                   S:
                     type: integer
+                    example: 990
                   I:
                     type: integer
+                    example: 10
                   R:
                     type: integer
+                    example: 0
                   Rt:
                     type: number
+                    example: 2.5
       400:
-        description: Parâmetros inválidos
+        description: Parâmetros inválidos ou em falta
+      403:
+        description: Acesso não autorizado
     """
     @jwt_required()
     def create_simulation_wrapper():
         return create_simulation_impl()
 
     return create_simulation_wrapper()
+
+
+@simulations_bp.route('/preview', methods=['POST'])
+@jwt_required()
+def preview_simulation():
+    """
+    Pré-visualizar simulação (sem gravar).
+    ---
+    tags:
+      - Simulations
+    security:
+      - Bearer: []
+    parameters:
+      - in: body
+        name: body
+        description: Parâmetros para simulação
+        required: true
+        schema:
+          type: object
+          required:
+            - parameters
+          properties:
+            parameters:
+              type: object
+              required:
+                - population_total
+                - infected_initial
+                - beta
+                - gamma
+                - duration
+              properties:
+                population_total:
+                  type: integer
+                  example: 1000
+                infected_initial:
+                  type: integer
+                  example: 10
+                beta:
+                  type: number
+                  example: 0.5
+                gamma:
+                  type: number
+                  example: 0.1
+                duration:
+                  type: integer
+                  example: 30
+    responses:
+      200:
+        description: Resultados da pré-visualização
+        schema:
+          type: object
+          properties:
+            seed:
+              type: integer
+              example: 123456789
+            results:
+              type: array
+              items:
+                type: object
+                properties:
+                  step:
+                    type: integer
+                    example: 1
+                  S:
+                    type: integer
+                    example: 990
+                  I:
+                    type: integer
+                    example: 10
+                  R:
+                    type: integer
+                    example: 0
+                  Rt:
+                    type: number
+                    example: 2.5
+      400:
+        description: Parâmetros inválidos
+    """
+    data = request.get_json()
+    params_data = data.get('parameters')
+
+    if not params_data:
+        return jsonify({'error': 'Parâmetros em falta'}), 400
+
+    # Validação de Negócio
+    if params_data.get('population_total', 0) <= 0:
+        return jsonify({'error': 'População total deve ser maior que 0'}), 400
+    if params_data.get('infected_initial', 0) < 0:
+        return jsonify({'error': 'Infetados iniciais não pode ser negativo'}), 400
+    if params_data.get('beta', 0) < 0 or params_data.get('gamma', 0) < 0:
+        return jsonify({'error': 'Taxas (beta/gamma) não podem ser negativas'}), 400
+
+    try:
+        # Executar simulação (gera seed se não for passada, mas aqui queremos gerar sempre nova se não vier)
+        # Opcional: aceitar seed no preview também para "replay"
+        seed_in = data.get('seed') 
+        
+        simulation_results, seed_out = run_simulation(
+            N=params_data.get('population_total'),
+            I0=params_data.get('infected_initial'),
+            beta=params_data.get('beta'),
+            gamma=params_data.get('gamma'),
+            duration=params_data.get('duration'),
+            seed=seed_in
+        )
+
+        return jsonify({
+            'seed': seed_out,
+            'results': simulation_results
+        }), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 def create_simulation_impl():
@@ -176,12 +352,16 @@ def create_simulation_impl():
 
         # 3. Executar a Simulação (Sprint C)
         # Calcular os passos usando o motor estocástico
-        simulation_results = run_simulation(
+        # Receber seed do body se existir
+        seed_val = data.get('seed')
+        
+        simulation_results, used_seed = run_simulation(
             N=new_params.population_total,
             I0=new_params.infected_initial,
             beta=new_params.beta,
             gamma=new_params.gamma,
-            duration=new_params.duration
+            duration=new_params.duration,
+            seed=seed_val
         )
 
         # 4. Guardar os Resultados (Steps)
@@ -239,6 +419,7 @@ def get_simulation_details(sim_id):
         name: sim_id
         type: integer
         required: true
+        description: ID da simulação
     responses:
       200:
         description: Detalhes completos e passos
@@ -247,10 +428,16 @@ def get_simulation_details(sim_id):
           properties:
             id:
               type: integer
+              example: 101
             status:
               type: string
+              example: completed
             parameters:
               type: object
+              properties:
+                population_total:
+                  type: integer
+                  example: 1000
             steps:
               type: array
               items:
@@ -258,14 +445,23 @@ def get_simulation_details(sim_id):
                 properties:
                   step:
                     type: integer
+                    example: 1
                   S:
                     type: integer
+                    example: 990
                   I:
                     type: integer
+                    example: 10
                   R:
                     type: integer
+                    example: 0
                   Rt:
                     type: number
+                    example: 2.5
+      403:
+        description: Acesso não autorizado (apenas o criador ou admin)
+      404:
+        description: Simulação não encontrada
     """
     sim = Simulation.query.get_or_404(sim_id)
 
@@ -311,7 +507,7 @@ def get_simulation_details(sim_id):
 
     return jsonify(response), 200
 
-
+""" Exportar simulação - Página Simulações """
 @simulations_bp.route('/<int:sim_id>/export', methods=['GET'])
 @jwt_required()
 def export_simulation_csv(sim_id):
@@ -329,11 +525,16 @@ def export_simulation_csv(sim_id):
         name: sim_id
         type: integer
         required: true
+        description: ID da simulação
     responses:
       200:
         description: Ficheiro CSV para download
         schema:
           type: file
+      403:
+        description: Acesso não autorizado
+      404:
+        description: Simulação não encontrada
     """
     sim = Simulation.query.get_or_404(sim_id)
 
@@ -361,11 +562,101 @@ def export_simulation_csv(sim_id):
     output.headers["Content-type"] = "text/csv"
     return output
 
+""" Exportar simulações em bulk- Página Historico """
+@simulations_bp.route('/export', methods=['POST'])
+@jwt_required()
+def export_simulations_bulk():
+    """
+    Exportar múltiplas simulações para CSV.
+    Se 'ids' for fornecido, exporta apenas essas.
+    Se 'ids' for vazio ou não existir, exporta todas (do user ou todas se admin).
+    ---
+    tags:
+      - Simulations
+    security:
+      - Bearer: []
+    parameters:
+      - in: body
+        name: body
+        description: Lista de IDs para exportar (opcional)
+        schema:
+          type: object
+          properties:
+            ids:
+              type: array
+              items:
+                type: integer
+                example: 101
+              example: [101, 102]
+    responses:
+      200:
+        description: Ficheiro CSV para download
+        schema:
+          type: file
+      404:
+        description: Nenhuma simulação encontrada
+    """
+    current_user_id = get_jwt_identity()
+    data = request.get_json() or {}
+    ids = data.get('ids', [])
+
+    # Verificar se é admin
+    is_admin = False
+    curr_user = User.query.get(current_user_id)
+    if curr_user:
+        user_type = UserType.query.get(curr_user.user_type_id)
+        if user_type and user_type.label == 'admin':
+            is_admin = True
+
+    query = Simulation.query
+
+    # Filtro de IDs (se fornecido)
+    if ids:
+        query = query.filter(Simulation.id.in_(ids))
+    
+    # Filtro de Permissões (Se não for admin, só vê as suas)
+    if not is_admin:
+        query = query.filter_by(user_id=current_user_id)
+
+    # Ordenar
+    sims = query.order_by(Simulation.created_at.desc()).all()
+
+    if not sims:
+        return jsonify({'error': 'Nenhuma simulação encontrada para exportar'}), 404
+
+    # Criar CSV
+    si = io.StringIO()
+    cw = csv.writer(si)
+
+    # Cabeçalho (Inclui ID e Descrição para distinguir)
+    cw.writerow(['Simulation ID', 'Description', 'Day', 'Susceptible', 'Infected', 'Recovered', 'Rt'])
+
+    for sim in sims:
+        # Ordenar passos
+        steps = sorted(sim.steps, key=lambda x: x.step_number)
+        
+        for step in steps:
+            cw.writerow([
+                sim.id,
+                sim.description,
+                step.step_number,
+                step.susceptible,
+                step.infected,
+                step.recovered,
+                step.rt_value
+            ])
+
+    output = make_response(si.getvalue())
+    filename = "simulations_export.csv"
+    output.headers["Content-Disposition"] = f"attachment; filename={filename}"
+    output.headers["Content-type"] = "text/csv"
+    return output
+
 
 @simulations_bp.route('/<int:sim_id>', methods=['DELETE'])
 def delete_simulation(sim_id):
     """
-    Apagar simulação (Admin Only).
+    Apagar simulação (Admin Only ou criador da simulação).
     ---
     tags:
       - Simulations
@@ -376,9 +667,20 @@ def delete_simulation(sim_id):
         name: sim_id
         type: integer
         required: true
+        description: ID da simulação
     responses:
       200:
         description: Simulação apagada
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: Simulação apagada com sucesso
+      403:
+        description: Acesso não autorizado
+      404:
+        description: Simulação não encontrada
     """
     @jwt_required()
     def delete_simulation_wrapper(sim_id):
@@ -401,3 +703,64 @@ def delete_simulation(sim_id):
         db.session.commit()
         return jsonify({'message': 'Simulação apagada com sucesso'}), 200
     return delete_simulation_wrapper(sim_id)
+
+
+@simulations_bp.route('/<int:sim_id>/pin', methods=['PATCH'])
+def toggle_pin_simulation(sim_id):
+    """
+    Mudar estado 'Favorito' da simulação (Pin/Unpin).
+    ---
+    tags:
+      - Simulations
+    security:
+      - Bearer: []
+    parameters:
+      - in: path
+        name: sim_id
+        type: integer
+        required: true
+        description: ID da simulação
+    responses:
+      200:
+        description: Estado atualizado
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: Favorito_true
+            pinned:
+              type: boolean
+              example: true
+      403:
+        description: Acesso não autorizado
+      404:
+        description: Simulação não encontrada
+    """
+    @jwt_required()
+    def toggle_pin_wrapper(sim_id):
+        sim = Simulation.query.get_or_404(sim_id)
+
+        # Verificar autorização (Próprio ou Admin)
+        current_user_id = get_jwt_identity()
+        is_admin = False
+
+        curr_user = User.query.get(current_user_id)
+        if curr_user:
+            user_type = UserType.query.get(curr_user.user_type_id)
+            if user_type and user_type.label == 'admin':
+                is_admin = True
+
+        if str(sim.user_id) != str(current_user_id) and not is_admin:
+            return jsonify({'error': 'Acesso não autorizado'}), 403
+
+        # Toggle status
+        sim.pinned = not sim.pinned
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Favorito_true' if sim.pinned else 'Favorito_false',
+            'pinned': sim.pinned
+        }), 200
+        
+    return toggle_pin_wrapper(sim_id)

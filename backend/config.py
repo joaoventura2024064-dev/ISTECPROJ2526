@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+from datetime import timedelta
 
 load_dotenv()
 
@@ -32,3 +33,6 @@ class Config:
 
     # Chave secreta para assinar cookies de sessão e tokens (importante para segurança)
     SECRET_KEY = os.environ.get('SECRET_KEY', 'uma!chave!muito!fixe')
+
+    # JWT Expiration (1 hora)
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)

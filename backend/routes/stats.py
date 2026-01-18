@@ -23,10 +23,15 @@ def get_dashboard_stats():
           properties:
             total_users:
               type: integer
+              example: 50
             total_simulations:
               type: integer
+              example: 120
             completed_simulations:
               type: integer
+              example: 100
+      403:
+        description: Acesso restrito a Administradores
     """
     @admin_required()
     def get_dashboard_stats_wrapper():

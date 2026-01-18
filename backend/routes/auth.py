@@ -22,6 +22,8 @@ def register():
     parameters:
       - in: body
         name: body
+        description: Dados de registo do utilizador
+        required: true
         schema:
           type: object
           required:
@@ -40,6 +42,7 @@ def register():
               example: secret123
             birth_date:
               type: string
+              format: date
               example: "1990-01-01"
             gender_id:
               type: integer
@@ -52,12 +55,26 @@ def register():
           properties:
             message:
               type: string
+              example: Utilizador registado com sucesso
             user_id:
               type: integer
+              example: 15
       400:
-        description: Dados inválidos
+        description: Dados inválidos ou em falta
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: Email e password são obrigatórios
       409:
         description: Email já existe
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: Este email já está registado
     """
     data = request.get_json()
 
@@ -115,6 +132,8 @@ def login():
     parameters:
       - in: body
         name: body
+        description: Credenciais de acesso
+        required: true
         schema:
           type: object
           required:
@@ -133,23 +152,43 @@ def login():
         schema:
           type: object
           properties:
+            message:
+              type: string
+              example: Login efetuado com sucesso
             access_token:
               type: string
+              example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
             user:
               type: object
               properties:
                 id:
                   type: integer
+                  example: 15
                 name:
                   type: string
+                  example: John Doe
                 email:
                   type: string
+                  example: john@example.com
                 role:
                   type: string
+                  example: registered
       401:
         description: Credenciais inválidas
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: Credenciais inválidas
       403:
         description: Conta suspensa
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: Conta suspensa ou pendente
     """
     data = request.get_json()
 
