@@ -89,6 +89,12 @@ def create_simulation():
 def create_simulation_impl():
     data = request.get_json()
     
+    # Verificar autorização
+    current_user_id = get_jwt_identity()
+    # Se o user_id vier no body, tem de bater certo com o token
+    if data.get('user_id') and str(current_user_id) != str(data.get('user_id')):
+        return jsonify({'error': 'Acesso não autorizado'}), 403
+    
     # Validação básica
     if not data.get('user_id') or not data.get('parameters'):
         return jsonify({'error': 'Dados incompletos'}), 400
@@ -178,6 +184,7 @@ def create_simulation_impl():
         return jsonify({'error': str(e)}), 500
 
 @simulations_bp.route('/<int:sim_id>', methods=['GET'])
+@jwt_required()
 def get_simulation_details(sim_id):
     """
     Obter detalhes da simulação.
@@ -220,6 +227,11 @@ def get_simulation_details(sim_id):
                     type: number
     """
     sim = Simulation.query.get_or_404(sim_id)
+    
+    # Verificar autorização
+    current_user_id = get_jwt_identity()
+    if str(sim.user_id) != str(current_user_id):
+        return jsonify({'error': 'Acesso não autorizado'}), 403
     params = SimulationParameters.query.get(sim.id)
     status = SimulationStatus.query.get(sim.simulation_status_id)
     
@@ -251,6 +263,7 @@ def get_simulation_details(sim_id):
     return jsonify(response), 200
 
 @simulations_bp.route('/<int:sim_id>/export', methods=['GET'])
+@jwt_required()
 def export_simulation_csv(sim_id):
     """
     Exportar simulação para CSV.
@@ -273,6 +286,11 @@ def export_simulation_csv(sim_id):
           type: file
     """
     sim = Simulation.query.get_or_404(sim_id)
+    
+    # Verificar autorização
+    current_user_id = get_jwt_identity()
+    if str(sim.user_id) != str(current_user_id):
+        return jsonify({'error': 'Acesso não autorizado'}), 403
     
     # Criar CSV em memória
     si = io.StringIO()

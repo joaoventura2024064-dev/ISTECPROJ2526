@@ -7,7 +7,12 @@ from datetime import datetime
 users_bp = Blueprint('users', __name__)
 
 @users_bp.route('/<int:user_id>', methods=['GET'])
+@jwt_required()
 def get_user_profile(user_id):
+    # Verificar autorização
+    current_user_id = get_jwt_identity()
+    if str(current_user_id) != str(user_id):
+        return jsonify({'error': 'Acesso não autorizado'}), 403
     """
     Obter perfil do utilizador.
     ---
@@ -57,7 +62,12 @@ def get_user_profile(user_id):
     }), 200
 
 @users_bp.route('/<int:user_id>', methods=['PUT'])
+@jwt_required()
 def update_user_profile(user_id):
+    # Verificar autorização
+    current_user_id = get_jwt_identity()
+    if str(current_user_id) != str(user_id):
+        return jsonify({'error': 'Acesso não autorizado'}), 403
     """
     Atualizar perfil do utilizador.
     ---
@@ -162,6 +172,10 @@ def upload_image(user_id):
     """
     @jwt_required()
     def upload_image_wrapper(user_id):
+        # Verificar autorização
+        current_user_id = get_jwt_identity()
+        if str(current_user_id) != str(user_id):
+            return jsonify({'error': 'Acesso não autorizado'}), 403
         return upload_image_impl(user_id)
     return upload_image_wrapper(user_id)
 
@@ -222,6 +236,10 @@ def get_user_simulations(user_id):
     """
     @jwt_required()
     def get_user_simulations_wrapper(user_id):
+        # Verificar autorização
+        current_user_id = get_jwt_identity()
+        if str(current_user_id) != str(user_id):
+            return jsonify({'error': 'Acesso não autorizado'}), 403
         return get_user_simulations_impl(user_id)
     return get_user_simulations_wrapper(user_id)
 
