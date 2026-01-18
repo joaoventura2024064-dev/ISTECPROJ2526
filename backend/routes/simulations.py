@@ -1,5 +1,7 @@
 from flask import Blueprint, request, jsonify, make_response
+from flask import Blueprint, request, jsonify, make_response
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from decorators import admin_required
 import csv
 import io
 from models import db, Simulation, SimulationParameters, SimulationStatus, SimulationSteps, User
@@ -8,6 +10,40 @@ import constants as c
 from simulation_engine import run_simulation
 
 simulations_bp = Blueprint('simulations', __name__)
+
+@simulations_bp.route('/', methods=['GET'])
+def get_all_simulations():
+    """
+    Listar todas as simulações (Admin Only).
+    ---
+    tags:
+      - Simulations
+    security:
+      - Bearer: []
+    responses:
+      200:
+        description: Lista de todas as simulações
+        schema:
+          type: array
+          items:
+            type: object
+    """
+    @admin_required()
+    def get_all_simulations_wrapper():
+        sims = Simulation.query.order_by(Simulation.created_at.desc()).all()
+        results = []
+        for s in sims:
+            status = SimulationStatus.query.get(s.simulation_status_id)
+            user = User.query.get(s.user_id)
+            results.append({
+                'id': s.id,
+                'user_email': user.email if user else 'Unknown',
+                'date': s.created_at.isoformat(),
+                'description': s.description,
+                'status': status.label
+            })
+        return jsonify(results), 200
+    return get_all_simulations_wrapper()
 
 @simulations_bp.route('/', methods=['POST'])
 def create_simulation():
@@ -228,9 +264,17 @@ def get_simulation_details(sim_id):
     """
     sim = Simulation.query.get_or_404(sim_id)
     
-    # Verificar autorização
+    # Verificar autorização (Próprio ou Admin)
     current_user_id = get_jwt_identity()
-    if str(sim.user_id) != str(current_user_id):
+    is_admin = False
+    
+    curr_user = User.query.get(current_user_id)
+    if curr_user:
+        user_type = UserType.query.get(curr_user.user_type_id)
+        if user_type and user_type.label == 'admin':
+            is_admin = True
+
+    if str(sim.user_id) != str(current_user_id) and not is_admin:
         return jsonify({'error': 'Acesso não autorizado'}), 403
     params = SimulationParameters.query.get(sim.id)
     status = SimulationStatus.query.get(sim.simulation_status_id)
@@ -309,3 +353,43 @@ def export_simulation_csv(sim_id):
     output.headers["Content-Disposition"] = f"attachment; filename=simulation_{sim_id}.csv"
     output.headers["Content-type"] = "text/csv"
     return output
+
+@simulations_bp.route('/<int:sim_id>', methods=['DELETE'])
+def delete_simulation(sim_id):
+    """
+    Apagar simulação (Admin Only).
+    ---
+    tags:
+      - Simulations
+    security:
+      - Bearer: []
+    parameters:
+      - in: path
+        name: sim_id
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Simulação apagada
+    """
+    @jwt_required()
+    def delete_simulation_wrapper(sim_id):
+        sim = Simulation.query.get_or_404(sim_id)
+        
+        # Verificar autorização (Próprio ou Admin)
+        current_user_id = get_jwt_identity()
+        is_admin = False
+        
+        curr_user = User.query.get(current_user_id)
+        if curr_user:
+            user_type = UserType.query.get(curr_user.user_type_id)
+            if user_type and user_type.label == 'admin':
+                is_admin = True
+
+        if str(sim.user_id) != str(current_user_id) and not is_admin:
+            return jsonify({'error': 'Acesso não autorizado'}), 403
+
+        db.session.delete(sim)
+        db.session.commit()
+        return jsonify({'message': 'Simulação apagada com sucesso'}), 200
+    return delete_simulation_wrapper(sim_id)

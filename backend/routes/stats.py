@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required
+from decorators import admin_required
 from models import db, User, Simulation, SimulationStatus
 import constants as c
 
@@ -8,7 +9,7 @@ stats_bp = Blueprint('stats', __name__)
 @stats_bp.route('/dashboard', methods=['GET'])
 def get_dashboard_stats():
     """
-    Estatísticas do Dashboard.
+    Estatísticas do Dashboard (Admin Only).
     ---
     tags:
       - Stats
@@ -27,7 +28,7 @@ def get_dashboard_stats():
             completed_simulations:
               type: integer
     """
-    @jwt_required()
+    @admin_required()
     def get_dashboard_stats_wrapper():
         return get_dashboard_stats_impl()
     return get_dashboard_stats_wrapper()

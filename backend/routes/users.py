@@ -1,17 +1,63 @@
 from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from decorators import admin_required
 from werkzeug.security import generate_password_hash
 from models import db, User, UserType, UserStatus, Genders, Simulation, SimulationStatus
 from datetime import datetime
 
 users_bp = Blueprint('users', __name__)
 
+@users_bp.route('/', methods=['GET'])
+def get_all_users():
+    """
+    Listar todos os utilizadores (Admin Only).
+    ---
+    tags:
+      - Users
+    security:
+      - Bearer: []
+    responses:
+      200:
+        description: Lista de utilizadores
+        schema:
+          type: array
+          items:
+            type: object
+    """
+    @admin_required()
+    def get_all_users_wrapper():
+        users = User.query.all()
+        results = []
+        for user in users:
+            type_label = UserType.query.get(user.user_type_id).label
+            status_label = UserStatus.query.get(user.user_status_id).label
+            results.append({
+                'id': user.id,
+                'name': user.name,
+                'email': user.email,
+                'role': type_label,
+                'status': status_label,
+                'created_at': user.created_at.isoformat()
+            })
+        return jsonify(results), 200
+    return get_all_users_wrapper()
+
 @users_bp.route('/<int:user_id>', methods=['GET'])
 @jwt_required()
 def get_user_profile(user_id):
-    # Verificar autorização
+    # Verificar autorização (Próprio ou Admin)
     current_user_id = get_jwt_identity()
-    if str(current_user_id) != str(user_id):
+    is_admin = False
+    
+    # Check if admin
+    curr_user = User.query.get(current_user_id)
+    if curr_user:
+        user_type = UserType.query.get(curr_user.user_type_id)
+        if user_type and user_type.label == 'admin':
+            is_admin = True
+            
+    if str(current_user_id) != str(user_id) and not is_admin:
         return jsonify({'error': 'Acesso não autorizado'}), 403
     """
     Obter perfil do utilizador.
@@ -64,9 +110,17 @@ def get_user_profile(user_id):
 @users_bp.route('/<int:user_id>', methods=['PUT'])
 @jwt_required()
 def update_user_profile(user_id):
-    # Verificar autorização
+    # Verificar autorização (Próprio ou Admin)
     current_user_id = get_jwt_identity()
-    if str(current_user_id) != str(user_id):
+    is_admin = False
+    
+    curr_user = User.query.get(current_user_id)
+    if curr_user:
+        user_type = UserType.query.get(curr_user.user_type_id)
+        if user_type and user_type.label == 'admin':
+            is_admin = True
+
+    if str(current_user_id) != str(user_id) and not is_admin:
         return jsonify({'error': 'Acesso não autorizado'}), 403
     """
     Atualizar perfil do utilizador.
@@ -120,6 +174,13 @@ def update_user_profile(user_id):
 
         if 'password' in data and data['password']:
             user.password_hash = generate_password_hash(data['password'])
+
+        # Admin pode alterar status e role
+        if is_admin:
+            if 'user_status_id' in data:
+                user.user_status_id = data['user_status_id']
+            if 'user_type_id' in data:
+                user.user_type_id = data['user_type_id']
 
         db.session.commit()
         return jsonify({'message': 'Perfil atualizado com sucesso'}), 200
