@@ -6,17 +6,19 @@ import SimulationResults from '../components/simulation/SimulationResults';
 import { faRotateRight } from '@fortawesome/free-solid-svg-icons';
 import { getSimulationService } from '../services/api';
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export default function SimulationView() {
     const { id } = useParams();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     const [params, setParams] = useState({
-        population: 0,
-        initialInfected: 0,
-        contactRate: 0,
-        recoveryRate: 0,
-        duration: 0
+        population_total: 1000,
+        infected_initial: 1,
+        beta: 0.5,
+        gamma: 0.1,
+        duration: 50
     });
 
     const [simulationData, setSimulationData] = useState(null);
@@ -25,14 +27,15 @@ export default function SimulationView() {
         const fetchSimulation = async () => {
             try {
                 setLoading(true);
+                //await sleep(5000)
                 const data = await getSimulationService(id);
 
-                if (data.parameters) {
+                if (data) {
                     setParams({
-                        population: data.parameters.population_total,
-                        initialInfected: data.parameters.infected_initial,
-                        contactRate: data.parameters.beta,
-                        recoveryRate: data.parameters.gamma,
+                        population_total: data.parameters.population_total,
+                        infected_initial: data.parameters.infected_initial,
+                        beta: data.parameters.beta,
+                        gamma: data.parameters.gamma,
                         duration: data.parameters.duration
                     });
                 }
@@ -55,11 +58,24 @@ export default function SimulationView() {
     }, [id]);
 
     if (loading) {
-        return <div className="p-8 text-center">A carregar simulação...</div>;
-    }
+        return (
+            <div className="flex flex-col gap-6 animate-pulse">
+                <div className="flex justify-between items-center h-[76px]">
+                    <div className="flex flex-col gap-2 items-end flex-1">
+                        <div className="h-8 w-64 bg-background-600 rounded"></div>
+                        <div className="h-4 w-96 bg-background-600 rounded"></div>
+                    </div>
+                </div>
 
+                <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-10 animate-pulse">
+                    <div className="rounded-xl h-[400px] bg-background-600"></div>
+                    <div className="rounded-xl h-[500px] bg-background-600"></div>
+                </div>
+            </div>
+        );
+    }
     if (error) {
-        return <div className="p-8 text-center text-red-500">{error}</div>;
+        return (<p>{error}</p>)
     }
 
     return (

@@ -2,6 +2,7 @@ import { memo } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import logo from '../../assets/medcei_nav_logo.webp';
 
 function Header() {
     const { user, logout } = useAuth();
@@ -26,7 +27,7 @@ function Header() {
     return (
         <header className="select-none bg-white shadow-[0px_3px_5px_-5px_rgba(0,0,0,0.1),0px_7px_20px_-5px_rgba(0,0,0,0.1)] h-[60px] flex items-center px-10 justify-between sticky top-0 z-50">
             <Link to="/" className="h-10 flex items-center">
-                <img src="/medcei_nav_logo.webp" alt="Medcei Logo" className="h-full object-contain" fetchPriority="high" />
+                <img src={logo} alt="Medcei Logo" className="h-full object-contain" fetchPriority="high" />
             </Link>
 
             <div className="flex items-center h-full gap-8">
@@ -36,7 +37,7 @@ function Header() {
                         className={({ isActive }) =>
                             `flex items-center h-full border-b-2 font-montserrat font-semibold text-[14px] transition-colors 
                         ${isActive
-                                ? 'border-primary-500 text-primary-500'
+                                ? 'border-primary-500 text-primary-500 cursor-default'
                                 : 'border-transparent text-neutral-300 hover:text-neutral-500'
                             }`
                         }
@@ -45,9 +46,10 @@ function Header() {
                     </NavLink>
                     <NavLink
                         to="/simulador"
+                        end
                         className={({ isActive }) =>
                             `flex items-center h-full border-b-2 font-montserrat font-semibold text-[14px] transition-colors ${isActive
-                                ? 'border-primary-500 text-primary-500'
+                                ? 'border-primary-500 text-primary-500 cursor-default'
                                 : 'border-transparent text-neutral-300 hover:text-neutral-500'
                             }`
                         }

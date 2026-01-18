@@ -8,6 +8,7 @@ from models import db
 
 mail = Mail()
 
+
 def create_app(config_class=Config):
     # Inicializar a aplicação Flask
     app = Flask(__name__)
@@ -26,7 +27,7 @@ def create_app(config_class=Config):
 
     # Inicializar JWT
     jwt = JWTManager(app)
-    
+
     # Inicializar Mail
     mail.init_app(app)
 
@@ -57,7 +58,7 @@ def create_app(config_class=Config):
             }
         }
     }
-    
+
     swagger = Swagger(app, config=swagger_config)
 
     # Rota para a documentação Scalar (Interface Moderna)

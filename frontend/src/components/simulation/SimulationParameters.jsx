@@ -6,51 +6,18 @@ import { useState } from 'react';
 export default function SimulationParameters({
     title,
     icon,
-    params = {
-        population: 1,
-        initialInfected: 1,
-        contactRate: 0,
-        recoveryRate: 0.01,
-        duration: 1
-    },
+    params,
     onRun,
     onChange,
     readOnly,
     loading
 }) {
 
-    const [populationValue, setpopulationValue] = useState(params.population);
-    const [initialInfectedValue, setinitialInfectedValue] = useState(params.initialInfected);
-    const [contactRateValue, setcontactRateValue] = useState(params.contactRate);
-    const [recoveryRateValue, setrecoveryRateValue] = useState(params.recoveryRate);
-    const [durationValue, setDurationValue] = useState(params.duration);
-
     const handleChange = (paramName, event) => {
-        switch (paramName) {
-            case 'population':
-                setpopulationValue(event.target.value);
-                break;
-            case 'initialInfected':
-                setinitialInfectedValue(event.target.value);
-                break;
-            case 'contactRate':
-                setcontactRateValue(event.target.value);
-                break;
-            case 'recoveryRate':
-                setrecoveryRateValue(event.target.value);
-                break;
-            case 'duration':
-                setDurationValue(event.target.value);
-                break;
-            default:
-                break;
-        }
-
         if (onChange) {
             onChange(paramName, event.target.value);
         }
     };
-
 
     return (
         <Card title={title} icon={icon} className="h-fit">
@@ -60,14 +27,14 @@ export default function SimulationParameters({
                 <div className="grid grid-cols-2 gap-4">
                     {/* Input Populacao */}
                     <div className="group flex flex-col gap-1">
-                        <label htmlFor="population" className="text-neutral-500 text-xs font-montserrat font-semibold group-focus-within:text-primary-500">População Total (N)</label>
+                        <label htmlFor="population_total" className="text-neutral-500 text-xs font-montserrat font-semibold group-focus-within:text-primary-500">População Total (N)</label>
                         <input
-                            id="population"
+                            id="population_total"
                             type="number"
-                            name="population"
+                            name="population_total"
                             min="1"
-                            value={populationValue}
-                            onChange={(e) => handleChange('population', e)}
+                            value={params.population_total}
+                            onChange={(e) => handleChange('population_total', e)}
                             disabled={readOnly || loading}
                             className="w-full border border-neutral-100 rounded-lg px-3 py-2 text-neutral-900 text-sm font-montserrat focus:outline-none focus:border-primary-500 disabled:bg-neutral-50 disabled:text-neutral-400 disabled:opacity-50"
                         />
@@ -75,14 +42,14 @@ export default function SimulationParameters({
 
                     {/* Input Infetados Iniciais */}
                     <div className="group flex flex-col gap-1">
-                        <label htmlFor="initialInfected" className="text-neutral-500 text-xs font-montserrat font-semibold group-focus-within:text-primary-500">Infetados Iniciais (I₀)</label>
+                        <label htmlFor="infected_initial" className="text-neutral-500 text-xs font-montserrat font-semibold group-focus-within:text-primary-500">Infetados Iniciais (I₀)</label>
                         <input
-                            id="initialInfected"
+                            id="infected_initial"
                             type="number"
-                            name="initialInfected"
+                            name="infected_initial"
                             min="1"
-                            value={initialInfectedValue}
-                            onChange={(e) => handleChange('initialInfected', e)}
+                            value={params.infected_initial}
+                            onChange={(e) => handleChange('infected_initial', e)}
                             disabled={readOnly || loading}
                             className="w-full border border-neutral-100 rounded-lg px-3 py-2 text-neutral-900 text-sm font-montserrat focus:outline-none focus:border-primary-500 disabled:bg-neutral-50 disabled:text-neutral-400 disabled:opacity-50"
                         />
@@ -92,16 +59,16 @@ export default function SimulationParameters({
                 {/* Input Taca Contacto */}
                 <div className="grid grid-cols-2 gap-4" >
                     <div className="group flex flex-col gap-1">
-                        <label htmlFor="contactRate" className="text-neutral-500 text-xs font-montserrat font-semibold group-focus-within:text-primary-500">Taxa Contacto (β)</label>
+                        <label htmlFor="beta" className="text-neutral-500 text-xs font-montserrat font-semibold group-focus-within:text-primary-500">Taxa Contacto (β)</label>
                         <input
-                            id="contactRate"
+                            id="beta"
                             type="number"
                             step="0.01"
                             min="0"
                             max="5"
-                            name="contactRate"
-                            value={contactRateValue}
-                            onChange={(e) => handleChange('contactRate', e)}
+                            name="beta"
+                            value={params.beta}
+                            onChange={(e) => handleChange('beta', e)}
                             disabled={readOnly || loading}
                             className="w-full border border-neutral-100 rounded-lg px-3 py-2 text-neutral-900 text-sm font-montserrat focus:outline-none focus:border-primary-500 disabled:bg-neutral-50 disabled:text-neutral-400 disabled:opacity-50"
                         />
@@ -109,16 +76,16 @@ export default function SimulationParameters({
 
                     {/* Input Taxa Recuperacao */}
                     <div className="group flex flex-col gap-1">
-                        <label htmlFor="recoveryRate" className="text-neutral-500 text-xs font-montserrat font-semibold group-focus-within:text-primary-500">Taxa Recup. (γ)</label>
+                        <label htmlFor="gamma" className="text-neutral-500 text-xs font-montserrat font-semibold group-focus-within:text-primary-500">Taxa Recup. (γ)</label>
                         <input
-                            id="recoveryRate"
+                            id="gamma"
                             type="number"
                             step="0.01"
                             min="0.01"
                             max="1"
-                            name="recoveryRate"
-                            value={recoveryRateValue}
-                            onChange={(e) => handleChange('recoveryRate', e)}
+                            name="gamma"
+                            value={params.gamma}
+                            onChange={(e) => handleChange('gamma', e)}
                             disabled={readOnly || loading}
                             className="w-full border border-neutral-100 rounded-lg px-3 py-2 text-neutral-900 text-sm font-montserrat focus:outline-none focus:border-primary-500 disabled:bg-neutral-50 disabled:text-neutral-400 disabled:opacity-50"
                         />
@@ -129,7 +96,7 @@ export default function SimulationParameters({
                 <div className="flex flex-col gap-2 group">
                     <div className="flex justify-between items-center">
                         <label htmlFor="duration" className="text-neutral-500 text-xs font-montserrat font-semibold group-focus-within:text-primary-500">Duração (Dias)</label>
-                        <span htmlFor="duration" className="text-primary-500 text-xs font-montserrat font-bold">{durationValue}</span>
+                        <span htmlFor="duration" className="text-primary-500 text-xs font-montserrat font-bold">{params.duration}</span>
                     </div>
                     <input
                         id="duration"
@@ -137,7 +104,7 @@ export default function SimulationParameters({
                         name="duration"
                         min="1"
                         max="365"
-                        value={durationValue}
+                        value={params.duration}
                         onChange={(e) => handleChange('duration', e)}
                         disabled={readOnly || loading}
                         className="w-full h-2 bg-neutral-100 rounded-lg appearance-none cursor-pointer accent-primary-500 disabled:accent-neutral-300 disabled:cursor-default disabled:opacity-50"
@@ -148,10 +115,11 @@ export default function SimulationParameters({
             {/* Executar Simulacao */}
             {
                 !readOnly && (
-                    <div className="mt-auto pt-5">
+                    <div className="mt-auto pt-4 h-15">
                         <Button
-                            text={loading ? "A Executar..." : "Executar Simulação"}
+                            text={loading ? " " : "Executar Simulação"}
                             width="fill"
+                            height="fill"
                             icon={!loading ? faPlay : faSpinner}
                             spin={loading}
                             onClick={onRun}

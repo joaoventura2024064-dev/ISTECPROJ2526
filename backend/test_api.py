@@ -121,7 +121,6 @@ def test_upload():
                 print("Warning: Could not remove test_image.jpg (file in use)")
 
 
-
 def test_simulation():
     print("\n--- Testing Simulation Creation (Sprint C) ---")
     if not USER_ID:
@@ -140,23 +139,23 @@ def test_simulation():
             "duration": 50
         }
     }
-    
+
     try:
         # 1. Criar Simulação
         response = requests.post(url, json=payload)
         print(f"Create Status: {response.status_code}")
         # print(f"Create Response: {response.json()}") # Verbose
-        
+
         if response.status_code == 201:
             data = response.json()
             global SIM_ID
             SIM_ID = data.get('id')
             sim_id = SIM_ID
-            
+
             # Verificar se os passos vêm logo na resposta (Sprint C Update)
             steps = data.get('steps', [])
             print(f"Steps returned immediately: {len(steps)}")
-            
+
             if len(steps) == 51:
                 print("SUCCESS: Steps returned in Create response.")
             else:
@@ -167,11 +166,11 @@ def test_simulation():
             res_get = requests.get(url_get)
             print(f"Get Status: {res_get.status_code}")
             data_get = res_get.json()
-            
+
             steps_get = data_get.get('steps', [])
             print(f"Steps persisted: {len(steps_get)}")
-            
-            if len(steps_get) == 51: # Dia 0 + 50 dias
+
+            if len(steps_get) == 51:  # Dia 0 + 50 dias
                 print("SUCCESS: Simulation steps persisted correctly.")
                 # Verificar se o último passo tem lógica (S+I+R = N)
                 last_step = steps_get[-1]
@@ -179,10 +178,9 @@ def test_simulation():
                 print(f"Last Step Total Population: {total} (Expected 1000)")
             else:
                 print(f"FAILURE: Expected 51 steps, got {len(steps_get)}")
-                
+
     except Exception as e:
         print(f"Error: {e}")
-
 
 
 def test_export_csv():
@@ -192,22 +190,22 @@ def test_export_csv():
         return
 
     url = f"{BASE_URL}/simulations/{SIM_ID}/export"
-    
+
     try:
         response = requests.get(url)
         print(f"Status: {response.status_code}")
-        
+
         if response.status_code == 200:
             content = response.text
             lines = content.strip().split('\n')
             print(f"CSV Lines received: {len(lines)}")
-            
+
             # Verificar cabeçalho
             if "Day,Susceptible,Infected,Recovered,Rt" in lines[0]:
                 print("SUCCESS: CSV Header is correct.")
             else:
                 print(f"FAILURE: Invalid header: {lines[0]}")
-                
+
             # Verificar se tem linhas de dados
             if len(lines) > 1:
                 print("SUCCESS: CSV contains data.")
@@ -215,7 +213,7 @@ def test_export_csv():
                 print("FAILURE: CSV is empty.")
         else:
             print(f"FAILURE: Status {response.status_code}")
-            
+
     except Exception as e:
         print(f"Error: {e}")
 
@@ -229,5 +227,3 @@ if __name__ == "__main__":
         test_simulation()
         test_export_csv()
         test_export_csv()
-
-
