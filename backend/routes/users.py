@@ -67,19 +67,6 @@ def get_all_users():
 @users_bp.route('/<int:user_id>', methods=['GET'])
 @jwt_required()
 def get_user_profile(user_id):
-    # Verificar autorização (Próprio ou Admin)
-    current_user_id = get_jwt_identity()
-    is_admin = False
-    
-    # Check if admin
-    curr_user = User.query.get(current_user_id)
-    if curr_user:
-        user_type = UserType.query.get(curr_user.user_type_id)
-        if user_type and user_type.label == 'admin':
-            is_admin = True
-            
-    if str(current_user_id) != str(user_id) and not is_admin:
-        return jsonify({'error': 'Acesso não autorizado'}), 403
     """
     Obter perfil do utilizador.
     ---
@@ -137,6 +124,19 @@ def get_user_profile(user_id):
       404:
         description: Utilizador não encontrado
     """
+    # Verificar autorização (Próprio ou Admin)
+    current_user_id = get_jwt_identity()
+    is_admin = False
+    
+    # Check if admin
+    curr_user = User.query.get(current_user_id)
+    if curr_user:
+        user_type = UserType.query.get(curr_user.user_type_id)
+        if user_type and user_type.label == 'admin':
+            is_admin = True
+            
+    if str(current_user_id) != str(user_id) and not is_admin:
+        return jsonify({'error': 'Acesso não autorizado'}), 403
     user = User.query.get_or_404(user_id)
     
     # Obter labels das tabelas de lookup
@@ -161,18 +161,6 @@ def get_user_profile(user_id):
 @users_bp.route('/<int:user_id>', methods=['PUT'])
 @jwt_required()
 def update_user_profile(user_id):
-    # Verificar autorização (Próprio ou Admin)
-    current_user_id = get_jwt_identity()
-    is_admin = False
-    
-    curr_user = User.query.get(current_user_id)
-    if curr_user:
-        user_type = UserType.query.get(curr_user.user_type_id)
-        if user_type and user_type.label == 'admin':
-            is_admin = True
-
-    if str(current_user_id) != str(user_id) and not is_admin:
-        return jsonify({'error': 'Acesso não autorizado'}), 403
     """
     Atualizar perfil do utilizador.
     ---
@@ -238,6 +226,18 @@ def update_user_profile(user_id):
       409:
         description: Email já existe
     """
+    # Verificar autorização (Próprio ou Admin)
+    current_user_id = get_jwt_identity()
+    is_admin = False
+    
+    curr_user = User.query.get(current_user_id)
+    if curr_user:
+        user_type = UserType.query.get(curr_user.user_type_id)
+        if user_type and user_type.label == 'admin':
+            is_admin = True
+
+    if str(current_user_id) != str(user_id) and not is_admin:
+        return jsonify({'error': 'Acesso não autorizado'}), 403
     user = User.query.get_or_404(user_id)
     data = request.get_json()
 
