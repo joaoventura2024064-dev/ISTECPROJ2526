@@ -123,6 +123,12 @@ def get_user_profile(user_id):
             img_url:
               type: string
               example: /static/uploads/user_15_123456_pic.jpg
+            cargo:
+              type: string
+              example: Investigador Chefe
+            about_me:
+              type: string
+              example: Sou um investigador apaixonado por epidemiologia.
             created_at:
               type: string
               example: "2023-10-27T10:00:00"
@@ -146,6 +152,8 @@ def get_user_profile(user_id):
         'gender': gender_label,
         'role': type_label,
         'status': status_label,
+        'cargo': user.cargo,
+        'about_me': user.about_me,
         'img_url': user.img_url,
         'created_at': user.created_at.isoformat()
     }), 200
@@ -187,15 +195,32 @@ def update_user_profile(user_id):
             name:
               type: string
               example: John Doe Updated
-            gender_id:
-              type: integer
-              example: 2
+            email:
+              type: string
+              example: newemail@example.com
+            cargo:
+              type: string
+              example: Investigador Chefe
+            about_me:
+              type: string
+              example: Sou um investigador apaixonado por epidemiologia.
             birth_date:
               type: string
               example: "1990-01-01"
-            password:
+            gender_id:
+              type: integer
+              example: 2
+            currentPassword:
               type: string
-              description: Nova password (opcional)
+              description: Password atual (obrigatória para mudar password)
+              example: oldsecret123
+            newPassword:
+              type: string
+              description: Nova password
+              example: newsecret123
+            confirmNewPassword:
+              type: string
+              description: Confirmação da nova password
               example: newsecret123
     responses:
       200:
@@ -210,6 +235,8 @@ def update_user_profile(user_id):
         description: Dados inválidos ou sem dados
       403:
         description: Acesso não autorizado
+      409:
+        description: Email já existe
     """
     user = User.query.get_or_404(user_id)
     data = request.get_json()
@@ -218,19 +245,68 @@ def update_user_profile(user_id):
         return jsonify({'error': 'Sem dados para atualizar'}), 400
 
     try:
+        # 1. Atualizar campos simples
         if 'name' in data:
             user.name = data['name']
         
+        if 'cargo' in data:
+            # Limitar a 20 caracteres conforme pedido
+            cargo_val = data['cargo']
+            if cargo_val and len(cargo_val) > 20:
+                 return jsonify({'error': 'Cargo não pode ter mais de 20 caracteres'}), 400
+            user.cargo = cargo_val
+
+        if 'about_me' in data:
+            user.about_me = data['about_me']
+
         if 'birth_date' in data:
-            # Assumindo formato YYYY-MM-DD
-            # TODO: Adicionar conversão de string para date object se necessário
-            pass 
+            bdate = data['birth_date']
+            if bdate:
+                try:
+                    # Tentar converter se for string
+                    if isinstance(bdate, str):
+                        user.birth_date = datetime.strptime(bdate, '%Y-%m-%d').date()
+                    else:
+                        # Assumir que já é date object ou compatível
+                        user.birth_date = bdate
+                except ValueError:
+                    return jsonify({'error': 'Data de nascimento inválida. Use YYYY-MM-DD'}), 400
+            else:
+                user.birth_date = None
 
         if 'gender_id' in data:
             user.gender_id = data['gender_id']
 
-        if 'password' in data and data['password']:
-            user.password_hash = generate_password_hash(data['password'])
+        # 2. Atualizar Email
+        if 'email' in data and data['email'] != user.email:
+            new_email = data['email']
+            # Verificar se já existe outro user com este email
+            existing = User.query.filter_by(email=new_email).first()
+            if existing:
+                return jsonify({'error': 'Este email já está em uso'}), 409
+            user.email = new_email
+
+        # 3. Atualizar Password
+        if 'newPassword' in data and data['newPassword']:
+            current_password = data.get('currentPassword')
+            new_password = data.get('newPassword')
+            confirm_password = data.get('confirmNewPassword')
+
+            # Validar input
+            if not current_password:
+                return jsonify({'error': 'Password atual é necessária para definir uma nova'}), 400
+            
+            # Verificar password atual
+            from werkzeug.security import check_password_hash
+            if not check_password_hash(user.password_hash, current_password):
+                 return jsonify({'error': 'Password atual incorreta'}), 400
+
+            # Verificar confirmação
+            if new_password != confirm_password:
+                return jsonify({'error': 'A nova password e a confirmação não coincidem'}), 400
+
+            # Atualizar hash
+            user.password_hash = generate_password_hash(new_password)
 
         # Admin pode alterar status e role
         if is_admin:
