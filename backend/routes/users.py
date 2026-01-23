@@ -502,3 +502,122 @@ def get_user_simulations_impl(user_id):
         })
     
     return jsonify(results), 200
+
+@users_bp.route('/<int:user_id>/status', methods=['PATCH'])
+@admin_required()
+def update_user_status(user_id):
+    """
+    Alterar estado do utilizador (Bloquear/Desbloquear) - Admin Only.
+    ---
+    tags:
+      - Users
+    security:
+      - Bearer: []
+    parameters:
+      - in: path
+        name: user_id
+        type: integer
+        required: true
+        description: ID do utilizador
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          required:
+            - status
+          properties:
+            status:
+              type: string
+              description: Novo estado (active, suspended, pending)
+              example: suspended
+    responses:
+      200:
+        description: Estado atualizado com sucesso
+      400:
+        description: Estado inválido
+      403:
+        description: Acesso restrito a Administradores
+      404:
+        description: Utilizador não encontrado
+    """
+    user = User.query.get_or_404(user_id)
+    data = request.get_json()
+    
+    if not data or 'status' not in data:
+        return jsonify({'error': 'Campo status é obrigatório'}), 400
+        
+    new_status_label = data['status']
+    
+    # Validar se o estado existe na BD
+    status_obj = UserStatus.query.filter_by(label=new_status_label).first()
+    if not status_obj:
+        return jsonify({'error': f'Estado inválido. Opções: active, suspended, pending'}), 400
+        
+    try:
+        user.user_status_id = status_obj.id
+        db.session.commit()
+        return jsonify({'message': f'Estado do utilizador alterado para {new_status_label}'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
+@users_bp.route('/<int:user_id>/role', methods=['PATCH'])
+@admin_required()
+def update_user_role(user_id):
+    """
+    Alterar role do utilizador (Promover/Despromover) - Admin Only.
+    ---
+    tags:
+      - Users
+    security:
+      - Bearer: []
+    parameters:
+      - in: path
+        name: user_id
+        type: integer
+        required: true
+        description: ID do utilizador
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          required:
+            - role
+          properties:
+            role:
+              type: string
+              description: Novo role (admin, registered, researcher)
+              example: admin
+    responses:
+      200:
+        description: Role atualizado com sucesso
+      400:
+        description: Role inválido
+      403:
+        description: Acesso restrito a Administradores
+      404:
+        description: Utilizador não encontrado
+    """
+    user = User.query.get_or_404(user_id)
+    data = request.get_json()
+    
+    if not data or 'role' not in data:
+        return jsonify({'error': 'Campo role é obrigatório'}), 400
+        
+    new_role_label = data['role']
+    
+    # Validar se o role existe na BD
+    role_obj = UserType.query.filter_by(label=new_role_label).first()
+    if not role_obj:
+        return jsonify({'error': f'Role inválido. Opções: admin, registered, researcher'}), 400
+        
+    try:
+        user.user_type_id = role_obj.id
+        db.session.commit()
+        return jsonify({'message': f'Role do utilizador alterado para {new_role_label}'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
