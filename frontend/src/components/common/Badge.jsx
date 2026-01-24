@@ -2,7 +2,7 @@ import { memo } from 'react';
 
 function Badge({ text, variant = 'default', size = 'medium', border = false, className = '', }) {
 
-    const base = `inline-flex items-center rounded-full text-xs font-medium inset-ring  ${size === 'medium' ? "px-2 py-1" : "px-1.5 py-0.5"} ${border ? "border border-base-600" : ""}`;
+    const base = `inline-flex items-center rounded-full text-xs font-medium inset-ring  ${size === 'medium' ? "px-2 py-1" : "px-1.5 py-0.5"} ${border ? "border border-base-600" : ""} pointer-events-none`;
 
     const colors = {
         default: "base-800",
