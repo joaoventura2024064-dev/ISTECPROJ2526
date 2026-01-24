@@ -72,6 +72,7 @@ class User(db.Model):
     img_url = db.Column(db.String(255), nullable=True) # URL para a imagem de perfil
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow) # Data de registo automática
+    last_login = db.Column(db.DateTime, nullable=True) # Data do último login
 
     # Chaves Estrangeiras (Foreign Keys)
     # Ligam este utilizador às tabelas de lookup
