@@ -1,22 +1,24 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
+import { faEnvelope, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import Button from '../common/Button';
 import { toast } from 'sonner';
 
 export default function RecoverPasswordCard() {
-    const [status, setStatus] = useState('idle');
     const [email, setEmail] = useState('');
     const { recoverPassword } = useAuth();
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        setLoading(true);
         if (!email) {
             toast.error("Por favor, preencha todos os campos.");
+            setLoading(false);
             return;
         }
 
@@ -25,14 +27,14 @@ export default function RecoverPasswordCard() {
             toast.error("Email inválido.");
             return;
         }
-        setStatus('loading');
         const result = await recoverPassword(email);
 
         if (result.success) {
+            toast.success('Email enviado com sucesso.');
             navigate('/');
         } else {
-            toast.error(result.error || 'Erro ao iniciar sessão.');
-            setStatus('idle');
+            toast.error(result.error || 'Erro ao enviar email.');
+            setLoading(false);
         }
     };
 
@@ -65,6 +67,7 @@ export default function RecoverPasswordCard() {
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="exemplo@email.com"
                             className="w-full pl-10 pr-4 py-3 border border-neutral-100 rounded-lg text-neutral-500 placeholder-neutral-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 font-montserrat text-[14px] transition-colors bg-white shadow-sm"
+                            disabled={loading}
                             required
                         />
                     </div>
@@ -72,9 +75,12 @@ export default function RecoverPasswordCard() {
             </form>
             <Button
                 onClick={handleSubmit}
-                text="Enviar"
+                text={loading ? "A enviar..." : "Enviar"}
                 variant="primary"
                 width='fill'
+                icon={loading ? faSpinner : ""}
+                spin={loading}
+                disabled={loading}
             />
         </div>
     );

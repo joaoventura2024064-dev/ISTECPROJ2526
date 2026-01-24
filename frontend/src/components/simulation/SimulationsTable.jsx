@@ -1,9 +1,9 @@
-import { TrashSolid } from "iconoir-react";
 import { Typography } from "@material-tailwind/react";
-import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { faChevronLeft, faChevronRight, faTrash } from "@fortawesome/free-solid-svg-icons";
 import Button from "../common/Button";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const TABLE_HEAD = ["Simulação", "População", "Infetados Iniciais", "Taxa Contacto", "Taxa Recuperação", "Duração", ""];
 //const TABLE_HEAD = ["Simulação", "Pop.", "Inf. Inic.", "Tx. Cont.", "Tx. Rec.", "Duração", ""];
@@ -117,7 +117,7 @@ export default function SimulationsTable({ data = [], isLoading = false, onDelet
                                                     onDelete(id);
                                                 }}
                                             >
-                                                <TrashSolid className="h-5 w-5 text-neutral-100 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 group-hover/delete:text-red-500 group-hover/delete:transition-colors group-hover/delete:duration-200" />
+                                                <FontAwesomeIcon icon={faTrash} className="h-5 w-5 text-neutral-100 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 group-hover/delete:text-red-500 group-hover/delete:transition-colors group-hover/delete:duration-200" />
                                             </td>
                                         </tr>
                                     );

@@ -31,10 +31,10 @@ const SimulationResults = memo(function SimulationResults({
                     <div className="flex flex-col items-center justify-center gap-4 text-neutral-400  h-full">
                         <div className="flex flex-col items-center justify-center text-neutral-400  h-full">
                             <img src={imagem} className={`w-[222px] h-[222px] ${status === 'loading' ? 'animate-pulse' : ''}`}></img>
-                            <p className="font-montserrat font-bold text-2xl text-neutral-600">
+                            <p className="headings-h1 text-neutral-400">
                                 {status === 'loading' ? 'A Processar...' : 'A Aguardar Execução...'}
                             </p>
-                            <p className="font-montserrat text-neutral-400 mt-2">
+                            <p className="caption-name text-neutral-400 mt-2">
                                 {status === 'loading' ? 'Estamos a gerar o seu gráfico...' : 'Estamos a aguardar os seus dados.'}
                             </p>
                         </div>
@@ -44,12 +44,8 @@ const SimulationResults = memo(function SimulationResults({
                         <div className="flex flex-col items-center justify-center text-neutral-400  h-full">
                             <img src={imagem} className="w-[222px] h-[222px] grayscale-[1]"></img>
                             <div className="text-center">
-                                <p className="font-montserrat font-bold text-2xl text-neutral-600">
-                                    Ocorreu um erro
-                                </p>
-                                <p className="font-montserrat text-neutral-400 mt-2">
-                                    Não foi possível executar a simulação.
-                                </p>
+                                <p className="headings-h1 text-neutral-400">Ocorreu um erro</p>
+                                <p className="caption-name text-neutral-400 mt-2">Não foi possível executar a simulação.</p>
                             </div>
                         </div>
                     </div>

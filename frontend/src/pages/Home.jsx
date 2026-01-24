@@ -54,7 +54,7 @@ export default function Home() {
         <div className="w-full flex flex-col gap-6">
             <PageHeader
                 title="Histórico de Simulações"
-                subTitle="Histórico de Simulações"
+                subTitle="Consulte, compare e retome as suas experiências passadas."
                 primaryActionButton={{
                     text: "Nova Simulação",
                     icon: faChartLine,

@@ -11,6 +11,8 @@ const RecoverPassword = lazy(() => import('./pages/RecoverPassword'));
 const NewSimulation = lazy(() => import('./pages/NewSimulation'));
 const SimulationView = lazy(() => import('./pages/SimulationView'));
 const Profile = lazy(() => import('./pages/Profile'));
+const UsersManagement = lazy(() => import('./pages/UsersManagement'));
+const UserDetail = lazy(() => import('./pages/UserDetail'));
 
 function App() {
   return (
@@ -32,6 +34,8 @@ function App() {
                 <Route path="simulador" element={<NewSimulation />} />
                 <Route path="simulador/:id" element={<SimulationView />} />
                 <Route path="perfil" element={<Profile />} />
+                <Route path="utilizadores" element={<UsersManagement />} />
+                <Route path="utilizador/:id" element={<UserDetail />} />
               </Route>
             </Route>
           </Routes>

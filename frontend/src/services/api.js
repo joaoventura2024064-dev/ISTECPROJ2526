@@ -78,3 +78,22 @@ export const deleteSimulationService = async (simulationId) => {
     return response.data;
 };
 
+export const getUsersService = async () => {
+    const response = await api.get(`/api/users/`);
+    return response.data;
+};
+
+export const getUserService = async (userId) => {
+    const response = await api.get(`/api/users/${userId}`);
+    return response.data;
+};
+
+export const updateUserService = async (userId, params) => {
+    const response = await api.put(`/api/users/${userId}`, params);
+    return response.data;
+};
+
+export const changePasswordService = async (userId, params) => {
+    const response = await api.put(`/api/users/${userId}/change-password`, params);
+    return response.data;
+};

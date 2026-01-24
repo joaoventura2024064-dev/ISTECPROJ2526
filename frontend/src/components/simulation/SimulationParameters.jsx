@@ -26,8 +26,8 @@ export default function SimulationParameters({
                 {/* Grid de Inputs */}
                 <div className="grid grid-cols-2 gap-4">
                     {/* Input Populacao */}
-                    <div className="group flex flex-col gap-1">
-                        <label htmlFor="population_total" className="text-neutral-500 text-xs font-montserrat font-semibold group-focus-within:text-primary-500">População Total (N)</label>
+                    <div className="group flex flex-col gap-2.5">
+                        <label htmlFor="population_total" className="text-neutral-500 body-medium group-focus-within:text-primary-500">População Total (N)</label>
                         <input
                             id="population_total"
                             type="number"
@@ -36,13 +36,13 @@ export default function SimulationParameters({
                             value={params.population_total}
                             onChange={(e) => handleChange('population_total', e)}
                             disabled={readOnly || loading}
-                            className="w-full border border-neutral-100 rounded-lg px-3 py-2 text-neutral-900 text-sm font-montserrat focus:outline-none focus:border-primary-500 disabled:bg-neutral-50 disabled:text-neutral-400 disabled:opacity-50"
+                            className="w-full border border-neutral-100 rounded-lg px-3 py-2 text-neutral-900 body-medium focus:outline-none focus:border-primary-500 disabled:bg-neutral-50 disabled:text-neutral-400 disabled:opacity-50"
                         />
                     </div>
 
                     {/* Input Infetados Iniciais */}
-                    <div className="group flex flex-col gap-1">
-                        <label htmlFor="infected_initial" className="text-neutral-500 text-xs font-montserrat font-semibold group-focus-within:text-primary-500">Infetados Iniciais (I₀)</label>
+                    <div className="group flex flex-col gap-2.5">
+                        <label htmlFor="infected_initial" className="text-neutral-500 body-medium group-focus-within:text-primary-500">Infetados Iniciais (I₀)</label>
                         <input
                             id="infected_initial"
                             type="number"
@@ -51,15 +51,15 @@ export default function SimulationParameters({
                             value={params.infected_initial}
                             onChange={(e) => handleChange('infected_initial', e)}
                             disabled={readOnly || loading}
-                            className="w-full border border-neutral-100 rounded-lg px-3 py-2 text-neutral-900 text-sm font-montserrat focus:outline-none focus:border-primary-500 disabled:bg-neutral-50 disabled:text-neutral-400 disabled:opacity-50"
+                            className="w-full border border-neutral-100 rounded-lg px-3 py-2 text-neutral-900 body-medium focus:outline-none focus:border-primary-500 disabled:bg-neutral-50 disabled:text-neutral-400 disabled:opacity-50"
                         />
                     </div>
                 </div>
 
                 {/* Input Taca Contacto */}
                 <div className="grid grid-cols-2 gap-4" >
-                    <div className="group flex flex-col gap-1">
-                        <label htmlFor="beta" className="text-neutral-500 text-xs font-montserrat font-semibold group-focus-within:text-primary-500">Taxa Contacto (β)</label>
+                    <div className="group flex flex-col gap-2.5">
+                        <label htmlFor="beta" className="text-neutral-500 body-medium group-focus-within:text-primary-500">Taxa Contacto (β)</label>
                         <input
                             id="beta"
                             type="number"
@@ -70,13 +70,13 @@ export default function SimulationParameters({
                             value={params.beta}
                             onChange={(e) => handleChange('beta', e)}
                             disabled={readOnly || loading}
-                            className="w-full border border-neutral-100 rounded-lg px-3 py-2 text-neutral-900 text-sm font-montserrat focus:outline-none focus:border-primary-500 disabled:bg-neutral-50 disabled:text-neutral-400 disabled:opacity-50"
+                            className="w-full border border-neutral-100 rounded-lg px-3 py-2 text-neutral-900 body-medium focus:outline-none focus:border-primary-500 disabled:bg-neutral-50 disabled:text-neutral-400 disabled:opacity-50"
                         />
                     </div>
 
                     {/* Input Taxa Recuperacao */}
-                    <div className="group flex flex-col gap-1">
-                        <label htmlFor="gamma" className="text-neutral-500 text-xs font-montserrat font-semibold group-focus-within:text-primary-500">Taxa Recup. (γ)</label>
+                    <div className="group flex flex-col gap-2.5">
+                        <label htmlFor="gamma" className="text-neutral-500 body-medium group-focus-within:text-primary-500">Taxa Recup. (γ)</label>
                         <input
                             id="gamma"
                             type="number"
@@ -87,16 +87,16 @@ export default function SimulationParameters({
                             value={params.gamma}
                             onChange={(e) => handleChange('gamma', e)}
                             disabled={readOnly || loading}
-                            className="w-full border border-neutral-100 rounded-lg px-3 py-2 text-neutral-900 text-sm font-montserrat focus:outline-none focus:border-primary-500 disabled:bg-neutral-50 disabled:text-neutral-400 disabled:opacity-50"
+                            className="w-full border border-neutral-100 rounded-lg px-3 py-2 text-neutral-900 body-medium focus:outline-none focus:border-primary-500 disabled:bg-neutral-50 disabled:text-neutral-400 disabled:opacity-50"
                         />
                     </div>
                 </div>
 
                 {/* Slider Duracao */}
-                <div className="flex flex-col gap-2 group">
+                <div className="flex flex-col gap-2.5 group">
                     <div className="flex justify-between items-center">
-                        <label htmlFor="duration" className="text-neutral-500 text-xs font-montserrat font-semibold group-focus-within:text-primary-500">Duração (Dias)</label>
-                        <span htmlFor="duration" className="text-primary-500 text-xs font-montserrat font-bold">{params.duration}</span>
+                        <label htmlFor="duration" className="text-neutral-500 body-medium group-focus-within:text-primary-500">Duração (Dias)</label>
+                        <span htmlFor="duration" className="text-primary-500 body-strong">{params.duration}</span>
                     </div>
                     <input
                         id="duration"

@@ -81,19 +81,21 @@ function Header() {
                     {isDropdownOpen && (
                         <div className="absolute right-0 mt-1 w-56 bg-white rounded-xl shadow-xl border border-base-600 overflow-hidden py-1 z-50">
                             <Link
-                                to="/perfil"
+                                to={`/utilizador/${user.id}`}
                                 className="block px-4 py-3 text-sm font-montserrat font-medium text-neutral-500 hover:text-primary-700 transition-colors"
                                 onClick={() => setIsDropdownOpen(false)}
                             >
                                 Meu perfil
                             </Link>
-                            <Link
-                                to="#"
-                                className="block px-4 py-3 text-sm font-montserrat font-medium text-neutral-500 hover:text-primary-700 transition-colors"
-                                onClick={() => setIsDropdownOpen(false)}
-                            >
-                                Gestão de utilizadores
-                            </Link>
+                            {user?.role === 'admin' && (
+                                <Link
+                                    to="/utilizadores"
+                                    className="block px-4 py-3 text-sm font-montserrat font-medium text-neutral-500 hover:text-primary-700 transition-colors"
+                                    onClick={() => setIsDropdownOpen(false)}
+                                >
+                                    Gestão de utilizadores
+                                </Link>
+                            )}
                             <div className="h-px bg-base-600 my-1"></div>
                             <button
                                 onClick={() => {

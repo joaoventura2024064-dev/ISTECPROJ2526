@@ -1,13 +1,17 @@
 import { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { runSimulationService } from '../services/api';
 import PageHeader from '../components/common/PageHeader';
 import SimulationResults from '../components/simulation/SimulationResults';
 import SimulationParameters from '../components/simulation/SimulationParameters';
-import { faRotateRight } from '@fortawesome/free-solid-svg-icons';
+import { faEnvelope, faRotateRight } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'sonner';
+import Modal from '../components/common/Modal';
+import Button from '../components/common/Button';
 
 export default function NewSimulation() {
+    const navigate = useNavigate();
     const auth = useAuth();
     const [status, setStatus] = useState('idle');
     const [results, setResults] = useState(null);
@@ -22,6 +26,8 @@ export default function NewSimulation() {
         },
         user_id: auth.user.id
     });
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [simulationName, setSimulationName] = useState('');
 
     const handleParamChange = (key, value) => {
         setParams(prev => ({
@@ -60,8 +66,20 @@ export default function NewSimulation() {
     };
 
     const handleSave = useCallback(() => {
-        toast.success("Simulação guardada com sucesso.");
+        setSimulationName('');
+        setIsModalOpen(true);
     }, []);
+
+    const handleConfirmSave = () => {
+        if (!simulationName.trim()) {
+            toast.error("Por favor, insira um nome para a simulação.");
+            return;
+        }
+
+        toast.success(`Simulação "${simulationName}" guardada com sucesso.`);
+        setIsModalOpen(false);
+        navigate(`/`);
+    };
 
     return (
         <div className="flex flex-col gap-6">
@@ -86,6 +104,45 @@ export default function NewSimulation() {
                     onSave={handleSave}
                 />
             </div>
-        </div>
+
+
+            <Modal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                title="Guardar Simulação"
+                subTitle="Dê um nome à sua simulação para a consultar mais tarde no histórico."
+                showExitButton={false}
+            >
+                <div className="flex flex-col p-7.5 border-b border-background-600">
+                    <div className="group flex flex-col gap-2.5">
+                        <label htmlFor="simulationName" className="text-neutral-500 body-medium group-focus-within:text-primary-500">Nome da Simulação</label>
+                        <input
+                            id="simulationName"
+                            type="text"
+                            value={simulationName}
+                            onChange={(e) => setSimulationName(e.target.value)}
+                            className="w-full border border-neutral-100 rounded-lg px-3 py-2 text-neutral-900 body-medium focus:outline-none focus:border-primary-500 disabled:bg-neutral-50 disabled:text-neutral-400 disabled:opacity-50"
+                            placeholder="Ex: Simulação de Teste #1"
+                            autoFocus
+                        />
+                    </div>
+                </div>
+                <div className="flex justify-end gap-10 px-7.5 py-5 bg-background-200">
+                    <div className="flex justify-end gap-10">
+                        <Button
+                            text="Cancelar"
+                            variant="ghost"
+                            onClick={() => setIsModalOpen(false)}
+                        />
+                        <Button
+                            text="Guardar"
+                            icon={faEnvelope}
+                            variant="primary"
+                            onClick={handleConfirmSave}
+                        />
+                    </div>
+                </div>
+            </Modal>
+        </div >
     );
 }
