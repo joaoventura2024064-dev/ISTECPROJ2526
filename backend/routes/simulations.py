@@ -119,6 +119,9 @@ def create_simulation():
             description:
               type: string
               example: Simulação de Teste
+            seed:
+              type: integer
+              example: 123456789
             parameters:
               type: object
               required:
@@ -213,6 +216,9 @@ def preview_simulation():
           required:
             - parameters
           properties:
+            seed:
+              type: integer
+              example: 123456789
             parameters:
               type: object
               required:
