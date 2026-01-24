@@ -8,6 +8,7 @@ const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
 const RecoverPassword = lazy(() => import('./pages/RecoverPassword'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const NewSimulation = lazy(() => import('./pages/NewSimulation'));
 const SimulationView = lazy(() => import('./pages/SimulationView'));
 const UsersManagement = lazy(() => import('./pages/UsersManagement'));
@@ -26,6 +27,7 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/registar" element={<Register />} />
               <Route path="/recuperar-password" element={<RecoverPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
             </Route>
             <Route element={<ProtectedRoute />}>
               <Route path="/" element={<Layout />}>
@@ -36,10 +38,10 @@ function App() {
                 <Route path="utilizador/:id" element={<UserDetail />} />
               </Route>
             </Route>
-          </Routes>
-        </Suspense>
-      </BrowserRouter>
-    </AuthProvider>
+          </Routes >
+        </Suspense >
+      </BrowserRouter >
+    </AuthProvider >
   );
 }
 
