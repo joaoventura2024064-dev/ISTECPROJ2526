@@ -7,9 +7,10 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+
 const TABLE_HEAD = ["Nome", "Estado", "Data Criação", "Último Login", "Total de Simulações", ""];
 
-export default function UsersTable({ users = [], isLoading = false, onDelete }) {
+export default function UsersTable({ users = [], isLoading = false, onDelete, HandleToggleBlock, HandleToggleAdmin }) {
     const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useState(1);
     const [openDropdownId, setOpenDropdownId] = useState(null);
@@ -32,7 +33,9 @@ export default function UsersTable({ users = [], isLoading = false, onDelete }) 
 
     const totalPages = Math.ceil(users.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const paginatedUsers = users.slice(startIndex, startIndex + itemsPerPage);
+
+    const sortedUsers = [...users].sort((a, b) => a.name.localeCompare(b.name));
+    const paginatedUsers = sortedUsers.slice(startIndex, startIndex + itemsPerPage);
 
     const handlePrevious = () => {
         if (currentPage > 1) {
@@ -114,12 +117,12 @@ export default function UsersTable({ users = [], isLoading = false, onDelete }) 
                                             </td>
                                             <td className="p-3">
                                                 <div className="text-center">
-                                                    <Typography className="!text-neutral-300">{created_at}</Typography>
+                                                    <Typography className="!text-neutral-300">{new Date(created_at).toLocaleDateString()}</Typography>
                                                 </div>
                                             </td>
                                             <td className="p-3">
                                                 <div className="text-center">
-                                                    <Typography className="!text-neutral-300">{last_login}</Typography>
+                                                    <Typography className="!text-neutral-300">{last_login ? new Date(last_login).toLocaleDateString() : 'Nunca'}</Typography>
                                                 </div>
                                             </td>
                                             <td className="p-3">
@@ -155,7 +158,9 @@ export default function UsersTable({ users = [], isLoading = false, onDelete }) 
                                                             <div className="flex flex-col py-1">
                                                                 <button
                                                                     onClick={() => {
-                                                                        // onToggleBlock(id);
+                                                                        console.log(`De: ${status}`);
+                                                                        console.log(`Para: ${status === 'active' ? 'suspended' : 'active'}`);
+                                                                        HandleToggleBlock(id, status === 'active' ? 'suspended' : 'active');
                                                                         setOpenDropdownId(null);
                                                                     }}
                                                                     className="text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-primary-600 transition-colors bg-white font-montserrat font-medium"
@@ -164,22 +169,12 @@ export default function UsersTable({ users = [], isLoading = false, onDelete }) 
                                                                 </button>
                                                                 <button
                                                                     onClick={() => {
-                                                                        // onResetPassword(id);
+                                                                        HandleToggleAdmin(id, role === 'admin' ? 'registered' : 'admin');
                                                                         setOpenDropdownId(null);
                                                                     }}
                                                                     className="text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-primary-600 transition-colors bg-white font-montserrat font-medium"
                                                                 >
-                                                                    Redefinir Senha
-                                                                </button>
-                                                                <div className="h-px bg-neutral-100 my-1"></div>
-                                                                <button
-                                                                    onClick={() => {
-                                                                        onDelete(id);
-                                                                        setOpenDropdownId(null);
-                                                                    }}
-                                                                    className="text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50 transition-colors bg-white font-montserrat font-medium"
-                                                                >
-                                                                    Apagar
+                                                                    {role === 'admin' ? 'Remover Admin' : 'Promover a Admin'}
                                                                 </button>
                                                             </div>
                                                         </div>,

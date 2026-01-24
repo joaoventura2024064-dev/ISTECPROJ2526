@@ -97,3 +97,13 @@ export const updateUserService = async (userId, params) => {
     const response = await api.put(`/api/users/${userId}`, params);
     return response.data;
 };
+
+export const changeUserStatusService = async (userId, status) => {
+    const response = await api.patch(`/api/users/${userId}/status`, { status });
+    return response.data;
+};
+
+export const changeUserRoleService = async (userId, role) => {
+    const response = await api.patch(`/api/users/${userId}/role`, { role });
+    return response.data;
+};

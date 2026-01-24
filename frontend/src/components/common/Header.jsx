@@ -7,7 +7,7 @@ import logo from '../../assets/medcei_nav_logo.webp';
 function Header() {
     const { user, logout } = useAuth();
     const userName = user?.name || 'Utilizador';
-    const userRole = 'Administrador';
+    const userRole = user?.cargo || 'Sem Cargo';
     const userInitial = userName.charAt(0).toUpperCase();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);

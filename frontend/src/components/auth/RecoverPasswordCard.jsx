@@ -16,24 +16,31 @@ export default function RecoverPasswordCard() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        if (!email) {
-            toast.error("Por favor, preencha todos os campos.");
-            setLoading(false);
-            return;
-        }
+        try {
+            if (!email.trim()) {
+                toast.error("Por favor, preencha o seu email.");
+                return;
+            }
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            toast.error("Email inválido.");
-            return;
-        }
-        const result = await recoverPassword(email);
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                toast.error("Email inválido.");
+                return;
+            }
 
-        if (result.success) {
-            toast.success('Email enviado com sucesso.');
-            navigate('/');
-        } else {
-            toast.error(result.error || 'Erro ao enviar email.');
+            const result = await recoverPassword(email);
+
+            if (result.success) {
+                toast.success('Email enviado com sucesso.');
+                navigate('/login');
+            } else {
+                toast.error(result.error || 'Erro ao enviar email.');
+            }
+        }
+        catch (error) {
+            toast.error(error.message);
+        }
+        finally {
             setLoading(false);
         }
     };

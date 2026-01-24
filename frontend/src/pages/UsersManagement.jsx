@@ -4,7 +4,7 @@ import PageHeader from '../components/common/PageHeader';
 import UsersTable from '../components/common/UsersTable';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'sonner';
-import { getUsersService } from '../services/api';
+import { getUsersService, changeUserStatusService, changeUserRoleService } from '../services/api';
 
 export default function UsersManagement() {
     const navigate = useNavigate();
@@ -33,10 +33,27 @@ export default function UsersManagement() {
         }
     };
 
+    const HandleToggleBlock = async (id, status) => {
+        try {
+            await changeUserStatusService(id, status);
+            fetchUsers();
+        } catch (error) {
+            toast.error('Erro a bloquear/desbloquear o utilizador');
+        }
+    };
+
+    const HandleToggleAdmin = async (id, role) => {
+        try {
+            await changeUserRoleService(id, role);
+            fetchUsers();
+        } catch (error) {
+            toast.error('Erro a promover/remover admin');
+        }
+    };
     return (
         <div className="w-full flex flex-col gap-6">
-            <PageHeader title="Gestão de Utilizadores" subTitle="Consulte, edite e gerencie as contas da plataforma." />
-            <UsersTable users={users} isLoading={loading} />
+            <PageHeader title="Gestão de Utilizadores" subTitle="Consulte e edite as contas da plataforma." />
+            <UsersTable users={users} isLoading={loading} HandleToggleBlock={HandleToggleBlock} HandleToggleAdmin={HandleToggleAdmin} />
         </div>
     );
 }
