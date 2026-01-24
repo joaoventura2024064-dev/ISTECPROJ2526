@@ -183,6 +183,12 @@ def login():
                 role:
                   type: string
                   example: registered
+                img_url:
+                  type: string
+                  example: /static/uploads/user_15_123456_pic.jpg
+                cargo:
+                  type: string
+                  example: Investigador Chefe
       401:
         description: Credenciais inválidas
         schema:
@@ -222,6 +228,10 @@ def login():
     role_label = UserType.query.get(user.user_type_id).label
     access_token = create_access_token(identity=str(user.id), additional_claims={'role': role_label})
 
+    # 5. Atualizar last_login
+    user.last_login = datetime.utcnow()
+    db.session.commit()
+
     return jsonify({
         'message': 'Login efetuado com sucesso',
         'access_token': access_token,
@@ -229,7 +239,9 @@ def login():
             'id': user.id,
             'name': user.name,
             'email': user.email,
-            'role': UserType.query.get(user.user_type_id).label
+            'role': UserType.query.get(user.user_type_id).label,
+            'img_url': user.img_url,
+            'cargo': user.cargo
         }
     }), 200
 

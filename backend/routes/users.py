@@ -43,6 +43,15 @@ def get_all_users():
               created_at:
                 type: string
                 example: "2023-10-27T10:00:00"
+              total_simulations:
+                type: integer
+                example: 5
+              last_login:
+                type: string
+                example: "2023-10-28T12:00:00"
+              cargo:
+                type: string
+                example: Investigador Chefe
       403:
         description: Acesso restrito a Administradores
     """
@@ -59,7 +68,10 @@ def get_all_users():
                 'email': user.email,
                 'role': type_label,
                 'status': status_label,
-                'created_at': user.created_at.isoformat()
+                'created_at': user.created_at.isoformat(),
+                'total_simulations': len(user.simulations),
+                'last_login': user.last_login.isoformat() if user.last_login else None,
+                'cargo': user.cargo
             })
         return jsonify(results), 200
     return get_all_users_wrapper()
