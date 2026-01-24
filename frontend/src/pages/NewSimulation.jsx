@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { runSimulationService } from '../services/api';
+import { runSimulationService, saveSimulationService } from '../services/api';
 import PageHeader from '../components/common/PageHeader';
 import SimulationResults from '../components/simulation/SimulationResults';
 import SimulationParameters from '../components/simulation/SimulationParameters';
@@ -16,6 +16,7 @@ export default function NewSimulation() {
     const [status, setStatus] = useState('idle');
     const [results, setResults] = useState(null);
     const [steps, setSteps] = useState(null);
+    const [seed, setSeed] = useState(null);
     const [params, setParams] = useState({
         parameters: {
             population_total: 1,
@@ -23,8 +24,7 @@ export default function NewSimulation() {
             beta: 0.1,
             gamma: 0.1,
             duration: 1
-        },
-        user_id: auth.user.id
+        }
     });
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [simulationName, setSimulationName] = useState('');
@@ -34,7 +34,7 @@ export default function NewSimulation() {
             ...prev,
             parameters: {
                 ...prev.parameters,
-                [key]: value
+                [key]: Number(value)
             }
         }));
     };
@@ -42,26 +42,25 @@ export default function NewSimulation() {
     const handleRunSimulation = async () => {
         setStatus('loading');
 
+        if (params.parameters.population_total < params.parameters.infected_initial) {
+            toast.error('A população total deve ser maior que a população infectada inicial.');
+            setStatus('error');
+            return;
+        }
         try {
-            const numericParams = {
-                ...params,
-                parameters: {
-                    population_total: Number(params.parameters.population_total),
-                    infected_initial: Number(params.parameters.infected_initial),
-                    beta: Number(params.parameters.beta),
-                    gamma: Number(params.parameters.gamma),
-                    duration: Number(params.parameters.duration)
-                }
-            };
-
-            const data = await runSimulationService(numericParams);
+            const data = await runSimulationService(params);
             setResults(data);
-            setSteps(data.steps);
+            setSteps(data.results);
+            setSeed(data.seed);
             //await new Promise(resolve => setTimeout(resolve, 2000));
             setStatus('success');
         } catch (error) {
+            if (error.response?.data?.error) {
+                toast.error(error.response.data.error);
+            } else {
+                toast.error('Erro ao executar simulação!');
+            }
             setStatus('error');
-            toast.error("Erro ao executar simulação.");
         }
     };
 
@@ -70,15 +69,29 @@ export default function NewSimulation() {
         setIsModalOpen(true);
     }, []);
 
-    const handleConfirmSave = () => {
+    const handleConfirmSave = async () => {
         if (!simulationName.trim()) {
             toast.error("Por favor, insira um nome para a simulação.");
             return;
         }
 
-        toast.success(`Simulação "${simulationName}" guardada com sucesso.`);
-        setIsModalOpen(false);
-        navigate(`/`);
+        try {
+            const data = await saveSimulationService({
+                description: simulationName,
+                parameters: params.parameters,
+                seed: seed,
+                user_id: auth.user.id
+            });
+            toast.success(`Simulação "${simulationName}" guardada com sucesso.`);
+            setIsModalOpen(false);
+            navigate(`/simulador/${data.id}`);
+        } catch (error) {
+            if (error.response?.data?.error) {
+                toast.error(error.response.data.error);
+            } else {
+                toast.error('Erro ao salvar simulação!');
+            }
+        }
     };
 
     return (

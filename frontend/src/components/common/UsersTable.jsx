@@ -1,6 +1,7 @@
 import { Typography } from "@material-tailwind/react";
 import { faChevronLeft, faChevronRight, faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import Button from "./Button";
+import Badge from "./Badge";
 import { createPortal } from "react-dom";
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -87,7 +88,7 @@ export default function UsersTable({ users = [], isLoading = false, onDelete }) 
                             ))
                         ) : (
                             paginatedUsers.map(
-                                ({ id, name, status, created_at, last_login, total_simulations }) => {
+                                ({ id, name, status, role, created_at, last_login, total_simulations }) => {
                                     return (
                                         <tr
                                             key={id}
@@ -96,14 +97,19 @@ export default function UsersTable({ users = [], isLoading = false, onDelete }) 
                                         >
                                             <td className="w-90 pl-8.5 p-3">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="flex flex-col">
+                                                    <div className="flex items-center gap-2">
                                                         <Typography className="body-header">{name}</Typography>
+                                                        {role === 'admin' && (
+                                                            <Badge size="small" text="Admin" />
+                                                        )}
                                                     </div>
                                                 </div>
                                             </td>
                                             <td className="p-3">
-                                                <div className="text-center">
-                                                    <Typography className="!text-neutral-300">{status}</Typography>
+                                                <div className="flex justify-center">
+                                                    <Badge size="medium"
+                                                        variant={status === 'active' ? 'success' : 'destructive'} text={status === 'active' ? 'Ativo' : 'Inativo'}
+                                                    />
                                                 </div>
                                             </td>
                                             <td className="p-3">
@@ -154,7 +160,7 @@ export default function UsersTable({ users = [], isLoading = false, onDelete }) 
                                                                     }}
                                                                     className="text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-primary-600 transition-colors bg-white font-montserrat font-medium"
                                                                 >
-                                                                    {status === 'Active' ? 'Bloquear' : 'Desbloquear'}
+                                                                    {status === 'active' ? 'Bloquear' : 'Desbloquear'}
                                                                 </button>
                                                                 <button
                                                                     onClick={() => {

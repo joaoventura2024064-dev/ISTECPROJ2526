@@ -59,6 +59,11 @@ export const resetPasswordService = async (token, newPassword) => {
 };
 
 export const runSimulationService = async (params) => {
+    const response = await api.post("/api/simulations/preview", params);
+    return response.data;
+};
+
+export const saveSimulationService = async (params) => {
     const response = await api.post("/api/simulations/", params);
     return response.data;
 };
