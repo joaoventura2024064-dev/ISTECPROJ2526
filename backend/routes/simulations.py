@@ -96,7 +96,7 @@ def get_all_simulations():
 @simulations_bp.route('/', methods=['POST'])
 def create_simulation():
     """
-    Criar nova simulação.
+    Gravar nova simulação.
     ---
     tags:
       - Simulations
