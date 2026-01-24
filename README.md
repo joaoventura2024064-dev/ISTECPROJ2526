@@ -149,10 +149,10 @@ gantt
 | **US_C007** | *Como Utilizador Registado, eu pretendo aceder a um histórico das minhas simulações guardadas, podendo consultar os seus parâmetros e visualizar novamente os gráficos de resultados.* | 2 | João | 100% | Completed |
 | **US_C008** | *Como Administrador, eu pretendo poder aceder a uma área restrita (interface simples) para gerir utilizadores (exemplo: visualizar lista, alterar tipo de acesso, alterar estado).* | 3 | João | 70% | Working |
 | **US_C009** | *Como QA, eu pretendo criar uma lista de testes para o motor de simulação (Python), validando a correção dos cálculos probabilísticos e as transições de estado.* | 3 | Zé | 100% | Completed |
-| **US_C010** | *Como QA, eu pretendo realizar testes às funcionalidades de configuração e execução de simulação, bem como à visualização de resultados, documentando os defeitos e a sua resolução.* | 3 | João | 0% | Pending |
+| **US_C010** | *Como QA, eu pretendo realizar testes às funcionalidades de configuração e execução de simulação, bem como à visualização de resultados, documentando os defeitos e a sua resolução.* | 3 | João | 100% | Completed |
 | **US_C011** | *Como Utilizador Registado, eu pretendo poder exportar os dados brutos da simulação num formato comum (exemplo: CSV) para que possa realizar análises externas mais detalhadas.* | 4 | Zé | 100% | Completed |
-| **US_C012** | *Como Gestor de Projeto, eu pretendo que a equipa prepare a apresentação final do projeto para a Sprint Review C, demonstrando todas as funcionalidades implementadas, os resultados dos testes e as aprendizagens obtidas.* | 1 | João | 0% | Pending |
-| **US_C013** | *Como Gestor de Projeto, eu pretendo que a equipa atualize o plano de trabalho no Diagrama de Gantt para a Sprint C.* | 3 | João | 0% | Pending |
+| **US_C012** | *Como Gestor de Projeto, eu pretendo que a equipa prepare a apresentação final do projeto para a Sprint Review C, demonstrando todas as funcionalidades implementadas, os resultados dos testes e as aprendizagens obtidas.* | 1 | Zé | 0% | Pending |
+| **US_C013** | *Como Gestor de Projeto, eu pretendo que a equipa atualize o plano de trabalho no Diagrama de Gantt para a Sprint C.* | 3 | João | 100% | Done |
 | **US_C014** | *Como Gestor de Projeto, eu pretendo criar um poster de apresentação do projeto, destacando os objetivos, a metodologia (modelo SIR estocástico, uso de React/Flask/MySQL), os resultados da simulação e as conclusões principais, para a avaliação final.* | 4 | João | 0% | Pending |
 | **US_C015** | *Como Gestor de Projeto, eu pretendo compilar um relatório final abrangente que documente todas as fases do projeto (análise, design, implementação, testes), as decisões técnicas e os resultados alcançados.* | 1 | Zé | 0% | Pending |
 

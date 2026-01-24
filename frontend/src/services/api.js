@@ -92,8 +92,3 @@ export const updateUserService = async (userId, params) => {
     const response = await api.put(`/api/users/${userId}`, params);
     return response.data;
 };
-
-export const changePasswordService = async (userId, params) => {
-    const response = await api.put(`/api/users/${userId}/change-password`, params);
-    return response.data;
-};

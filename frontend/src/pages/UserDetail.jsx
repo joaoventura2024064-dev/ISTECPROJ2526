@@ -5,7 +5,7 @@ import Card from '../components/common/Card/Card';
 import { faUser, faKey, faSave, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'sonner';
 import { useAuth } from '../context/AuthContext';
-import { getUserService, updateUserService, changePasswordService } from '../services/api';
+import { getUserService, updateUserService } from '../services/api';
 import Button from '../components/common/Button';
 
 export default function UserDetail() {
@@ -53,7 +53,7 @@ export default function UserDetail() {
         gender_id: formData.gender_id
     });
 
-    const hasPasswordInput = passwordData.actualPassword || passwordData.newPassword || passwordData.confirmPassword;
+    const hasPasswordInput = passwordData.currentPassword || passwordData.newPassword || passwordData.confirmPassword;
 
     useEffect(() => {
         if (user) {
@@ -99,21 +99,22 @@ export default function UserDetail() {
             if (formData.gender_id !== (userData.gender_id || '')) changes.gender_id = formData.gender_id;
             changes.email = userData.email;
 
-            if (Object.keys(changes).length > 0) {
-                await updateUserService(id, changes);
-                setUserData(prev => ({
-                    ...prev,
-                    ...changes
-                }));
+            const result = await updateUserService(id, changes);
 
-                if (user.id.toString() === id.toString()) {
-                    updateUser({ ...user, ...changes });
-                }
+            setUserData(prev => ({ ...prev, ...changes }));
 
-                toast.success('Alterações guardadas com sucesso!');
+            if (user.id.toString() === id.toString()) {
+                updateUser({ ...user, ...changes });
             }
+
+            toast.success('Alterações guardadas com sucesso!');
+
         } catch (error) {
-            toast.error('Erro ao guardar alterações.');
+            if (error.response?.data?.error) {
+                toast.error(error.response.data.error);
+            } else {
+                toast.error('Erro ao guardar alterações.');
+            }
         } finally {
             setLoadingPersonal(false);
         }
@@ -128,7 +129,7 @@ export default function UserDetail() {
                 return;
             }
 
-            if (passwordData.newPassword !== passwordData.confirmPassword) {
+            if (passwordData.newPassword !== passwordData.confirmNewPassword) {
                 toast.error('As palavras-passe não coincidem.');
                 return;
             }
@@ -138,15 +139,21 @@ export default function UserDetail() {
                 return;
             }
 
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            toast.success('Palavra-passe alterada com sucesso!');
+            //await new Promise(resolve => setTimeout(resolve, 1000));
+            const result = await updateUserService(id, passwordData);
 
+            toast.success('Palavra-passe alterada com sucesso!');
             if (user.id.toString() === id.toString()) {
                 logout();
                 navigate('/login');
             }
+
         } catch (error) {
-            toast.error('Erro ao alterar palavra-passe.');
+            if (error.response?.data?.error) {
+                toast.error(error.response.data.error);
+            } else {
+                toast.error('Erro ao alterar palavra-passe!');
+            }
         } finally {
             setLoadingPassword(false);
         }
@@ -285,13 +292,13 @@ export default function UserDetail() {
                         >
                             <div className="flex flex-col gap-5 py-2.5">
                                 <div className="group flex flex-col gap-2.5">
-                                    <label htmlFor="actualPassword" className="text-neutral-500 body-medium group-focus-within:text-primary-500">Palavra-Passe Atual</label>
+                                    <label htmlFor="currentPassword" className="text-neutral-500 body-medium group-focus-within:text-primary-500">Palavra-Passe Atual</label>
                                     <input
-                                        id="actualPassword"
+                                        id="currentPassword"
                                         type="password"
-                                        name="actualPassword"
+                                        name="currentPassword"
                                         placeholder="Insira a sua palavra-passe atual"
-                                        value={passwordData.actualPassword}
+                                        value={passwordData.currentPassword}
                                         onChange={handlePasswordChange}
                                         disabled={loadingPassword}
                                         className="w-full border border-neutral-100 rounded-lg px-3 py-2 text-neutral-900 body-medium focus:outline-none focus:border-primary-500 disabled:bg-neutral-50 disabled:text-neutral-400 disabled:opacity-50"
@@ -314,13 +321,13 @@ export default function UserDetail() {
 
                                     {/* Input Taxa Recuperacao */}
                                     <div className="group flex flex-col gap-2.5">
-                                        <label htmlFor="confirmPassword" className="text-neutral-500 body-medium group-focus-within:text-primary-500">Confirmar Palavra-Passe</label>
+                                        <label htmlFor="confirmNewPassword" className="text-neutral-500 body-medium group-focus-within:text-primary-500">Confirmar Palavra-Passe</label>
                                         <input
-                                            id="confirmPassword"
+                                            id="confirmNewPassword"
                                             type="password"
-                                            name="confirmPassword"
+                                            name="confirmNewPassword"
                                             placeholder="Confirme a sua nova palavra-passe"
-                                            value={passwordData.confirmPassword}
+                                            value={passwordData.confirmNewPassword}
                                             onChange={handlePasswordChange}
                                             disabled={loadingPassword}
                                             className="w-full border border-neutral-100 rounded-lg px-3 py-2 text-neutral-900 body-medium focus:outline-none focus:border-primary-500 disabled:bg-neutral-50 disabled:text-neutral-400 disabled:opacity-50"
