@@ -186,6 +186,9 @@ def login():
                 img_url:
                   type: string
                   example: /static/uploads/user_15_123456_pic.jpg
+                cargo:
+                  type: string
+                  example: Investigador Chefe
       401:
         description: Credenciais inválidas
         schema:
@@ -237,7 +240,8 @@ def login():
             'name': user.name,
             'email': user.email,
             'role': UserType.query.get(user.user_type_id).label,
-            'img_url': user.img_url
+            'img_url': user.img_url,
+            'cargo': user.cargo
         }
     }), 200
 

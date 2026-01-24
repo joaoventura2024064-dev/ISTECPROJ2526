@@ -49,6 +49,9 @@ def get_all_users():
               last_login:
                 type: string
                 example: "2023-10-28T12:00:00"
+              cargo:
+                type: string
+                example: Investigador Chefe
       403:
         description: Acesso restrito a Administradores
     """
@@ -67,7 +70,8 @@ def get_all_users():
                 'status': status_label,
                 'created_at': user.created_at.isoformat(),
                 'total_simulations': len(user.simulations),
-                'last_login': user.last_login.isoformat() if user.last_login else None
+                'last_login': user.last_login.isoformat() if user.last_login else None,
+                'cargo': user.cargo
             })
         return jsonify(results), 200
     return get_all_users_wrapper()
