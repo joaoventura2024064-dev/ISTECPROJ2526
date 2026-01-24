@@ -6,7 +6,17 @@ from datetime import datetime, timedelta
 import constants as c
 from flask_mail import Message
 from app import mail
+from threading import Thread
+from flask import current_app
 import jwt # Usar pyjwt para gerar tokens de reset seguros
+
+def send_async_email(app, msg):
+    with app.app_context():
+        try:
+            mail.send(msg)
+            print(f"Email enviado para: {msg.recipients}")
+        except Exception as e:
+            print(f"Erro ao enviar email: {e}")
 
 # Criar um "Blueprint" para agrupar as rotas de autenticação
 # Isto ajuda a organizar o código, separando-o do app.py principal
@@ -209,7 +219,8 @@ def login():
 
     # 4. Login com sucesso - Gerar Token
     # identity pode ser o ID do user ou o email
-    access_token = create_access_token(identity=str(user.id))
+    role_label = UserType.query.get(user.user_type_id).label
+    access_token = create_access_token(identity=str(user.id), additional_claims={'role': role_label})
 
     return jsonify({
         'message': 'Login efetuado com sucesso',
@@ -268,17 +279,15 @@ def recover_password():
     # TODO: Ajustar URL base conforme ambiente (dev/prod)
     reset_url = f"https://seios-frontend.onrender.com/reset-password?token={reset_token}"
     
-    # Enviar Email
-    try:
-        msg = Message(
-            subject="Recuperação de Password - SEIOS",
-            recipients=[user.email],
-            body=f"Olá {user.name},\n\nPara redefinir a sua password, clique no link abaixo:\n{reset_url}\n\nEste link expira em 1 hora.\n\nSe não pediu isto, ignore este email."
-        )
-        mail.send(msg)
-    except Exception as e:
-        print(f"Erro ao enviar email: {e}")
-        return jsonify({'error': f'Erro ao enviar email: {str(e)}'}), 500
+    # Enviar Email (Asynchronous)
+    msg = Message(
+        subject="Recuperação de Password - SEIOS",
+        recipients=[user.email],
+        body=f"Olá {user.name},\n\nPara redefinir a sua password, clique no link abaixo:\n{reset_url}\n\nEste link expira em 1 hora.\n\nSe não pediu isto, ignore este email."
+    )
+    
+    # Usar thread para não bloquear o servidor (evitar timeout)
+    Thread(target=send_async_email, args=(current_app._get_current_object(), msg)).start()
         
     return jsonify({'message': 'Se o email existir, receberá instruções.'}), 200
 

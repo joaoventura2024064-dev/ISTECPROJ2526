@@ -67,6 +67,8 @@ class User(db.Model):
     password_hash = db.Column(db.String(255), nullable=False) # Guardamos apenas a hash, nunca a password real
     
     birth_date = db.Column(db.Date, nullable=True)
+    cargo = db.Column(db.String(20), nullable=True) # Cargo/Função do utilizador
+    about_me = db.Column(db.Text, nullable=True) # Sobre mim (Biografia)
     img_url = db.Column(db.String(255), nullable=True) # URL para a imagem de perfil
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow) # Data de registo automática

@@ -18,14 +18,16 @@ class Config:
     MAIL_USE_TLS = True
     MAIL_USERNAME = os.getenv('MAIL_USERNAME')
     MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
-    MAIL_DEFAULT_SENDER = os.getenv('MAIL_USERNAME')
+    MAIL_DEFAULT_SENDER = os.getenv('MAIL_USERNAME', 'noreply@seios.pt')
 
     # Configuração da Base de Dados SQLite
     # O ficheiro .db será criado na pasta 'instance' ou na raiz, dependendo da configuração
     # Aqui defino para ficar na raiz do backend para ser mais fácil de encontrar
     # SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
     #    'sqlite:///' + os.path.join(basedir, 'projecto_integrador.db')
-    SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI')
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI') or \
+        'sqlite:///' + os.path.join(basedir, 'instance', 'projecto_integrador.db')
 
     # Desativar notificações de modificação do SQLAlchemy para poupar recursos
     SQLALCHEMY_TRACK_MODIFICATIONS = os.environ.get(
