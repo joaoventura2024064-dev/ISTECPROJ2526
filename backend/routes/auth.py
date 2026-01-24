@@ -289,7 +289,7 @@ def recover_password():
     
     # URL do Frontend para reset
     # TODO: Ajustar URL base conforme ambiente (dev/prod)
-    reset_url = f"https://seios-frontend.onrender.com/reset-password?token={reset_token}"
+    reset_url = f"https://seios.onrender.com/reset-password?token={reset_token}"
     
     # Enviar Email (Asynchronous)
     msg = Message(
