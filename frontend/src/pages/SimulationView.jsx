@@ -27,7 +27,7 @@ export default function SimulationView() {
         const fetchSimulation = async () => {
             try {
                 setLoading(true);
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                //await new Promise(resolve => setTimeout(resolve, 2000));
                 const data = await getSimulationService(id);
 
                 if (data?.parameters) {
