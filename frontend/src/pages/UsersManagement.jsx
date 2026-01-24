@@ -36,7 +36,10 @@ export default function UsersManagement() {
     const HandleToggleBlock = async (id, status) => {
         try {
             await changeUserStatusService(id, status);
-            fetchUsers();
+            setUsers(prevUsers => prevUsers.map(user =>
+                user.id === id ? { ...user, status } : user
+            ));
+            toast.success("Estado do utilizador atualizado com sucesso");
         } catch (error) {
             toast.error('Erro a bloquear/desbloquear o utilizador');
         }
@@ -45,7 +48,10 @@ export default function UsersManagement() {
     const HandleToggleAdmin = async (id, role) => {
         try {
             await changeUserRoleService(id, role);
-            fetchUsers();
+            setUsers(prevUsers => prevUsers.map(user =>
+                user.id === id ? { ...user, role } : user
+            ));
+            toast.success("Permissões do utilizador atualizadas com sucesso");
         } catch (error) {
             toast.error('Erro a promover/remover admin');
         }

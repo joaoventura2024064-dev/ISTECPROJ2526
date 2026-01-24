@@ -103,7 +103,7 @@ export default function UsersTable({ users = [], isLoading = false, onDelete, Ha
                                                     <div className="flex items-center gap-2">
                                                         <Typography className="body-header">{name}</Typography>
                                                         {role === 'admin' && (
-                                                            <Badge size="small" text="Admin" />
+                                                            <Badge size="small" variant="secondary" text="Admin" />
                                                         )}
                                                     </div>
                                                 </div>
@@ -111,7 +111,7 @@ export default function UsersTable({ users = [], isLoading = false, onDelete, Ha
                                             <td className="p-3">
                                                 <div className="flex justify-center">
                                                     <Badge size="medium"
-                                                        variant={status === 'active' ? 'success' : 'destructive'} text={status === 'active' ? 'Ativo' : 'Inativo'}
+                                                        variant={status === 'active' ? 'success' : 'default'} text={status === 'active' ? 'Ativo' : 'Inativo'}
                                                     />
                                                 </div>
                                             </td>
@@ -148,7 +148,7 @@ export default function UsersTable({ users = [], isLoading = false, onDelete, Ha
                                                     {openDropdownId === id && createPortal(
                                                         <div
                                                             ref={dropdownRef}
-                                                            className="absolute w-48 bg-white border border-neutral-200 rounded-lg shadow-lg z-50 overflow-hidden"
+                                                            className="absolute w-48 bg-white rounded-xl shadow-xl border border-base-600 z-50 overflow-hidden"
                                                             style={{
                                                                 top: `${dropdownPosition.top}px`,
                                                                 left: `${dropdownPosition.left}px`
@@ -163,7 +163,7 @@ export default function UsersTable({ users = [], isLoading = false, onDelete, Ha
                                                                         HandleToggleBlock(id, status === 'active' ? 'suspended' : 'active');
                                                                         setOpenDropdownId(null);
                                                                     }}
-                                                                    className="text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-primary-600 transition-colors bg-white font-montserrat font-medium"
+                                                                    className="text-left px-4 py-2 text-sm text-neutral-700 hover:text-primary-500 transition-colors bg-white font-montserrat font-medium"
                                                                 >
                                                                     {status === 'active' ? 'Bloquear' : 'Desbloquear'}
                                                                 </button>
@@ -172,7 +172,7 @@ export default function UsersTable({ users = [], isLoading = false, onDelete, Ha
                                                                         HandleToggleAdmin(id, role === 'admin' ? 'registered' : 'admin');
                                                                         setOpenDropdownId(null);
                                                                     }}
-                                                                    className="text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-primary-600 transition-colors bg-white font-montserrat font-medium"
+                                                                    className="text-left px-4 py-2 text-sm text-neutral-700 hover:text-primary-500 transition-colors bg-white font-montserrat font-medium"
                                                                 >
                                                                     {role === 'admin' ? 'Remover Admin' : 'Promover a Admin'}
                                                                 </button>
