@@ -75,7 +75,7 @@ export default function UserDetail() {
     const fetchUser = async () => {
         try {
             setLoading(true);
-            //await new Promise(resolve => setTimeout(resolve, 2000));
+            await new Promise(resolve => setTimeout(resolve, 2000));
             const data = await getUserService(id);
             setUserData(data);
             setFormData({
@@ -186,7 +186,7 @@ export default function UserDetail() {
                 <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-10">
                     <div className="h-[340px] w-full rounded-xl bg-background-600 opacity-40 animate-pulse" />
                     <div className="flex flex-col gap-5">
-                        <div className="h-[390px] w-full rounded-xl bg-background-600 opacity-40 animate-pulse" />
+                        <div className="h-[478px] w-full rounded-xl bg-background-600 opacity-40 animate-pulse" />
                         <div className="h-[300px] w-full rounded-xl bg-background-600 opacity-40 animate-pulse" />
                     </div>
                 </div>
