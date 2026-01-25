@@ -559,18 +559,18 @@ def export_simulation_csv(sim_id):
     cw = csv.writer(si, delimiter=';')
 
     # Cabeçalho
-    cw.writerow(['Day', 'Susceptible', 'Infected', 'Recovered', 'Rt', 
-                 'Population', 'Initial Infected', 'Beta', 'Gamma', 'Duration'])
+    cw.writerow(['Population', 'Initial Infected', 'Beta', 'Gamma', 'Duration',
+                 'Day', 'Susceptible', 'Infected', 'Recovered', 'Rt'])
 
     # Dados
     # Ordenar por step_number para garantir ordem cronológica
     steps = sorted(sim.steps, key=lambda x: x.step_number)
     params = sim.parameters
     for step in steps:
-        cw.writerow([step.step_number, step.susceptible,
-                    step.infected, step.recovered, step.rt_value,
-                    params.population_total, params.infected_initial,
-                    params.beta, params.gamma, params.duration])
+        cw.writerow([params.population_total, params.infected_initial,
+                    params.beta, params.gamma, params.duration,
+                    step.step_number, step.susceptible,
+                    step.infected, step.recovered, step.rt_value])
 
     output = make_response(si.getvalue())
     output.headers["Content-Disposition"] = f"attachment; filename=simulation_{sim_id}.csv"
@@ -645,8 +645,9 @@ def export_simulations_bulk():
     cw = csv.writer(si, delimiter=';')
 
     # Cabeçalho (Inclui ID e Descrição para distinguir)
-    cw.writerow(['Simulation ID', 'Description', 'Day', 'Susceptible', 'Infected', 'Recovered', 'Rt',
-                 'Population', 'Initial Infected', 'Beta', 'Gamma', 'Duration'])
+    cw.writerow(['Simulation ID', 'Description',
+                 'Population', 'Initial Infected', 'Beta', 'Gamma', 'Duration',
+                 'Day', 'Susceptible', 'Infected', 'Recovered', 'Rt'])
 
     for sim in sims:
         # Ordenar passos
@@ -657,16 +658,16 @@ def export_simulations_bulk():
             cw.writerow([
                 sim.id,
                 sim.description,
-                step.step_number,
-                step.susceptible,
-                step.infected,
-                step.recovered,
-                step.rt_value,
                 params.population_total,
                 params.infected_initial,
                 params.beta,
                 params.gamma,
-                params.duration
+                params.duration,
+                step.step_number,
+                step.susceptible,
+                step.infected,
+                step.recovered,
+                step.rt_value
             ])
 
     output = make_response(si.getvalue())
