@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 export default function SimulationView() {
     const { id } = useParams();
     const [loading, setLoading] = useState(true);
+    const [description, setDescription] = useState('');
     const navigate = useNavigate();
 
     const [params, setParams] = useState({
@@ -38,6 +39,10 @@ export default function SimulationView() {
                         gamma: data.parameters.gamma,
                         duration: data.parameters.duration
                     });
+                }
+
+                if (data?.description) {
+                    setDescription(data.description || `Simulação #${id}`);
                 }
 
                 if (data?.steps) {
@@ -74,7 +79,7 @@ export default function SimulationView() {
         </div>) : (
             <div className="flex flex-col gap-6">
                 <PageHeader
-                    title="Simulação COVID-19"
+                    title={description}
                     subTitle={`Visualizar resultados da simulação #${id}`}
                     backButton={true}
                     align="right"
