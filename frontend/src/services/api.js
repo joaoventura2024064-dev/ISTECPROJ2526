@@ -107,3 +107,8 @@ export const changeUserRoleService = async (userId, role) => {
     const response = await api.patch(`/api/users/${userId}/role`, { role });
     return response.data;
 };
+
+export const downloadSimulationCSVService = async (ids) => {
+    const response = await api.post("/api/simulations/export", { ids }, { responseType: 'blob' });
+    return response.data;
+};

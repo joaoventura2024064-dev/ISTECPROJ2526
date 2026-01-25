@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { faChartLine, faFileArrowDown } from '@fortawesome/free-solid-svg-icons';
 import PageHeader from '../components/common/PageHeader';
 import SimulationsTable from '../components/simulation/SimulationsTable';
-import { getUserSimulationsService, deleteSimulationService } from '../services/api';
+import { getUserSimulationsService, deleteSimulationService, downloadSimulationCSVService } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'sonner';
 
@@ -46,8 +46,16 @@ export default function Home() {
         }
     };
 
-    const exportCSV = () => {
-        toast.success("Simulações exportadas com sucesso.");
+    const exportCSV = async () => {
+        //console.log(simulations.map(sim => sim.id));
+        const result = await downloadSimulationCSVService(simulations.map(sim => sim.id));
+        const blob = new Blob([result], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'simulacoes.csv';
+        link.click();
+        URL.revokeObjectURL(url);
     };
 
     return (
