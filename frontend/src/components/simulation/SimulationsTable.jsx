@@ -144,6 +144,7 @@ export default function SimulationsTable({ data = [], isLoading = false, onDelet
                     </Button>
                     <Button
                         text="Seguinte"
+                        iconPosition="right"
                         variant="secondary"
                         onClick={handleNext}
                         icon={faChevronRight}

@@ -208,6 +208,7 @@ export default function UsersTable({ users = [], isLoading = false, onDelete, Ha
                     <Button
                         text="Seguinte"
                         variant="secondary"
+                        iconPosition="right"
                         onClick={handleNext}
                         icon={faChevronRight}
                         disabled={currentPage === totalPages || isLoading || data.length === 0}

@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-function Button({ text, onClick, variant = 'primary', width = 'hug', height = 'hug', icon = null, disabled = false, spin = false, className = '' }) {
+function Button({ text, onClick, variant = 'primary', width = 'hug', height = 'hug', icon = null, iconPosition = 'left', disabled = false, spin = false, className = '' }) {
 
     const base = "flex items-center justify-center gap-2 font-montserrat font-medium text-sm py-2 rounded-lg transition-all duration-200 select-none";
 
@@ -27,8 +27,9 @@ function Button({ text, onClick, variant = 'primary', width = 'hug', height = 'h
             onClick={onClick}
             disabled={disabled}
             className={`${base} ${variants[variant]} ${widthStyles[width]} ${heightStyles[height]} ${className} ${disabled ? 'cursor-not-allowed opacity-50 pointer-events-none' : ''}`}        >
-            {icon && <FontAwesomeIcon icon={icon} spin={spin} />}
+            {icon && iconPosition === 'left' && <FontAwesomeIcon icon={icon} spin={spin} />}
             {text}
+            {icon && iconPosition === 'right' && <FontAwesomeIcon icon={icon} spin={spin} />}
         </button>
     );
 }
