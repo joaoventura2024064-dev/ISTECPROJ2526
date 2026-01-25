@@ -30,7 +30,7 @@ const SimulationResults = memo(function SimulationResults({
                 {status === 'idle' || status === 'loading' ? (
                     <div className="flex flex-col items-center justify-center min-h-[488px] gap-4 text-neutral-400 h-full">
                         <div className="flex flex-col items-center justify-center text-neutral-400  h-full">
-                            <img src={imagem} className={`w-[222px] h-[222px] ${status === 'loading' ? 'animate-pulse' : ''}`}></img>
+                            <img src={imagem} alt="Imagem Aguardar Execução" className={`w-[222px] h-[222px] ${status === 'loading' ? 'animate-pulse' : ''}`}></img>
                             <p className="headings-h1 text-neutral-400">
                                 {status === 'loading' ? 'A Processar...' : 'A Aguardar Execução...'}
                             </p>
