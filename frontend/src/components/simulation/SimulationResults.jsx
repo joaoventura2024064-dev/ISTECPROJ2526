@@ -42,7 +42,7 @@ const SimulationResults = memo(function SimulationResults({
                 ) : status === 'error' ? (
                     < div className="flex flex-col items-center justify-center gap-4 text-neutral-400  h-full">
                         <div className="flex flex-col items-center justify-center text-neutral-400  h-full">
-                            <img src={imagem} className="w-[222px] h-[222px] grayscale-[1]"></img>
+                            <img src={imagem} alt="Imagem Erro Simulação" className="w-[222px] h-[222px] grayscale-[1]"></img>
                             <div className="text-center">
                                 <p className="headings-h1 text-neutral-400">Ocorreu um erro</p>
                                 <p className="caption-name text-neutral-400 mt-2">Não foi possível executar a simulação.</p>
