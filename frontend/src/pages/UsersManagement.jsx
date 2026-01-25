@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageHeader from '../components/common/PageHeader';
-import UsersTable from '../components/common/UsersTable';
+import UsersTable from '../components/users/UsersTable';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'sonner';
 import { getUsersService, changeUserStatusService, changeUserRoleService } from '../services/api';

@@ -1,14 +1,14 @@
 import { Typography } from "@material-tailwind/react";
 import { faChevronLeft, faChevronRight, faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
-import Button from "./Button";
-import Badge from "./Badge";
+import Button from "../common/Button";
+import Badge from "../common/Badge";
 import { createPortal } from "react-dom";
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 
-const TABLE_HEAD = ["Nome", "Estado", "Data Criação", "Último Login", "Total de Simulações", ""];
+const TABLE_HEAD = ["Nome", "Função", "Estado", "Data Criação", "Último Login", "Total de Simulações", ""];
 
 export default function UsersTable({ users = [], isLoading = false, onDelete, HandleToggleBlock, HandleToggleAdmin }) {
     const navigate = useNavigate();
@@ -57,7 +57,7 @@ export default function UsersTable({ users = [], isLoading = false, onDelete, Ha
                         <tr>
                             {TABLE_HEAD.map((head, index) => (
                                 <th key={index} className="first:w-90 first:pl-8.5 last:pr-8.5 py-7 px-3">
-                                    <Typography className={`flex cursor-default text-transform: uppercase !caption-strong items-center text-base-900 ${index === 0 ? "justify-start" : "justify-center"}`}>
+                                    <Typography className={`flex cursor-default text-transform: uppercase !caption-strong items-center text-base-900 ${index === 0 || index === 1 ? "justify-start" : "justify-center"}`}>
                                         {head}
                                     </Typography>
                                 </th>
@@ -91,7 +91,7 @@ export default function UsersTable({ users = [], isLoading = false, onDelete, Ha
                             ))
                         ) : (
                             paginatedUsers.map(
-                                ({ id, name, status, role, created_at, last_login, total_simulations }) => {
+                                ({ id, role, name, cargo, status, created_at, last_login, total_simulations }) => {
                                     return (
                                         <tr
                                             key={id}
@@ -106,6 +106,11 @@ export default function UsersTable({ users = [], isLoading = false, onDelete, Ha
                                                             <Badge size="small" variant="secondary" text="Admin" />
                                                         )}
                                                     </div>
+                                                </div>
+                                            </td>
+                                            <td className="p-3">
+                                                <div className="text-start">
+                                                    <Typography className="!text-neutral-300">{cargo}</Typography>
                                                 </div>
                                             </td>
                                             <td className="p-3">
@@ -143,7 +148,7 @@ export default function UsersTable({ users = [], isLoading = false, onDelete, Ha
                                                 }}
                                             >
                                                 <div className="flex justify-end relative">
-                                                    <FontAwesomeIcon icon={faEllipsisVertical} className="h-5 w-5 text-neutral-100 hover:text-neutral-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 group-hover/delete:text-neutral-500 group-hover/delete:transition-colors group-hover/delete:duration-200" />
+                                                    <FontAwesomeIcon icon={faEllipsisVertical} className="h-5 w-5 text-neutral-100 hover:text-primary-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 group-hover/delete:text-primary-500 group-hover/delete:transition-colors group-hover/delete:duration-200" />
 
                                                     {openDropdownId === id && createPortal(
                                                         <div
