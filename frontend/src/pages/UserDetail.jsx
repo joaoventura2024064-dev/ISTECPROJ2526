@@ -17,14 +17,17 @@ export default function UserDetail() {
         cargo: '',
         about_me: '',
         email: '',
-        gender_id: ''
+        gender_id: '',
+        birth_date: ''
     });
+
     const [formData, setFormData] = useState({
         name: '',
         cargo: '',
         about_me: '',
         email: '',
-        gender_id: ''
+        gender_id: '',
+        birth_date: ''
     });
 
     const [passwordData, setPasswordData] = useState({
@@ -44,13 +47,15 @@ export default function UserDetail() {
         cargo: userData.cargo || '',
         about_me: userData.about_me || '',
         email: userData.email || '',
-        gender_id: userData.gender_id || ''
+        gender_id: userData.gender_id || '',
+        birth_date: userData.birth_date || ''
     }) !== JSON.stringify({
         name: formData.name,
         cargo: formData.cargo,
         about_me: formData.about_me,
         email: formData.email,
-        gender_id: formData.gender_id
+        gender_id: formData.gender_id,
+        birth_date: formData.birth_date
     });
 
     const hasPasswordInput = passwordData.currentPassword || passwordData.newPassword || passwordData.confirmPassword;
@@ -72,14 +77,14 @@ export default function UserDetail() {
             setLoading(true);
             //await new Promise(resolve => setTimeout(resolve, 2000));
             const data = await getUserService(id);
-            const safeData = data || {};
-            setUserData(safeData);
+            setUserData(data);
             setFormData({
-                name: safeData.name || '',
-                cargo: safeData.cargo || '',
-                about_me: safeData.about_me || '',
-                email: safeData.email || '',
-                gender_id: safeData.gender_id || ''
+                name: data.name || '',
+                cargo: data.cargo || '',
+                about_me: data.about_me || '',
+                email: data.email || '',
+                gender_id: data.gender_id || '',
+                birth_date: data.birth_date || ''
             });
         } catch (error) {
             toast.error('Erro a carregar o utilizador');
@@ -97,6 +102,7 @@ export default function UserDetail() {
             if (formData.cargo !== (userData.cargo || '')) changes.cargo = formData.cargo;
             if (formData.about_me !== (userData.about_me || '')) changes.about_me = formData.about_me;
             if (formData.gender_id !== (userData.gender_id || '')) changes.gender_id = formData.gender_id;
+            if (formData.birth_date !== (userData.birth_date || '')) changes.birth_date = formData.birth_date;
             changes.email = userData.email;
 
             const result = await updateUserService(id, changes);
@@ -250,6 +256,39 @@ export default function UserDetail() {
                                             disabled={loadingPersonal}
                                             className="w-full border border-neutral-100 rounded-lg px-3 py-2 text-neutral-900 body-medium focus:outline-none focus:border-primary-500 disabled:bg-neutral-50 disabled:text-neutral-400 disabled:opacity-50"
                                         />
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4" >
+                                    <div className="group flex flex-col gap-2.5">
+                                        <label htmlFor="birth_date" className="text-neutral-500 body-medium group-focus-within:text-primary-500">Data de Nascimento</label>
+                                        <input
+                                            id="birth_date"
+                                            type="date"
+                                            name="birth_date"
+                                            value={formData.birth_date}
+                                            onChange={handleChange}
+                                            disabled={loadingPersonal}
+                                            className="w-full border border-neutral-100 rounded-lg px-3 py-2 text-neutral-900 body-medium focus:outline-none focus:border-primary-500 disabled:bg-neutral-50 disabled:text-neutral-400 disabled:opacity-50"
+                                        />
+                                    </div>
+
+                                    {/* Input Taxa Recuperacao */}
+                                    <div className="group flex flex-col gap-2.5">
+                                        <label htmlFor="gender_id" className="text-neutral-500 body-medium group-focus-within:text-primary-500">Gênero</label>
+                                        <select
+                                            id="gender_id"
+                                            value={formData.gender_id}
+                                            name="gender_id"
+                                            onChange={handleChange}
+                                            className="w-full border border-neutral-100 rounded-lg px-3 py-2 text-neutral-900 body-medium focus:outline-none focus:border-primary-500 disabled:bg-neutral-50 disabled:text-neutral-400 disabled:opacity-50 appearance-none"
+                                            required
+                                        >
+                                            <option value="" disabled>Insira o seu genero</option>
+                                            <option value="1">Masculino</option>
+                                            <option value="2">Feminino</option>
+                                            <option value="3">Outro</option>
+                                            <option value="4">Prefiro não dizer</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div className="group flex flex-col gap-2.5">
