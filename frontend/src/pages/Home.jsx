@@ -48,14 +48,20 @@ export default function Home() {
 
     const exportCSV = async () => {
         //console.log(simulations.map(sim => sim.id));
-        const result = await downloadSimulationCSVService(simulations.map(sim => sim.id));
-        const blob = new Blob([result], { type: 'text/csv' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'simulacoes.csv';
-        link.click();
-        URL.revokeObjectURL(url);
+        try {
+            const result = await downloadSimulationCSVService(simulations.map(sim => sim.id));
+            const blob = new Blob([result], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'simulacoes.csv';
+            link.click();
+            URL.revokeObjectURL(url);
+            toast.success('Simulações exportadas com sucesso');
+        }
+        catch (error) {
+            toast.error('Erro a exportar simulações');
+        }
     };
 
     return (
