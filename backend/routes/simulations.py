@@ -556,7 +556,7 @@ def export_simulation_csv(sim_id):
 
     # Criar CSV em memória
     si = io.StringIO()
-    cw = csv.writer(si)
+    cw = csv.writer(si, delimiter=';')
 
     # Cabeçalho
     cw.writerow(['Day', 'Susceptible', 'Infected', 'Recovered', 'Rt'])
@@ -571,6 +571,7 @@ def export_simulation_csv(sim_id):
     output = make_response(si.getvalue())
     output.headers["Content-Disposition"] = f"attachment; filename=simulation_{sim_id}.csv"
     output.headers["Content-type"] = "text/csv"
+    output.headers["Access-Control-Expose-Headers"] = "Content-Disposition"
     return output
 
 """ Exportar simulações em bulk- Página Historico """
@@ -637,7 +638,7 @@ def export_simulations_bulk():
 
     # Criar CSV
     si = io.StringIO()
-    cw = csv.writer(si)
+    cw = csv.writer(si, delimiter=';')
 
     # Cabeçalho (Inclui ID e Descrição para distinguir)
     cw.writerow(['Simulation ID', 'Description', 'Day', 'Susceptible', 'Infected', 'Recovered', 'Rt'])
@@ -661,6 +662,7 @@ def export_simulations_bulk():
     filename = "simulations_export.csv"
     output.headers["Content-Disposition"] = f"attachment; filename={filename}"
     output.headers["Content-type"] = "text/csv"
+    output.headers["Access-Control-Expose-Headers"] = "Content-Disposition"
     return output
 
 
