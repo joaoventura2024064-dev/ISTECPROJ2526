@@ -207,7 +207,7 @@ export default function UsersTable({ users = [], isLoading = false, onDelete, Ha
                         variant="ghost"
                         onClick={handlePrevious}
                         icon={faChevronLeft}
-                        disabled={currentPage === 1 || isLoading || data.length === 0}
+                        disabled={currentPage === 1 || isLoading || users.length === 0}
                     >
                     </Button>
                     <Button
@@ -216,7 +216,7 @@ export default function UsersTable({ users = [], isLoading = false, onDelete, Ha
                         iconPosition="right"
                         onClick={handleNext}
                         icon={faChevronRight}
-                        disabled={currentPage === totalPages || isLoading || data.length === 0}
+                        disabled={currentPage === totalPages || isLoading || users.length === 0}
                     >
                     </Button>
                 </div>
