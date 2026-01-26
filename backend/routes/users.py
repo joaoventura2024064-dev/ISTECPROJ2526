@@ -2,7 +2,6 @@ import os
 from flask import current_app
 from werkzeug.utils import secure_filename
 from flask import Blueprint, request, jsonify
-from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from decorators import admin_required
 from werkzeug.security import generate_password_hash
@@ -59,11 +58,14 @@ def get_all_users():
       403:
         description: Acesso restrito a Administradores
     """
+    # Usamos o decorador personalizado @admin_required para garantir que apenas admins acedem.
     @admin_required()
     def get_all_users_wrapper():
+        # Vamos buscar todos os utilizadores à base de dados.
         users = User.query.all()
         results = []
         for user in users:
+            # Para cada utilizador, vamos buscar as labels legíveis (ex: 'admin' em vez de 1).
             type_label = UserType.query.get(user.user_type_id).label
             status_label = UserStatus.query.get(user.user_status_id).label
             results.append({
@@ -73,6 +75,7 @@ def get_all_users():
                 'role': type_label,
                 'status': status_label,
                 'created_at': user.created_at.isoformat(),
+                # Contamos o número de simulações que este utilizador criou.
                 'total_simulations': len(user.simulations),
                 'last_login': user.last_login.isoformat() if user.last_login else None,
                 'cargo': user.cargo
@@ -142,21 +145,26 @@ def get_user_profile(user_id):
         description: Utilizador não encontrado
     """
     # Verificar autorização (Próprio ou Admin)
+    # Queremos garantir que um utilizador não pode ver os dados privados de outro,
+    # a menos que seja um administrador.
     current_user_id = get_jwt_identity()
     is_admin = False
 
-    # Check if admin
+    # Verificar se quem faz o pedido é admin
     curr_user = User.query.get(current_user_id)
     if curr_user:
         user_type = UserType.query.get(curr_user.user_type_id)
         if user_type and user_type.label == 'admin':
             is_admin = True
 
+    # Se não for o próprio utilizador E não for admin, bloqueamos.
     if str(current_user_id) != str(user_id) and not is_admin:
         return jsonify({'error': 'Acesso não autorizado'}), 403
+        
+    # get_or_404 retorna automaticamente erro 404 se o ID não existir.
     user = User.query.get_or_404(user_id)
 
-    # Obter labels das tabelas de lookup
+    # Obter labels das tabelas de lookup para enviar ao frontend
     type_label = UserType.query.get(user.user_type_id).label
     status_label = UserStatus.query.get(user.user_status_id).label
 
@@ -255,6 +263,7 @@ def update_user_profile(user_id):
 
     if str(current_user_id) != str(user_id) and not is_admin:
         return jsonify({'error': 'Acesso não autorizado'}), 403
+        
     user = User.query.get_or_404(user_id)
     data = request.get_json()
 
@@ -267,7 +276,7 @@ def update_user_profile(user_id):
             user.name = data['name']
 
         if 'cargo' in data:
-            # Limitar a 20 caracteres conforme pedido
+            # Limitar a 20 caracteres
             cargo_val = data['cargo']
             if cargo_val and len(cargo_val) > 20:
                 return jsonify({'error': 'Cargo não pode ter mais de 20 caracteres'}), 400
@@ -280,7 +289,7 @@ def update_user_profile(user_id):
             bdate = data['birth_date']
             if bdate:
                 try:
-                    # Tentar converter se for string
+                    # Tentar converter se for string (formato ISO YYYY-MM-DD)
                     if isinstance(bdate, str):
                         user.birth_date = datetime.strptime(
                             bdate, '%Y-%m-%d').date()
@@ -296,15 +305,16 @@ def update_user_profile(user_id):
             user.gender_id = data['gender_id']
 
         # 2. Atualizar Email
+        # Se o email mudar, temos de garantir que o novo email não está a ser usado por outra pessoa.
         if 'email' in data and data['email'] != user.email:
             new_email = data['email']
-            # Verificar se já existe outro user com este email
             existing = User.query.filter_by(email=new_email).first()
             if existing:
                 return jsonify({'error': 'Este email já está em uso'}), 409
             user.email = new_email
 
         # 3. Atualizar Password
+        # Requer a password atual por segurança.
         if 'newPassword' in data and data['newPassword']:
             current_password = data.get('currentPassword')
             new_password = data.get('newPassword')
@@ -326,7 +336,7 @@ def update_user_profile(user_id):
             # Atualizar hash
             user.password_hash = generate_password_hash(new_password)
 
-        # Admin pode alterar status e role
+        # Admin pode alterar status e role de qualquer utilizador
         if is_admin:
             if 'user_status_id' in data:
                 user.user_status_id = data['user_status_id']
@@ -345,6 +355,7 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 
 def allowed_file(filename):
+    """Verifica se a extensão do ficheiro é permitida."""
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -407,16 +418,20 @@ def upload_image_impl(user_id):
         return jsonify({'error': 'Sem ficheiro selecionado'}), 400
 
     if file and allowed_file(file.filename):
+        # secure_filename remove caracteres perigosos do nome do ficheiro (ex: ../)
         filename = secure_filename(file.filename)
-        # Adicionar timestamp ou ID para evitar conflitos
+        
+        # Adicionar timestamp e ID do user para evitar conflitos de nomes
+        # (ex: user_15_1698400000_foto.jpg)
         filename = f"user_{user_id}_{int(datetime.utcnow().timestamp())}_{filename}"
 
+        # Construir o caminho completo onde o ficheiro será guardado
         filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
 
-        # Atualizar DB
+        # Atualizar DB com o novo URL
         user = User.query.get_or_404(user_id)
-        # Guardar caminho relativo para servir via static
+        # Guardar caminho relativo para servir via static folder do Flask
         user.img_url = f"/static/uploads/{filename}"
         db.session.commit()
 
@@ -500,6 +515,7 @@ def get_user_simulations_impl(user_id):
     # Verificar se o user existe
     user = User.query.get_or_404(user_id)
 
+    # Obter simulações ordenadas da mais recente para a mais antiga
     sims = Simulation.query.filter_by(user_id=user_id).order_by(
         Simulation.created_at.desc()).all()
 

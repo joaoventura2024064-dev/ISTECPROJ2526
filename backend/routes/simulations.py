@@ -1,5 +1,4 @@
 from flask import Blueprint, request, jsonify, make_response
-from flask import Blueprint, request, jsonify, make_response
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from decorators import admin_required
 import csv
@@ -71,6 +70,7 @@ def get_all_simulations():
     """
     @admin_required()
     def get_all_simulations_wrapper():
+        # Obter todas as simulações, ordenadas da mais recente para a mais antiga.
         sims = Simulation.query.order_by(Simulation.created_at.desc()).all()
         results = []
         for s in sims:
@@ -796,12 +796,12 @@ def toggle_pin_simulation(sim_id):
         if str(sim.user_id) != str(current_user_id) and not is_admin:
             return jsonify({'error': 'Acesso não autorizado'}), 403
 
-        # Toggle status
+        # Alternar estado (Toggle)
         sim.pinned = not sim.pinned
         db.session.commit()
         
         return jsonify({
-            'message': 'Favorito_true' if sim.pinned else 'Favorito_false',
+            'message': f'Favorito_{str(sim.pinned).lower()}',
             'pinned': sim.pinned
         }), 200
         
