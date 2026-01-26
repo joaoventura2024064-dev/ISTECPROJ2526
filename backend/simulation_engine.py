@@ -15,12 +15,13 @@ def run_simulation(N, I0, beta, gamma, duration, seed=None):
         list: Lista de dicionários com os resultados por dia.
     """
     
-    # 0. Configurar Seed
+    # 0. Configurar Seed   
     if seed is None:
-        seed = np.random.randint(0, 2**31 - 1)
+        # Gerar seed aleatória segura
+        seed = int(np.random.default_rng().integers(0, 2**31 - 1))
     
-    # Definir a seed para garantir reprodutibilidade
-    np.random.seed(seed)
+    # Inicializar o Gerador (recomendado para novas versões do NumPy)
+    rng = np.random.default_rng(seed)
 
     # 1. Estado Inicial
     S = N - I0
@@ -47,9 +48,9 @@ def run_simulation(N, I0, beta, gamma, duration, seed=None):
         prob_recovery = 1 - np.exp(-gamma)
         
         # B. Determinar Transições (Stochastic - Binomial)
-        # NumPy calcula isto de forma vetorizada e muito rápida
-        new_infected = np.random.binomial(S, prob_infection)
-        new_recovered = np.random.binomial(I, prob_recovery)
+        # Usar o gerador 'rng' para suportar números grandes (int64)
+        new_infected = rng.binomial(S, prob_infection)
+        new_recovered = rng.binomial(I, prob_recovery)
         
         # C. Atualizar Estados
         S = S - new_infected

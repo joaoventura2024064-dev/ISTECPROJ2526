@@ -167,9 +167,9 @@ class SimulationSteps(db.Model):
     step_number = db.Column(db.Integer, nullable=False)
 
     # Métricas SIR
-    susceptible = db.Column(db.Integer, nullable=False)
-    infected = db.Column(db.Integer, nullable=False)
-    recovered = db.Column(db.Integer, nullable=False)
+    susceptible = db.Column(db.BigInteger, nullable=False)
+    infected = db.Column(db.BigInteger, nullable=False)
+    recovered = db.Column(db.BigInteger, nullable=False)
 
     # Métricas Adicionais
     # Reproductive number efetivo
