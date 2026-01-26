@@ -9,40 +9,45 @@ db = SQLAlchemy()
 # TABELAS DE LOOKUP (Tipos, Status, Géneros)
 # ==========================================
 
+
 class UserType(db.Model):
     """Tabela para definir os tipos de utilizador (ex: admin, registered)."""
     __tablename__ = 'user_types'
-    
+
     id = db.Column(db.Integer, primary_key=True)
-    label = db.Column(db.String(50), nullable=False, unique=True) # O nome do tipo
+    label = db.Column(db.String(50), nullable=False,
+                      unique=True)  # O nome do tipo
 
     def __repr__(self):
         return f'<UserType {self.label}>'
 
+
 class UserStatus(db.Model):
     """Tabela para estados de conta (ex: active, pending, suspended)."""
     __tablename__ = 'user_status'
-    
+
     id = db.Column(db.Integer, primary_key=True)
     label = db.Column(db.String(50), nullable=False, unique=True)
 
     def __repr__(self):
         return f'<UserStatus {self.label}>'
 
+
 class Genders(db.Model):
     """Tabela para opções de género."""
     __tablename__ = 'genders'
-    
+
     id = db.Column(db.Integer, primary_key=True)
     label = db.Column(db.String(50), nullable=False, unique=True)
 
     def __repr__(self):
         return f'<Gender {self.label}>'
 
+
 class SimulationStatus(db.Model):
     """Tabela para estados da simulação (ex: complete, paused)."""
     __tablename__ = 'simulation_status'
-    
+
     id = db.Column(db.Integer, primary_key=True)
     label = db.Column(db.String(50), nullable=False, unique=True)
 
@@ -63,22 +68,30 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=True)  # Nome completo
-    email = db.Column(db.String(100), unique=True, nullable=False) # Email deve ser único
-    password_hash = db.Column(db.String(255), nullable=False) # Guardamos apenas a hash, nunca a password real
-    
+    email = db.Column(db.String(100), unique=True,
+                      nullable=False)  # Email deve ser único
+    # Guardamos apenas a hash, nunca a password real
+    password_hash = db.Column(db.String(255), nullable=False)
+
     birth_date = db.Column(db.Date, nullable=True)
-    cargo = db.Column(db.String(20), nullable=True) # Cargo/Função do utilizador
-    about_me = db.Column(db.Text, nullable=True) # Sobre mim (Biografia)
-    img_url = db.Column(db.String(255), nullable=True) # URL para a imagem de perfil
-    
-    created_at = db.Column(db.DateTime, default=datetime.utcnow) # Data de registo automática
-    last_login = db.Column(db.DateTime, nullable=True) # Data do último login
+    # Cargo/Função do utilizador
+    cargo = db.Column(db.String(20), nullable=True)
+    about_me = db.Column(db.Text, nullable=True)  # Sobre mim (Biografia)
+    # URL para a imagem de perfil
+    img_url = db.Column(db.String(255), nullable=True)
+
+    # Data de registo automática
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    last_login = db.Column(db.DateTime, nullable=True)  # Data do último login
 
     # Chaves Estrangeiras (Foreign Keys)
     # Ligam este utilizador às tabelas de lookup
-    gender_id = db.Column(db.Integer, db.ForeignKey('genders.id'), nullable=True)
-    user_type_id = db.Column(db.Integer, db.ForeignKey('user_types.id'), nullable=False, default=1)
-    user_status_id = db.Column(db.Integer, db.ForeignKey('user_status.id'), nullable=False, default=1)
+    gender_id = db.Column(db.Integer, db.ForeignKey(
+        'genders.id'), nullable=True)
+    user_type_id = db.Column(db.Integer, db.ForeignKey(
+        'user_types.id'), nullable=False, default=1)
+    user_status_id = db.Column(db.Integer, db.ForeignKey(
+        'user_status.id'), nullable=False, default=1)
 
     # Relações (para facilitar o acesso via código, ex: user.simulations)
     simulations = db.relationship('Simulation', backref='creator', lazy=True)
@@ -95,18 +108,22 @@ class Simulation(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.Text, nullable=True)
-    pinned = db.Column(db.Boolean, default=False) # Se o utilizador "fixou" esta simulação
+    # Se o utilizador "fixou" esta simulação
+    pinned = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     # Chaves Estrangeiras
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    simulation_status_id = db.Column(db.Integer, db.ForeignKey('simulation_status.id'), nullable=False, default=1)
+    simulation_status_id = db.Column(db.Integer, db.ForeignKey(
+        'simulation_status.id'), nullable=False, default=1)
 
     # Relações
     # uselist=False garante que é uma relação 1-para-1
-    parameters = db.relationship('SimulationParameters', backref='simulation', uselist=False, cascade="all, delete-orphan")
+    parameters = db.relationship(
+        'SimulationParameters', backref='simulation', uselist=False, cascade="all, delete-orphan")
     # Relação 1-para-Muitos com os passos da simulação
-    steps = db.relationship('SimulationSteps', backref='simulation', lazy=True, cascade="all, delete-orphan")
+    steps = db.relationship(
+        'SimulationSteps', backref='simulation', lazy=True, cascade="all, delete-orphan")
 
     def __repr__(self):
         return f'<Simulation {self.id} - User {self.user_id}>'
@@ -120,13 +137,16 @@ class SimulationParameters(db.Model):
     __tablename__ = 'simulation_parameters'
 
     # A chave primária é também a chave estrangeira para garantir 1-para-1
-    simulation_id = db.Column(db.Integer, db.ForeignKey('simulations.id'), primary_key=True)
-    
-    population_total = db.Column(db.Integer, nullable=False) # População Total (N)
-    infected_initial = db.Column(db.Integer, nullable=False) # Infetados Iniciais (I0)
-    beta = db.Column(db.Float, nullable=False) # Taxa de transmissão
-    gamma = db.Column(db.Float, nullable=False) # Taxa de recuperação
-    duration = db.Column(db.Integer, nullable=False) # Duração em dias
+    simulation_id = db.Column(db.Integer, db.ForeignKey(
+        'simulations.id'), primary_key=True)
+
+    population_total = db.Column(
+        db.BigInteger, nullable=False)  # População Total (N)
+    infected_initial = db.Column(
+        db.BigInteger, nullable=False)  # Infetados Iniciais (I0)
+    beta = db.Column(db.Float, nullable=False)  # Taxa de transmissão
+    gamma = db.Column(db.Float, nullable=False)  # Taxa de recuperação
+    duration = db.Column(db.Integer, nullable=False)  # Duração em dias
 
     def __repr__(self):
         return f'<Params for Sim {self.simulation_id}>'
@@ -140,17 +160,20 @@ class SimulationSteps(db.Model):
     __tablename__ = 'simulation_steps'
 
     id = db.Column(db.Integer, primary_key=True)
-    simulation_id = db.Column(db.Integer, db.ForeignKey('simulations.id'), nullable=False)
-    
-    step_number = db.Column(db.Integer, nullable=False) # O dia ou passo da simulação
-    
+    simulation_id = db.Column(db.Integer, db.ForeignKey(
+        'simulations.id'), nullable=False)
+
+    # O dia ou passo da simulação
+    step_number = db.Column(db.Integer, nullable=False)
+
     # Métricas SIR
     susceptible = db.Column(db.Integer, nullable=False)
     infected = db.Column(db.Integer, nullable=False)
     recovered = db.Column(db.Integer, nullable=False)
-    
+
     # Métricas Adicionais
-    rt_value = db.Column(db.Float, nullable=True) # Reproductive number efetivo
+    # Reproductive number efetivo
+    rt_value = db.Column(db.Float, nullable=True)
 
     def __repr__(self):
         return f'<Step {self.step_number} for Sim {self.simulation_id}>'
