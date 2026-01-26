@@ -107,6 +107,7 @@ export default function RegisterCard() {
                                 id="birthDate"
                                 type="date"
                                 value={birthDate}
+                                max={new Date().toISOString().split('T')[0]}
                                 onChange={(e) => setBirthDate(e.target.value)}
                                 className="w-full pl-10 pr-4 py-3 border border-neutral-100 rounded-lg text-neutral-500 placeholder-neutral-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 font-montserrat text-[14px] transition-colors bg-white shadow-sm"
                                 required

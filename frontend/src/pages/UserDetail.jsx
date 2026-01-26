@@ -271,6 +271,7 @@ export default function UserDetail() {
                                             id="birth_date"
                                             type="date"
                                             name="birth_date"
+                                            max={new Date().toISOString().split('T')[0]}
                                             value={formData.birth_date}
                                             onChange={handleChange}
                                             disabled={loadingPersonal}
