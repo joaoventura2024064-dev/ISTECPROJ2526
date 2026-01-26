@@ -110,7 +110,7 @@ export default function UsersTable({ users = [], isLoading = false, onDelete, Ha
                                             </td>
                                             <td className="p-3">
                                                 <div className="text-start">
-                                                    <Typography className="!text-neutral-300">{cargo}</Typography>
+                                                    <Typography className="!text-neutral-300">{cargo || 'Sem Função'}</Typography>
                                                 </div>
                                             </td>
                                             <td className="p-3">
