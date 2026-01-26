@@ -13,16 +13,17 @@ def create_app(config_class=Config):
     # Inicializar a aplicação Flask
     app = Flask(__name__)
 
-    # Carregar configurações do ficheiro config.py
+    # Carregar configurações do ficheiro config.py (e.g., database URI, secret keys)
     app.config.from_object(config_class)
 
-    # Configurar pasta de uploads (para imagens de perfil)
+    # Configurar pasta de uploads (para imagens de perfil, validando que directorio existe)
     import os
     UPLOAD_FOLDER = os.path.join(app.root_path, 'static', 'uploads')
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
     # Inicializar a Base de Dados com a app
+    # SQLAlchemy needs to be bound to this specific app to know which database to talk to.
     db.init_app(app)
 
     # Inicializar JWT
@@ -32,7 +33,7 @@ def create_app(config_class=Config):
     mail.init_app(app)
 
     # Ativar CORS (Cross-Origin Resource Sharing)
-    # Isto permite que o frontend (React) noutra porta comunique com este backend
+    # Isto permite que o frontend (React) noutra porta comunique com este backend sem que o browser bloqueie
     CORS(app)
 
     # Configuração do Flasgger (OpenAPI/Swagger)
@@ -42,8 +43,8 @@ def create_app(config_class=Config):
             {
                 "endpoint": 'apispec_1',
                 "route": '/apispec_1.json',
-                "rule_filter": lambda rule: True,  # all in
-                "model_filter": lambda tag: True,  # all in
+                "rule_filter": lambda rule: True,  # Include all routes
+                "model_filter": lambda tag: True,  # Include all models
             }
         ],
         "static_url_path": "/flasgger_static",
@@ -59,7 +60,7 @@ def create_app(config_class=Config):
         }
     }
 
-    # Inicializar Flasgger
+    # Inicializar Flasgger com a conf acima
     Swagger(app, config=swagger_config)
 
 
@@ -89,6 +90,8 @@ def create_app(config_class=Config):
         return html
 
     # Registar Blueprints (Rotas)
+    # Blueprints permitem organizar as rotas em ficheiros separados (auth, users, etc.)
+    # mantendo o código modular e mais fácil de manter.
     from routes.auth import auth_bp
     from routes.simulations import simulations_bp
     from routes.stats import stats_bp
@@ -100,8 +103,9 @@ def create_app(config_class=Config):
     app.register_blueprint(users_bp, url_prefix='/api/users')
 
     # Contexto da aplicação para operações de base de dados
+    # Usamos contexto de aplicação porque db.create_all() precisa de acesso à configuração da app.
     with app.app_context():
-        # Importar modelos para garantir que o SQLAlchemy os conhece antes de criar as tabelas
+        # Importar modelos para garantir que o SQLAlchemy os conhece antes de criar as tabelas para que db.create_all() funcione corretamente.
         from models import (
             User, Simulation, SimulationParameters, SimulationSteps,
             UserType, UserStatus, Genders, SimulationStatus

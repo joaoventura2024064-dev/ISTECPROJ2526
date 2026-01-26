@@ -41,16 +41,20 @@ def get_dashboard_stats():
 def get_dashboard_stats_impl():
     try:
         # 1. Total de Utilizadores
+        # Contamos todos os registos na tabela User.
         total_users = User.query.count()
 
         # 2. Total de Simulações
+        # Contamos todas as simulações criadas até hoje.
         total_simulations = Simulation.query.count()
 
-        # 3. Simulações por Estado (Exemplo de agregação simples)
-        # Contar quantas simulações estão 'completed'
+        # 3. Simulações por Estado
+        # Queremos saber quantas simulações foram concluídas com sucesso.
+        # Primeiro, obtemos o ID do estado 'complete'.
         completed_status = SimulationStatus.query.filter_by(label=c.SIM_STATUS_COMPLETE).first()
         completed_sims = 0
         if completed_status:
+            # Depois filtramos as simulações que têm esse status_id.
             completed_sims = Simulation.query.filter_by(simulation_status_id=completed_status.id).count()
 
         return jsonify({

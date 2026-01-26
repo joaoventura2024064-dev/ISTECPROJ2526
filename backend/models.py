@@ -1,29 +1,38 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
-# Inicializar a extensão SQLAlchemy
-# Será ligada à app Flask mais tarde no ficheiro app.py
+# Inicializar a extensão SQLAlchemy.
+# Este objeto será usado para definir os nossos modelos (tabelas) e interagir com a base de dados.
+# É ligado à aplicação Flask no ficheiro app.py usando db.init_app(app).
 db = SQLAlchemy()
 
 # ==========================================
 # TABELAS DE LOOKUP (Tipos, Status, Géneros)
 # ==========================================
-
+# Usamos tabelas de lookup para normalizar a nossa base de dados. Em vez de guardar strings como "admin"
+# repetidamente na tabela Users, guardamos um ID inteiro que refere estas tabelas.
+# Isto poupa espaço e garante consistência (ex: previne erros como "Admin" vs "admin").
 
 class UserType(db.Model):
-    """Tabela para definir os tipos de utilizador (ex: admin, registered)."""
+    """
+    Define os tipos de utilizador no sistema (ex: 'admin', 'registered').
+    Isto permite-nos gerir facilmente as permissões com base no papel do utilizador.
+    """
     __tablename__ = 'user_types'
 
     id = db.Column(db.Integer, primary_key=True)
     label = db.Column(db.String(50), nullable=False,
-                      unique=True)  # O nome do tipo
+                      unique=True)  # O nome do tipo (ex: 'admin')
 
     def __repr__(self):
         return f'<UserType {self.label}>'
 
 
 class UserStatus(db.Model):
-    """Tabela para estados de conta (ex: active, pending, suspended)."""
+    """
+    Define os estados possíveis de uma conta de utilizador (ex: 'active', 'pending', 'suspended').
+    Isto é útil para gerir o acesso do utilizador sem apagar registos.
+    """
     __tablename__ = 'user_status'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -34,7 +43,10 @@ class UserStatus(db.Model):
 
 
 class Genders(db.Model):
-    """Tabela para opções de género."""
+    """
+    Define as opções de género disponíveis para os utilizadores.
+    Usar uma tabela permite-nos adicionar facilmente mais opções no futuro, se necessário.
+    """
     __tablename__ = 'genders'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -45,7 +57,10 @@ class Genders(db.Model):
 
 
 class SimulationStatus(db.Model):
-    """Tabela para estados da simulação (ex: complete, paused)."""
+    """
+    Define os estados do ciclo de vida de uma simulação (ex: 'running', 'completed', 'failed').
+    Isto ajuda o frontend a saber se deve mostrar um spinner de carregamento ou os resultados.
+    """
     __tablename__ = 'simulation_status'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -61,31 +76,33 @@ class SimulationStatus(db.Model):
 
 class User(db.Model):
     """
-    Tabela principal de Utilizadores.
-    Guarda toda a informação de perfil e credenciais.
+    A tabela principal de Utilizadores.
+    Guarda dados de autenticação, informação de perfil e ligações às tabelas de lookup.
     """
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=True)  # Nome completo
     email = db.Column(db.String(100), unique=True,
-                      nullable=False)  # Email deve ser único
-    # Guardamos apenas a hash, nunca a password real
+                      nullable=False)  # O email deve ser único para login
+    
+    # Guardamos a hash da password, NÃO a password real.
+    # Se a base de dados for comprometida, os atacantes não terão acesso às passwords dos utilizadores.
     password_hash = db.Column(db.String(255), nullable=False)
 
     birth_date = db.Column(db.Date, nullable=True)
-    # Cargo/Função do utilizador
+    # Cargo ou função do utilizador
     cargo = db.Column(db.String(20), nullable=True)
-    about_me = db.Column(db.Text, nullable=True)  # Sobre mim (Biografia)
-    # URL para a imagem de perfil
+    about_me = db.Column(db.Text, nullable=True)  # Biografia ou descrição
+    # URL para a imagem de perfil guardada na pasta static/uploads
     img_url = db.Column(db.String(255), nullable=True)
 
-    # Data de registo automática
+    # Definir automaticamente a data de registo quando o utilizador é criado
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    last_login = db.Column(db.DateTime, nullable=True)  # Data do último login
+    last_login = db.Column(db.DateTime, nullable=True)  # Atualizado em cada login
 
     # Chaves Estrangeiras (Foreign Keys)
-    # Ligam este utilizador às tabelas de lookup
+    # Estas ligam o utilizador às linhas específicas nas tabelas de lookup definidas acima.
     gender_id = db.Column(db.Integer, db.ForeignKey(
         'genders.id'), nullable=True)
     user_type_id = db.Column(db.Integer, db.ForeignKey(
@@ -93,7 +110,9 @@ class User(db.Model):
     user_status_id = db.Column(db.Integer, db.ForeignKey(
         'user_status.id'), nullable=False, default=1)
 
-    # Relações (para facilitar o acesso via código, ex: user.simulations)
+    # Relações
+    # Isto permite-nos aceder às simulações de um utilizador via `user.simulations`.
+    # `lazy=True` significa que as simulações são carregadas da BD apenas quando acedemos a esta propriedade.
     simulations = db.relationship('Simulation', backref='creator', lazy=True)
 
     def __repr__(self):
@@ -102,13 +121,14 @@ class User(db.Model):
 
 class Simulation(db.Model):
     """
-    Tabela que representa uma Simulação criada por um utilizador.
+    Representa uma simulação criada por um utilizador.
+    Liga o utilizador, os parâmetros e os resultados (passos).
     """
     __tablename__ = 'simulations'
 
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.Text, nullable=True)
-    # Se o utilizador "fixou" esta simulação
+    # Permite aos utilizadores "fixar" ou dar favourite simulações para as encontrar facilmente mais tarde
     pinned = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -118,10 +138,13 @@ class Simulation(db.Model):
         'simulation_status.id'), nullable=False, default=1)
 
     # Relações
-    # uselist=False garante que é uma relação 1-para-1
+    # `uselist=False` garante uma relação 1:1 (uma simulação tem um conjunto de parâmetros).
+    # `cascade="all, delete-orphan"` garante que se apagarmos uma simulação,
+    # os seus parâmetros e passos também são apagados automaticamente.
     parameters = db.relationship(
         'SimulationParameters', backref='simulation', uselist=False, cascade="all, delete-orphan")
-    # Relação 1-para-Muitos com os passos da simulação
+    
+    # Relação 1:Many com os passos da simulação (dias).
     steps = db.relationship(
         'SimulationSteps', backref='simulation', lazy=True, cascade="all, delete-orphan")
 
@@ -131,19 +154,21 @@ class Simulation(db.Model):
 
 class SimulationParameters(db.Model):
     """
-    Parâmetros de entrada de uma simulação.
-    Relação 1-para-1 com a tabela Simulations.
+    Guarda os parâmetros de entrada para uma simulação.
+    Separar isto da tabela Simulation mantém o esquema limpo e organizado.
     """
     __tablename__ = 'simulation_parameters'
 
-    # A chave primária é também a chave estrangeira para garantir 1-para-1
+    # A chave primária é também uma chave estrangeira para Simulation, forçando uma relação 1:1.
     simulation_id = db.Column(db.Integer, db.ForeignKey(
         'simulations.id'), primary_key=True)
 
+    # Usamos BigInteger para contagens de população para suportar simulações à escala global (triliões).
     population_total = db.Column(
         db.BigInteger, nullable=False)  # População Total (N)
     infected_initial = db.Column(
         db.BigInteger, nullable=False)  # Infetados Iniciais (I0)
+    
     beta = db.Column(db.Float, nullable=False)  # Taxa de transmissão
     gamma = db.Column(db.Float, nullable=False)  # Taxa de recuperação
     duration = db.Column(db.Integer, nullable=False)  # Duração em dias
@@ -154,8 +179,8 @@ class SimulationParameters(db.Model):
 
 class SimulationSteps(db.Model):
     """
-    Resultados detalhados de cada passo (dia) da simulação.
-    Guarda tanto os valores SIR como o Rt.
+    Guarda os resultados diários de uma simulação.
+    Cada linha representa um dia (passo) da simulação.
     """
     __tablename__ = 'simulation_steps'
 
@@ -163,16 +188,17 @@ class SimulationSteps(db.Model):
     simulation_id = db.Column(db.Integer, db.ForeignKey(
         'simulations.id'), nullable=False)
 
-    # O dia ou passo da simulação
+    # O número do dia (ex: 1, 2, 3...)
     step_number = db.Column(db.Integer, nullable=False)
 
-    # Métricas SIR
+    # Métricas SIR (Suscetíveis, Infetados, Recuperados)
+    # Usamos BigInteger para corresponder à escala da população.
     susceptible = db.Column(db.BigInteger, nullable=False)
     infected = db.Column(db.BigInteger, nullable=False)
     recovered = db.Column(db.BigInteger, nullable=False)
 
     # Métricas Adicionais
-    # Reproductive number efetivo
+    # Número Reprodutivo Efetivo (Rt) - ajuda a entender se o vírus está a espalhar-se ou a morrer.
     rt_value = db.Column(db.Float, nullable=True)
 
     def __repr__(self):

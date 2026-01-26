@@ -11,6 +11,11 @@ from flask import current_app
 import jwt # Usar pyjwt para gerar tokens de reset seguros
 
 def send_async_email(app, msg):
+    """
+    Envia emails de forma assíncrona (em background).
+    Isto é importante porque o envio de emails pode demorar alguns segundos,
+    e não queremos bloquear o utilizador à espera que a página carregue.
+    """
     with app.app_context():
         try:
             mail.send(msg)
@@ -19,7 +24,7 @@ def send_async_email(app, msg):
             print(f"Erro ao enviar email: {e}")
 
 # Criar um "Blueprint" para agrupar as rotas de autenticação
-# Isto ajuda a organizar o código, separando-o do app.py principal
+# Todas as rotas aqui definidas terão o prefixo /api/auth (definido no app.py).
 auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/register', methods=['POST'])
@@ -89,21 +94,24 @@ def register():
     data = request.get_json()
 
     # 1. Validar dados obrigatórios
+    # Sem email ou password, não podemos criar conta.
     if not data or not data.get('email') or not data.get('password'):
         return jsonify({'error': 'Email e password são obrigatórios'}), 400
 
     # 2. Verificar se o email já existe
+    # O email deve ser único no sistema.
     if User.query.filter_by(email=data.get('email')).first():
         return jsonify({'error': 'Este email já está registado'}), 409
 
     try:
         # 3. Obter valores predefinidos para novos utilizadores
-        # Por defeito, um novo utilizador é 'registered' e 'active' (ou 'pending' se preferires validação)
+        # Por defeito, um novo utilizador é 'registered' e 'active'.
+        # (Poderemos futuramente usar 'pending' se implementarmos validação por email antes do login).
         user_type = UserType.query.filter_by(label=c.USER_TYPE_REGISTERED).first()
         user_status = UserStatus.query.filter_by(label=c.USER_STATUS_ACTIVE).first()
 
         # 4. Criar o novo utilizador
-        # Converter data de nascimento se vier como string
+        # Converter data de nascimento se vier como string (formato YYYY-MM-DD)
         birth_date_val = data.get('birth_date')
         if birth_date_val and isinstance(birth_date_val, str):
             try:
@@ -114,7 +122,9 @@ def register():
         new_user = User(
             name=data.get('name'),
             email=data.get('email'),
-            password_hash=generate_password_hash(data.get('password')), # Nunca guardar plain text!
+            # IMPORTANTE: Nunca guardar passwords em texto simples (plain text)!
+            # Usamos generate_password_hash para criar um hash seguro.
+            password_hash=generate_password_hash(data.get('password')),
             birth_date=birth_date_val, # Formato esperado: YYYY-MM-DD
             gender_id=data.get('gender_id'),
             user_type_id=user_type.id,
@@ -128,7 +138,7 @@ def register():
         return jsonify({'message': 'Utilizador registado com sucesso', 'user_id': new_user.id}), 201
 
     except Exception as e:
-        db.session.rollback() # Desfazer alterações em caso de erro
+        db.session.rollback() # Desfazer alterações em caso de erro para não deixar a BD inconsistente
         return jsonify({'error': f'Erro ao registar: {str(e)}'}), 500
 
 
@@ -215,16 +225,19 @@ def login():
     user = User.query.filter_by(email=data.get('email')).first()
 
     # 2. Verificar se existe e se a password corresponde ao hash guardado
+    # check_password_hash compara a password fornecida com o hash na BD.
     if not user or not check_password_hash(user.password_hash, data.get('password')):
         return jsonify({'error': 'Credenciais inválidas'}), 401
 
     # 3. Verificar se a conta está ativa
+    # Utilizadores suspensos ou pendentes não podem fazer login.
     status = UserStatus.query.get(user.user_status_id)
     if status.label != c.USER_STATUS_ACTIVE:
         return jsonify({'error': 'Conta suspensa ou pendente'}), 403
 
-    # 4. Login com sucesso - Gerar Token
-    # identity pode ser o ID do user ou o email
+    # 4. Login com sucesso - Gerar Token JWT
+    # O token permite ao utilizador fazer pedidos autenticados sem enviar a password novamente.
+    # 'identity' é geralmente o ID do user. Adicionamos 'role' como claim extra.
     role_label = UserType.query.get(user.user_type_id).label
     access_token = create_access_token(identity=str(user.id), additional_claims={'role': role_label})
 
@@ -275,11 +288,13 @@ def recover_password():
         
     user = User.query.filter_by(email=email).first()
     
-    # Por segurança, respondemos sempre 200 mesmo que o email não exista
+    # Por segurança, respondemos sempre 200 mesmo que o email não exista.
+    # Isto impede que atacantes descubram quais emails estão registados na plataforma.
     if not user:
         return jsonify({'message': 'Se o email existir, receberá instruções.'}), 200
         
     # Gerar token de reset (válido por 1 hora)
+    # Este token é assinado com a nossa SECRET_KEY
     from flask import current_app
     reset_token = jwt.encode(
         {'reset_password': user.id, 'exp': datetime.utcnow() + timedelta(hours=1)},
@@ -288,10 +303,11 @@ def recover_password():
     )
     
     # URL do Frontend para reset
+    # O utilizador clica neste link, que recebe no email, para ir para a página de definir nova password.
     # TODO: Ajustar URL base conforme ambiente (dev/prod)
     reset_url = f"https://seios.onrender.com/reset-password?token={reset_token}"
     
-    # Enviar Email (Asynchronous)
+    # Enviar Email (Assíncrono)
     msg = Message(
         subject="Recuperação de Password - SEIOS",
         recipients=[user.email],
@@ -340,6 +356,7 @@ def reset_password():
     try:
         from flask import current_app
         # Descodificar token
+        # Se o token estiver expirado ou a assinatura for inválida, o jwt.decode lança uma exceção.
         payload = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
         user_id = payload.get('reset_password')
         
@@ -348,6 +365,7 @@ def reset_password():
             return jsonify({'error': 'Utilizador inválido'}), 400
             
         # Atualizar Password
+        # Geramos um novo hash para a nova password.
         user.password_hash = generate_password_hash(new_password)
         db.session.commit()
         
