@@ -1,3 +1,6 @@
+import os
+from flask import current_app
+from werkzeug.utils import secure_filename
 from flask import Blueprint, request, jsonify
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -7,6 +10,7 @@ from models import db, User, UserType, UserStatus, Genders, Simulation, Simulati
 from datetime import datetime
 
 users_bp = Blueprint('users', __name__)
+
 
 @users_bp.route('/', methods=['GET'])
 def get_all_users():
@@ -76,6 +80,7 @@ def get_all_users():
         return jsonify(results), 200
     return get_all_users_wrapper()
 
+
 @users_bp.route('/<int:user_id>', methods=['GET'])
 @jwt_required()
 def get_user_profile(user_id):
@@ -110,9 +115,9 @@ def get_user_profile(user_id):
             birth_date:
               type: string
               example: "1990-01-01"
-            gender:
-              type: string
-              example: Male
+            gender_id:
+              type: integer
+              example: 1
             role:
               type: string
               example: registered
@@ -139,20 +144,19 @@ def get_user_profile(user_id):
     # Verificar autorização (Próprio ou Admin)
     current_user_id = get_jwt_identity()
     is_admin = False
-    
+
     # Check if admin
     curr_user = User.query.get(current_user_id)
     if curr_user:
         user_type = UserType.query.get(curr_user.user_type_id)
         if user_type and user_type.label == 'admin':
             is_admin = True
-            
+
     if str(current_user_id) != str(user_id) and not is_admin:
         return jsonify({'error': 'Acesso não autorizado'}), 403
     user = User.query.get_or_404(user_id)
-    
+
     # Obter labels das tabelas de lookup
-    gender_label = Genders.query.get(user.gender_id).label if user.gender_id else None
     type_label = UserType.query.get(user.user_type_id).label
     status_label = UserStatus.query.get(user.user_status_id).label
 
@@ -161,7 +165,7 @@ def get_user_profile(user_id):
         'name': user.name,
         'email': user.email,
         'birth_date': user.birth_date.isoformat() if user.birth_date else None,
-        'gender': gender_label,
+        'gender_id': user.gender_id,
         'role': type_label,
         'status': status_label,
         'cargo': user.cargo,
@@ -169,6 +173,7 @@ def get_user_profile(user_id):
         'img_url': user.img_url,
         'created_at': user.created_at.isoformat()
     }), 200
+
 
 @users_bp.route('/<int:user_id>', methods=['PUT'])
 @jwt_required()
@@ -241,7 +246,7 @@ def update_user_profile(user_id):
     # Verificar autorização (Próprio ou Admin)
     current_user_id = get_jwt_identity()
     is_admin = False
-    
+
     curr_user = User.query.get(current_user_id)
     if curr_user:
         user_type = UserType.query.get(curr_user.user_type_id)
@@ -260,12 +265,12 @@ def update_user_profile(user_id):
         # 1. Atualizar campos simples
         if 'name' in data:
             user.name = data['name']
-        
+
         if 'cargo' in data:
             # Limitar a 20 caracteres conforme pedido
             cargo_val = data['cargo']
             if cargo_val and len(cargo_val) > 20:
-                 return jsonify({'error': 'Cargo não pode ter mais de 20 caracteres'}), 400
+                return jsonify({'error': 'Cargo não pode ter mais de 20 caracteres'}), 400
             user.cargo = cargo_val
 
         if 'about_me' in data:
@@ -277,7 +282,8 @@ def update_user_profile(user_id):
                 try:
                     # Tentar converter se for string
                     if isinstance(bdate, str):
-                        user.birth_date = datetime.strptime(bdate, '%Y-%m-%d').date()
+                        user.birth_date = datetime.strptime(
+                            bdate, '%Y-%m-%d').date()
                     else:
                         # Assumir que já é date object ou compatível
                         user.birth_date = bdate
@@ -307,11 +313,11 @@ def update_user_profile(user_id):
             # Validar input
             if not current_password:
                 return jsonify({'error': 'Password atual é necessária para definir uma nova'}), 400
-            
+
             # Verificar password atual
             from werkzeug.security import check_password_hash
             if not check_password_hash(user.password_hash, current_password):
-                 return jsonify({'error': 'Password atual incorreta'}), 400
+                return jsonify({'error': 'Password atual incorreta'}), 400
 
             # Verificar confirmação
             if new_password != confirm_password:
@@ -334,15 +340,14 @@ def update_user_profile(user_id):
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
-import os
-from werkzeug.utils import secure_filename
-from flask import current_app
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 @users_bp.route('/<int:user_id>/upload-image', methods=['POST'])
 def upload_image(user_id):
@@ -392,31 +397,33 @@ def upload_image(user_id):
         return upload_image_impl(user_id)
     return upload_image_wrapper(user_id)
 
+
 def upload_image_impl(user_id):
     if 'file' not in request.files:
         return jsonify({'error': 'Sem ficheiro'}), 400
-    
+
     file = request.files['file']
     if file.filename == '':
         return jsonify({'error': 'Sem ficheiro selecionado'}), 400
-        
+
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         # Adicionar timestamp ou ID para evitar conflitos
         filename = f"user_{user_id}_{int(datetime.utcnow().timestamp())}_{filename}"
-        
+
         filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
-        
+
         # Atualizar DB
         user = User.query.get_or_404(user_id)
         # Guardar caminho relativo para servir via static
         user.img_url = f"/static/uploads/{filename}"
         db.session.commit()
-        
+
         return jsonify({'message': 'Upload com sucesso', 'img_url': user.img_url}), 200
-    
+
     return jsonify({'error': 'Tipo de ficheiro não permitido'}), 400
+
 
 @users_bp.route('/<int:user_id>/simulations', methods=['GET'])
 def get_user_simulations(user_id):
@@ -488,12 +495,14 @@ def get_user_simulations(user_id):
         return get_user_simulations_impl(user_id)
     return get_user_simulations_wrapper(user_id)
 
+
 def get_user_simulations_impl(user_id):
     # Verificar se o user existe
     user = User.query.get_or_404(user_id)
-    
-    sims = Simulation.query.filter_by(user_id=user_id).order_by(Simulation.created_at.desc()).all()
-    
+
+    sims = Simulation.query.filter_by(user_id=user_id).order_by(
+        Simulation.created_at.desc()).all()
+
     results = []
     for s in sims:
         status = SimulationStatus.query.get(s.simulation_status_id)
@@ -512,8 +521,9 @@ def get_user_simulations_impl(user_id):
                 'duration': params.duration if params else None
             }
         })
-    
+
     return jsonify(results), 200
+
 
 @users_bp.route('/<int:user_id>/status', methods=['PATCH'])
 @admin_required()
@@ -555,17 +565,17 @@ def update_user_status(user_id):
     """
     user = User.query.get_or_404(user_id)
     data = request.get_json()
-    
+
     if not data or 'status' not in data:
         return jsonify({'error': 'Campo status é obrigatório'}), 400
-        
+
     new_status_label = data['status']
-    
+
     # Validar se o estado existe na BD
     status_obj = UserStatus.query.filter_by(label=new_status_label).first()
     if not status_obj:
         return jsonify({'error': f'Estado inválido. Opções: active, suspended, pending'}), 400
-        
+
     try:
         user.user_status_id = status_obj.id
         db.session.commit()
@@ -615,17 +625,17 @@ def update_user_role(user_id):
     """
     user = User.query.get_or_404(user_id)
     data = request.get_json()
-    
+
     if not data or 'role' not in data:
         return jsonify({'error': 'Campo role é obrigatório'}), 400
-        
+
     new_role_label = data['role']
-    
+
     # Validar se o role existe na BD
     role_obj = UserType.query.filter_by(label=new_role_label).first()
     if not role_obj:
         return jsonify({'error': f'Role inválido. Opções: admin, registered, researcher'}), 400
-        
+
     try:
         user.user_type_id = role_obj.id
         db.session.commit()
