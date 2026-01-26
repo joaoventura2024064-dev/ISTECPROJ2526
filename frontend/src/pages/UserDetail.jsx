@@ -95,6 +95,12 @@ export default function UserDetail() {
     };
 
     const handleSave = async () => {
+
+        if (formData.birth_date > new Date().toISOString().split('T')[0]) {
+            toast.error("A data de nascimento deve ser igual ou inferior ao dia atual.");
+            return;
+        }
+
         setLoadingPersonal(true);
         try {
             const changes = {};

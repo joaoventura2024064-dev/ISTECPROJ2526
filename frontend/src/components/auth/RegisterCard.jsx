@@ -25,6 +25,11 @@ export default function RegisterCard() {
             return;
         }
 
+        if (birthDate > new Date().toISOString().split('T')[0]) {
+            toast.error("A data de nascimento deve ser igual ou inferior ao dia atual.");
+            return;
+        }
+
         if (password !== confirmPassword) {
             toast.error("As password não coincidem.");
             return;
