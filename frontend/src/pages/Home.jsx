@@ -49,6 +49,10 @@ export default function Home() {
     const exportCSV = async () => {
         //console.log(simulations.map(sim => sim.id));
         try {
+            if (simulations.length === 0) {
+                toast.info('Nenhuma simulação para exportar');
+                return;
+            }
             const result = await downloadSimulationCSVService(simulations.map(sim => sim.id));
             const blob = new Blob([result], { type: 'text/csv' });
             const url = URL.createObjectURL(blob);
