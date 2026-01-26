@@ -4,14 +4,22 @@ import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import logo from '../../assets/medcei_nav_logo.webp';
 
+/**
+ * Cabeçalho principal da aplicação.
+ * Contém a navegação e o menu de utilizador.
+ */
 function Header() {
     const { user, logout } = useAuth();
     const userName = user?.name || 'Utilizador';
     const userRole = user?.cargo || 'Sem Cargo';
+
+    // Obter inicial para o avatar
     const userInitial = userName.charAt(0).toUpperCase();
+
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
 
+    // Fechar dropdown ao clicar fora dele
     useEffect(() => {
         function handleClickOutside(event) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -30,15 +38,15 @@ function Header() {
                 <img src={logo} alt="Medcei Logo" className="h-full object-contain" fetchPriority="high" />
             </Link>
 
-            <div className="flex items-center h-full gap-8">
+            <div className="flex items-center h-full gap-8 ">
                 <nav className="flex h-full gap-8">
                     <NavLink
                         to="/"
                         className={({ isActive }) =>
-                            `flex items-center h-full border-b-2 font-montserrat font-semibold text-[14px] transition-colors 
+                            `flex items-center h-full border-b-2 body-strong transition-colors duration-300 ease-in-out relative
                         ${isActive
                                 ? 'border-primary-500 text-primary-500 cursor-default'
-                                : 'border-transparent text-neutral-300 hover:text-neutral-500'
+                                : 'border-transparent text-neutral-300 hover:text-primary-500'
                             }`
                         }
                     >
@@ -48,9 +56,9 @@ function Header() {
                         to="/simulador"
                         end
                         className={({ isActive }) =>
-                            `flex items-center h-full border-b-2 font-montserrat font-semibold text-[14px] transition-colors ${isActive
-                                ? 'border-primary-500 text-primary-500 cursor-default'
-                                : 'border-transparent text-neutral-300 hover:text-neutral-500'
+                            `flex items-center h-full border-b-2 body-strong transition-colors duration-300 ease-in-out relative  ${isActive
+                                ? 'border-primary-500 text-primary-500 cursor-default '
+                                : 'border-transparent text-neutral-300 hover:text-primary-500 '
                             }`
                         }
                     >
@@ -66,14 +74,14 @@ function Header() {
                         className="flex items-center gap-3 focus:outline-none p-2 rounded-lg transition-colors cursor-pointer group"
                     >
                         <div className="text-right flex flex-col justify-center">
-                            <span className="font-montserrat font-semibold text-[12px] text-neutral-500 leading-tight group-hover:text-primary-500 transition-colors">
+                            <span className="caption-strong text-neutral-500 group-hover:text-primary-500 transition-colors">
                                 {userName}
                             </span>
-                            <span className="font-montserrat font-medium text-[10px] text-neutral-300 leading-tight">
+                            <span className="caption-main text-neutral-300">
                                 {userRole}
                             </span>
                         </div>
-                        <div className="w-9 h-9 rounded-full bg-primary-50 border border-primary-200 flex items-center justify-center text-primary-700 font-montserrat font-semibold text-[14px]">
+                        <div className="ui-profile-initial-s w-9 h-9 rounded-full bg-primary-50 border border-primary-200 flex items-center justify-center text-primary-700">
                             {userInitial}
                         </div>
                     </button>
@@ -82,7 +90,7 @@ function Header() {
                         <div className="absolute right-0 mt-1 w-56 bg-white rounded-xl shadow-xl border border-base-600 overflow-hidden py-1 z-50">
                             <Link
                                 to={`/utilizador/${user.id}`}
-                                className="block px-4 py-3 text-sm font-montserrat font-medium text-neutral-500 hover:text-primary-700 transition-colors"
+                                className="block px-4 py-3 body-medium text-neutral-500 hover:text-primary-500 transition-colors"
                                 onClick={() => setIsDropdownOpen(false)}
                             >
                                 Meu perfil
@@ -90,7 +98,7 @@ function Header() {
                             {user?.role === 'admin' && (
                                 <Link
                                     to="/utilizadores"
-                                    className="block px-4 py-3 text-sm font-montserrat font-medium text-neutral-500 hover:text-primary-700 transition-colors"
+                                    className="block px-4 py-3 body-medium text-neutral-500 hover:text-primary-500 transition-colors"
                                     onClick={() => setIsDropdownOpen(false)}
                                 >
                                     Gestão de utilizadores
@@ -102,7 +110,7 @@ function Header() {
                                     logout();
                                     setIsDropdownOpen(false);
                                 }}
-                                className="block px-4 py-3 text-sm font-montserrat font-medium text-neutral-500 hover:text-primary-700 transition-colors"
+                                className="block px-4 py-3 body-medium text-neutral-500 hover:text-primary-500 transition-colors"
                             >
                                 Terminar sessão
                             </button>

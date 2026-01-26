@@ -8,11 +8,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 const TABLE_HEAD = ["Simulação", "População", "Infetados Iniciais", "Taxa Contacto", "Taxa Recuperação", "Duração", ""];
 //const TABLE_HEAD = ["Simulação", "Pop.", "Inf. Inic.", "Tx. Cont.", "Tx. Rec.", "Duração", ""];
 
+/**
+ * Tabela de Histórico de Simulações.
+ * Apresenta uma lista paginada das simulações realizads.
+ */
 export default function SimulationsTable({ data = [], isLoading = false, onDelete }) {
     const navigate = useNavigate();
+
+    // Estado de Paginação
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 7;
 
+    // Calcular índices para slicing do array de dados
     const totalPages = Math.ceil(data.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
     const paginatedData = data.slice(startIndex, startIndex + itemsPerPage);
@@ -117,7 +124,7 @@ export default function SimulationsTable({ data = [], isLoading = false, onDelet
                                                     onDelete(id);
                                                 }}
                                             >
-                                                <FontAwesomeIcon icon={faTrash} className="h-5 w-5 text-neutral-100 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 group-hover/delete:text-red-500 group-hover/delete:transition-colors group-hover/delete:duration-200" />
+                                                <FontAwesomeIcon icon={faTrash} className="h-5 w-5 text-neutral-100 hover:text-destructive-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 group-hover/delete:text-destructive-500 group-hover/delete:transition-colors group-hover/delete:duration-200" />
                                             </td>
                                         </tr>
                                     );

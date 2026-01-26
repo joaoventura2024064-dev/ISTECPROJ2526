@@ -3,6 +3,18 @@ import Card from '../common/Card/Card';
 import { faPlay, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 
+/**
+ * Componente de Formulário de Parâmetros da Simulação.
+ * Permite editar inputs numéricos e sliders para configurar a simulação.
+ * 
+ * @param {string} title - Título do cartão.
+ * @param {object} icon - Ícone do cartão.
+ * @param {object} params - Estado atual dos parâmetros.
+ * @param {function} onRun - Callback para executar simulação.
+ * @param {function} onChange - Callback para atualizar um parâmetro.
+ * @param {boolean} readOnly - Modo de leitura (desativa inputs).
+ * @param {boolean} loading - Estado de carregamento.
+ */
 export default function SimulationParameters({
     title,
     icon,

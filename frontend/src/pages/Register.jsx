@@ -1,5 +1,9 @@
 import RegisterCard from '../components/auth/RegisterCard';
 
+/**
+ * Página de Registo.
+ * Renderiza o Cartão de Registo e o logótipo.
+ */
 export default function Register() {
     return (
         <div className="flex flex-col items-center justify-center gap-10 w-full max-w-[550px] select-none">

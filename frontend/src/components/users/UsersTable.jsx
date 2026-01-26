@@ -10,14 +10,27 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const TABLE_HEAD = ["Nome", "Função", "Estado", "Data Criação", "Último Login", "Total de Simulações", ""];
 
+/**
+ * Tabela de Gestão de Utilizadores (Admin).
+ * Lista todos os utilizadores e permite ações administrativas (Bloquear, Promover).
+ * 
+ * @param {Array} users - Lista de utilizadores.
+ * @param {boolean} isLoading - Estado de carregamento.
+ * @param {function} onDelete - Callback para apagar utilizador (não implementado visualmente na tabela atual).
+ * @param {function} HandleToggleBlock - Callback para bloquear/desbloquear.
+ * @param {function} HandleToggleAdmin - Callback para promover/despromover admin.
+ */
 export default function UsersTable({ users = [], isLoading = false, onDelete, HandleToggleBlock, HandleToggleAdmin }) {
     const navigate = useNavigate();
+
+    // Estado de paginação e Dropdowns de ações
     const [currentPage, setCurrentPage] = useState(1);
-    const [openDropdownId, setOpenDropdownId] = useState(null);
-    const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+    const [openDropdownId, setOpenDropdownId] = useState(null); // ID do user com menu aberto
+    const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 }); // Posição do menu
     const dropdownRef = useRef(null);
     const itemsPerPage = 7;
 
+    // Fechar dropdown ao clicar fora
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -34,6 +47,7 @@ export default function UsersTable({ users = [], isLoading = false, onDelete, Ha
     const totalPages = Math.ceil(users.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
 
+    // Ordenar utilizadores por nome e paginar
     const sortedUsers = [...users].sort((a, b) => a.name.localeCompare(b.name));
     const paginatedUsers = sortedUsers.slice(startIndex, startIndex + itemsPerPage);
 
@@ -168,7 +182,7 @@ export default function UsersTable({ users = [], isLoading = false, onDelete, Ha
                                                                         HandleToggleBlock(id, status === 'active' ? 'suspended' : 'active');
                                                                         setOpenDropdownId(null);
                                                                     }}
-                                                                    className="text-left px-4 py-2 text-sm text-neutral-700 hover:text-primary-500 transition-colors bg-white font-montserrat font-medium"
+                                                                    className="text-left px-4 py-2 body-medium text-neutral-500 hover:text-primary-500 transition-colors bg-white font-montserrat font-medium"
                                                                 >
                                                                     {status === 'active' ? 'Bloquear' : 'Desbloquear'}
                                                                 </button>
@@ -177,7 +191,7 @@ export default function UsersTable({ users = [], isLoading = false, onDelete, Ha
                                                                         HandleToggleAdmin(id, role === 'admin' ? 'registered' : 'admin');
                                                                         setOpenDropdownId(null);
                                                                     }}
-                                                                    className="text-left px-4 py-2 text-sm text-neutral-700 hover:text-primary-500 transition-colors bg-white font-montserrat font-medium"
+                                                                    className="text-left px-4 py-2 body-medium text-neutral-500 hover:text-primary-500 transition-colors bg-white font-montserrat font-medium"
                                                                 >
                                                                     {role === 'admin' ? 'Remover Admin' : 'Promover a Admin'}
                                                                 </button>

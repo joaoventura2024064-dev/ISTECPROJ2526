@@ -6,6 +6,10 @@ import Button from '../common/Button';
 import { toast } from 'sonner';
 import { resetPasswordService } from '../../services/api';
 
+/**
+ * Cartão de Redefinição de Password.
+ * Usado quando o utilizador clica no link do email.
+ */
 export default function ResetPasswordCard() {
     const [loading, setLoading] = useState(false);
     const [password, setPassword] = useState('');
@@ -13,6 +17,7 @@ export default function ResetPasswordCard() {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
 
+    // Obter token da URL (?token=xyz)
     const token = searchParams.get('token');
 
     const handleSubmit = async (e) => {
@@ -51,10 +56,10 @@ export default function ResetPasswordCard() {
         <div className="w-full max-w-[550px] bg-white rounded-xl shadow-[0px_20px_25px_-5px_rgba(0,0,0,0.1),0px_10px_10px_-5px_rgba(0,0,0,0.04)] px-10 py-8 flex flex-col items-center gap-6">
 
             <div className="text-center space-y-2">
-                <h2 className="font-roboto font-bold text-[20px] text-neutral-500 leading-7">
-                    Redefinir Password
+                <h2 className="headings-h2 text-neutral-500">
+                    Redefinir Palavra-passe
                 </h2>
-                <p className="font-montserrat text-[14px] text-neutral-200 leading-5">
+                <p className="body-main text-neutral-200">
                     Introduza a sua nova palavra-passe
                 </p>
             </div>
@@ -62,8 +67,8 @@ export default function ResetPasswordCard() {
             <form onSubmit={handleSubmit} className="w-full flex flex-col gap-5">
 
                 <div className="flex flex-col gap-2.5 group">
-                    <label htmlFor="password" className="font-montserrat font-medium text-[14px] text-neutral-500 group-focus-within:text-primary-500">
-                        Nova Password
+                    <label htmlFor="password" className="body-main text-neutral-500 group-focus-within:text-primary-500">
+                        Nova Palavra-passe
                     </label>
                     <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-neutral-200">
@@ -75,15 +80,15 @@ export default function ResetPasswordCard() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             placeholder="**********"
-                            className="w-full pl-10 pr-4 py-3 border border-neutral-100 rounded-lg text-neutral-500 placeholder-neutral-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 font-montserrat text-[14px] transition-colors bg-white shadow-sm"
+                            className="w-full pl-10 pr-4 py-3 border border-neutral-100 rounded-lg text-neutral-500 placeholder-neutral-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 body-main transition-colors bg-white shadow-sm"
                             required
                         />
                     </div>
                 </div>
 
                 <div className="flex flex-col gap-2.5 group">
-                    <label htmlFor="confirmPassword" className="font-montserrat font-medium text-[14px] text-neutral-500 group-focus-within:text-primary-500">
-                        Confirmar Password
+                    <label htmlFor="confirmPassword" className="body-main text-neutral-500 group-focus-within:text-primary-500">
+                        Confirmar Palavra-passe
                     </label>
                     <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-neutral-200">
@@ -95,14 +100,14 @@ export default function ResetPasswordCard() {
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                             placeholder="**********"
-                            className="w-full pl-10 pr-4 py-3 border border-neutral-100 rounded-lg text-neutral-500 placeholder-neutral-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 font-montserrat text-[14px] transition-colors bg-white shadow-sm"
+                            className="w-full pl-10 pr-4 py-3 border border-neutral-100 rounded-lg text-neutral-500 placeholder-neutral-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 body-main transition-colors bg-white shadow-sm"
                             required
                         />
                     </div>
                 </div>
 
                 <Button
-                    text={loading ? "A alterar..." : "Alterar Password"}
+                    text={loading ? "A alterar..." : "Alterar Palavra-passe"}
                     width="fill"
                     icon={loading ? faSpinner : ""}
                     spin={loading}

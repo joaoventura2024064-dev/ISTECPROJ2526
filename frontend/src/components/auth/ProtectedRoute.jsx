@@ -2,6 +2,12 @@ import { useEffect } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
+/**
+ * Rota Protegida.
+ * Verifica se o utilizador está autenticado. 
+ * Se sim, renderiza o conteúdo (Outlet). 
+ * Se não, redireciona para o login.
+ */
 export default function ProtectedRoute() {
     const { user, loading } = useAuth();
     const navigate = useNavigate();

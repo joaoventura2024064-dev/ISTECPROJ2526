@@ -4,17 +4,24 @@ import { loadSlim } from "@tsparticles/slim";
 import { Outlet } from "react-router-dom";
 import CustomScrollDiv from "../common/CustomScrollDiv";
 
+/**
+ * Layout de Autenticação.
+ * Apresenta um fundo animado com partículas (TSParticles) e o conteúdo centralizado.
+ * Usado nas páginas de Login, Registo, Recuperação de Password.
+ */
 export default function AuthLayout() {
     const [init, setInit] = useState(false);
 
+    // Inicializa o motor de partículas apenas uma vez
     useEffect(() => {
         initParticlesEngine(async (engine) => {
-            await loadSlim(engine);
+            await loadSlim(engine); // Carrega a versão leve do tsparticles
         }).then(() => {
             setInit(true);
         });
     }, []);
 
+    // Configuração das Partículas (Memorizada para evitar recálculos)
     const options = useMemo(
         () => ({
             id: "tsparticles",

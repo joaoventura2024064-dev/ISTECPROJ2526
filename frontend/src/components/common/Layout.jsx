@@ -2,6 +2,10 @@ import { Outlet } from 'react-router-dom';
 import Header from './Header';
 import CustomScrollDiv from './CustomScrollDiv';
 
+/**
+ * Componente de Layout Base.
+ * Define a estrutura principal da página com Cabeçalho fixo e conteúdo scrollável customizado.
+ */
 export default function Layout() {
     return (
         <div className="h-screen overflow-hidden flex flex-col bg-background-300">

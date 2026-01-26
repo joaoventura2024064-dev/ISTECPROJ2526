@@ -7,6 +7,11 @@ import CountUp from 'react-countup';
 import { memo } from 'react';
 import imagem from '../../assets/medcei_ig_icon_tech.png';
 
+/**
+ * Componente de Resultados.
+ * Exibe os KPIs principais (Pico, Recuperados, R0) e o Gráfico da simulação.
+ * Gere também os estados de Loading, Error e Idle (aguardando dados).
+ */
 const SimulationResults = memo(function SimulationResults({
     results,
     status = 'idle',
@@ -53,16 +58,16 @@ const SimulationResults = memo(function SimulationResults({
                     <div className="flex flex-col gap-10 w-full h-full ">
                         <div className="grid grid-cols-3 gap-4">
                             <div className="bg-secondary-50 border border-secondary-100 rounded-lg p-4 flex flex-col gap-1 items-start">
-                                <span className="text-secondary-500 font-montserrat font-semibold text-xs uppercase">Pico Infetados</span>
-                                <span className="text-secondary-700 font-montserrat font-bold text-2xl"><CountUp start={0} end={Math.max(...results.map(data => data.I)) || 0} duration={2.5} /></span>
+                                <span className="text-secondary-500 caption-strong uppercase">Pico Infetados</span>
+                                <span className="text-secondary-700 display-numbers"><CountUp start={0} end={Math.max(...results.map(data => data.I)) || 0} duration={2.5} /></span>
                             </div>
-                            <div className="bg-primary-50 border border-primary-200 rounded-lg p-4 flex flex-col gap-1 items-start">
-                                <span className="text-primary-600 font-montserrat font-semibold text-xs uppercase">Total Recuperados</span>
-                                <span className="text-primary-700 font-montserrat font-bold text-2xl"><CountUp start={0} end={results[results.length - 1].R || 0} duration={2.5} /></span>
+                            <div className="bg-primary-50 border border-primary-100 rounded-lg p-4 flex flex-col gap-1 items-start">
+                                <span className="text-primary-500 caption-strong uppercase">Total Recuperados</span>
+                                <span className="text-primary-700 display-numbers"><CountUp start={0} end={results[results.length - 1].R || 0} duration={2.5} /></span>
                             </div>
-                            <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4 flex flex-col gap-1 items-start">
-                                <span className="text-neutral-400 font-montserrat font-semibold text-xs uppercase">R₀ Estimado</span>
-                                <span className="text-neutral-600 font-montserrat font-bold text-2xl"><CountUp start={0} end={results[0].Rt || 0} duration={2.5} /></span>
+                            <div className="bg-neutral-50 border border-neutral-100 rounded-lg p-4 flex flex-col gap-1 items-start">
+                                <span className="text-neutral-300 caption-strong uppercase">R₀ Estimado</span>
+                                <span className="text-neutral-400 display-numbers"><CountUp start={0} end={results[0].Rt || 0} duration={2.5} /></span>
                             </div>
                         </div>
 

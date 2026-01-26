@@ -1,5 +1,9 @@
 import ResetPasswordCard from '../components/auth/ResetPasswordCard';
 
+/**
+ * Página de Redefinição de Password.
+ * Renderiza o Cartão de Reset e o logótipo.
+ */
 export default function ResetPassword() {
     return (
         <div className="flex flex-col items-center justify-center gap-10 w-full max-w-[550px] select-none">

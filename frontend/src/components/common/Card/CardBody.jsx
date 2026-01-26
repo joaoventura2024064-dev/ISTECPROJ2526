@@ -1,5 +1,6 @@
 import { memo } from 'react';
 
+// Corpo do Cartão (Conteúdo principal)
 function CardBody({ children }) {
 
     return (

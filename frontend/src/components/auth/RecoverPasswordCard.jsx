@@ -6,6 +6,10 @@ import { faEnvelope, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import Button from '../common/Button';
 import { toast } from 'sonner';
 
+/**
+ * Cartão de Recuperação de Password.
+ * Pede o email ao utilizador para enviar link de reset.
+ */
 export default function RecoverPasswordCard() {
     const [email, setEmail] = useState('');
     const { recoverPassword } = useAuth();
@@ -49,10 +53,10 @@ export default function RecoverPasswordCard() {
         <div className="w-full max-w-[550px] bg-white rounded-xl shadow-[0px_20px_25px_-5px_rgba(0,0,0,0.1),0px_10px_10px_-5px_rgba(0,0,0,0.04)] px-10 py-8 flex flex-col items-center gap-6">
 
             <div className="text-center space-y-2">
-                <h2 className="font-roboto font-bold text-[20px] text-neutral-500 leading-7">
-                    Recuperar senha
+                <h2 className="headings-h2 text-neutral-500">
+                    Recuperar Palavra-passe
                 </h2>
-                <p className="font-montserrat text-[14px] text-neutral-200 leading-5">
+                <p className="body-main text-neutral-200">
                     Insira o seu email para recuperar a palavra-passe
                 </p>
             </div>
@@ -60,7 +64,7 @@ export default function RecoverPasswordCard() {
             <form onSubmit={handleSubmit} className="w-full flex flex-col gap-5">
 
                 <div className="flex flex-col gap-2.5 group">
-                    <label htmlFor="email" className="font-montserrat font-medium text-[14px] text-neutral-500 group-focus-within:text-primary-500">
+                    <label htmlFor="email" className="body-main text-neutral-500 group-focus-within:text-primary-500">
                         Email
                     </label>
                     <div className="relative">
@@ -73,7 +77,7 @@ export default function RecoverPasswordCard() {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="exemplo@email.com"
-                            className="w-full pl-10 pr-4 py-3 border border-neutral-100 rounded-lg text-neutral-500 placeholder-neutral-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 font-montserrat text-[14px] transition-colors bg-white shadow-sm"
+                            className="w-full body-main pl-10 pr-4 py-3 border border-neutral-100 rounded-lg text-neutral-500 placeholder-neutral-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors bg-white shadow-sm"
                             disabled={loading}
                             required
                         />

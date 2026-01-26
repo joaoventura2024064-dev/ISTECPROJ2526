@@ -2,6 +2,10 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 
 const SCROLL_BOX_MIN_HEIGHT = 20;
 
+/**
+ * Componente que implementa uma Scrollbar personalizada.
+ * Esconde a scrollbar nativa do browser e recria uma visualmente consistente com o design system.
+ */
 export default function CustomScrollDiv({ children, className, ...props }) {
     const [hovering, setHovering] = useState(false);
     const [scrollBoxHeight, setScrollBoxHeight] = useState(SCROLL_BOX_MIN_HEIGHT);
@@ -22,12 +26,13 @@ export default function CustomScrollDiv({ children, className, ...props }) {
         }
     }, [isDragging]);
 
+    // Atualiza a posição da "Thumb" (barra movel) quando o conteudo faz scroll
     const handleScroll = useCallback(() => {
         if (!scrollHostRef.current) return;
         const { scrollTop, scrollHeight, offsetHeight } = scrollHostRef.current;
 
         let newTop = (parseInt(scrollTop, 10) / parseInt(scrollHeight, 10)) * offsetHeight;
-        // Fix bounds
+        // Fix bounds (impedir sair dos limites)
         newTop = Math.min(newTop, offsetHeight - scrollBoxHeight);
         setScrollBoxTop(newTop);
     }, [scrollBoxHeight]);

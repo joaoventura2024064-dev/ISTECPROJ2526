@@ -6,6 +6,10 @@ import { faCalendar, faEnvelope, faLock, faUser, faSpinner } from '@fortawesome/
 import Button from '../common/Button';
 import { toast } from 'sonner';
 
+/**
+ * Cartão de Registo.
+ * Formulário completo para criar nova conta de utilizador.
+ */
 export default function RegisterCard() {
     const [loading, setLoading] = useState(false);
     const [name, setName] = useState('');
@@ -20,21 +24,25 @@ export default function RegisterCard() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        // 1. Verificar campos obrigatórios
         if (!name || !email || !birthDate || !gender || !password || !confirmPassword) {
             toast.error("Por favor, preencha todos os campos.");
             return;
         }
 
+        // 2. Validar data de nascimento (não futura)
         if (birthDate > new Date().toISOString().split('T')[0]) {
             toast.error("A data de nascimento deve ser igual ou inferior ao dia atual.");
             return;
         }
 
+        // 3. Confirmar passwords iguais
         if (password !== confirmPassword) {
             toast.error("As password não coincidem.");
             return;
         }
 
+        // 4. Comprimento mínimo
         if (password.length < 8) {
             toast.error("A password deve ter pelo menos 8 caracteres.");
             return;
@@ -64,10 +72,10 @@ export default function RegisterCard() {
         <div className="w-full max-w-[550px] bg-white rounded-xl shadow-[0px_20px_25px_-5px_rgba(0,0,0,0.1),0px_10px_10px_-5px_rgba(0,0,0,0.04)] px-10 py-8 flex flex-col items-center gap-6">
 
             <div className="text-center space-y-2">
-                <h2 className="font-roboto font-bold text-[20px] text-neutral-500 leading-7">
+                <h2 className="headings-h2 text-neutral-500">
                     Criar Conta
                 </h2>
-                <p className="font-montserrat text-[14px] text-neutral-200 leading-5">
+                <p className="body-main text-neutral-200">
                     Preencha os dados abaixo para se registar
                 </p>
             </div>
@@ -75,7 +83,7 @@ export default function RegisterCard() {
             <form onSubmit={handleSubmit} className="w-full flex flex-col gap-5">
 
                 <div className="flex flex-col gap-2.5 group">
-                    <label htmlFor="name" className="font-montserrat font-medium text-[14px] text-neutral-500 group-focus-within:text-primary-500">
+                    <label htmlFor="name" className="body-main text-neutral-500 group-focus-within:text-primary-500">
                         Nome
                     </label>
                     <div className="relative">
@@ -88,7 +96,7 @@ export default function RegisterCard() {
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             placeholder="John Doe"
-                            className="w-full pl-10 pr-4 py-3 border border-neutral-100 rounded-lg text-neutral-500 placeholder-neutral-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 font-montserrat text-[14px] transition-colors bg-white shadow-sm"
+                            className="w-full body-main pl-10 pr-4 py-3 border border-neutral-100 rounded-lg text-neutral-500 placeholder-neutral-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors bg-white shadow-sm"
                             required
                         />
                     </div>
@@ -96,7 +104,7 @@ export default function RegisterCard() {
 
                 <div className="flex gap-4 w-full">
                     <div className="flex flex-col gap-2.5 flex-1 group">
-                        <label htmlFor="birthDate" className="font-montserrat font-medium text-[14px] text-neutral-500 group-focus-within:text-primary-500">
+                        <label htmlFor="birthDate" className="body-main text-neutral-500 group-focus-within:text-primary-500">
                             Data de Nascimento
                         </label>
                         <div className="relative">
@@ -109,14 +117,14 @@ export default function RegisterCard() {
                                 value={birthDate}
                                 max={new Date().toISOString().split('T')[0]}
                                 onChange={(e) => setBirthDate(e.target.value)}
-                                className="w-full pl-10 pr-4 py-3 border border-neutral-100 rounded-lg text-neutral-500 placeholder-neutral-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 font-montserrat text-[14px] transition-colors bg-white shadow-sm"
+                                className="w-full body-main pl-10 pr-4 py-3 border border-neutral-100 rounded-lg text-neutral-500 placeholder-neutral-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors bg-white shadow-sm"
                                 required
                             />
                         </div>
                     </div>
 
                     <div className="flex flex-col gap-2.5 flex-1 group">
-                        <label htmlFor="gender" className="font-montserrat font-medium text-[14px] text-neutral-500 group-focus-within:text-primary-500">
+                        <label htmlFor="gender" className="body-main text-neutral-500 group-focus-within:text-primary-500">
                             Genero
                         </label>
                         <div className="relative">
@@ -124,7 +132,7 @@ export default function RegisterCard() {
                                 id="gender"
                                 value={gender}
                                 onChange={(e) => setGender(e.target.value)}
-                                className="w-full pl-4 pr-4 py-3 border border-neutral-100 rounded-lg text-neutral-500 placeholder-neutral-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 font-montserrat text-[14px] transition-colors bg-white shadow-sm appearance-none"
+                                className="w-full body-main pl-4 pr-4 py-3 border border-neutral-100 rounded-lg text-neutral-500 placeholder-neutral-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors bg-white shadow-sm appearance-none"
                                 required
                             >
                                 <option value="" disabled>Insira o seu genero</option>
@@ -138,7 +146,7 @@ export default function RegisterCard() {
                 </div>
 
                 <div className="flex flex-col gap-2.5 group">
-                    <label htmlFor="email" className="font-montserrat font-medium text-[14px] text-neutral-500 group-focus-within:text-primary-500">
+                    <label htmlFor="email" className="body-main text-neutral-500 group-focus-within:text-primary-500">
                         Email
                     </label>
                     <div className="relative">
@@ -151,14 +159,14 @@ export default function RegisterCard() {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="exemplo@email.com"
-                            className="w-full pl-10 pr-4 py-3 border border-neutral-100 rounded-lg text-neutral-500 placeholder-neutral-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 font-montserrat text-[14px] transition-colors bg-white shadow-sm"
+                            className="w-full body-main pl-10 pr-4 py-3 border border-neutral-100 rounded-lg text-neutral-500 placeholder-neutral-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors bg-white shadow-sm"
                             required
                         />
                     </div>
                 </div>
 
                 <div className="flex flex-col gap-2.5 group">
-                    <label htmlFor="password" className="font-montserrat font-medium text-[14px] text-neutral-500 group-focus-within:text-primary-500">
+                    <label htmlFor="password" className="body-main text-neutral-500 group-focus-within:text-primary-500">
                         Password
                     </label>
                     <div className="relative">
@@ -171,14 +179,14 @@ export default function RegisterCard() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             placeholder="**********"
-                            className="w-full pl-10 pr-4 py-3 border border-neutral-100 rounded-lg text-neutral-500 placeholder-neutral-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 font-montserrat text-[14px] transition-colors bg-white shadow-sm"
+                            className="w-full body-main pl-10 pr-4 py-3 border border-neutral-100 rounded-lg text-neutral-500 placeholder-neutral-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors bg-white shadow-sm"
                             required
                         />
                     </div>
                 </div>
 
                 <div className="flex flex-col gap-2.5 group">
-                    <label htmlFor="confirmPassword" className="font-montserrat font-medium text-[14px] text-neutral-500 group-focus-within:text-primary-500">
+                    <label htmlFor="confirmPassword" className="body-main text-neutral-500 group-focus-within:text-primary-500">
                         Confirmar Password
                     </label>
                     <div className="relative">
@@ -191,7 +199,7 @@ export default function RegisterCard() {
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                             placeholder="**********"
-                            className="w-full pl-10 pr-4 py-3 border border-neutral-100 rounded-lg text-neutral-500 placeholder-neutral-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 font-montserrat text-[14px] transition-colors bg-white shadow-sm"
+                            className="w-full body-main pl-10 pr-4 py-3 border border-neutral-100 rounded-lg text-neutral-500 placeholder-neutral-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors bg-white shadow-sm"
                             required
                         />
                     </div>
@@ -206,7 +214,7 @@ export default function RegisterCard() {
                 spin={loading}
                 disabled={loading}
             />
-            <div className="font-montserrat text-[12px] text-neutral-500">Já tem uma conta? <Link to="/login" className="font-montserrat font-medium text-primary-500 hover:text-primary-800 transition-colors">Inicie sessão aqui</Link></div>
+            <div className="label-caption text-neutral-500">Já tem uma conta? <Link to="/login" className="label-caption text-primary-500 hover:text-primary-800 transition-colors">Inicie sessão aqui</Link></div>
         </div>
     );
 }

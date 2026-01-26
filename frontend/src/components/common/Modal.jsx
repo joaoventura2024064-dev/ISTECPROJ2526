@@ -3,10 +3,21 @@ import { createPortal } from 'react-dom';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+/**
+ * Componente Modal Genérico.
+ * Renderizado via React Portals na 'document.body' para garantir sobreposição (stacking context).
+ * 
+ * @param {boolean} isOpen - Se modal está visível.
+ * @param {function} onClose - Função para fechar o modal.
+ * @param {string} title - Título principal.
+ * @param {string} subTitle - Subtítulo opcional.
+ * @param {boolean} showExitButton - Se mostra o "X" de fechar.
+ */
 export default function Modal({ isOpen, onClose, title, subTitle = "teste", showExitButton = true, children }) {
 
     if (!isOpen) return null;
 
+    // Renderiza o modal fora da hierarquia DOM normal (no body)
     return createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-neutral-400/50 select-none">
             <div className="flex flex-col bg-background-50 rounded-xl w-full max-w-[704px] shadow-[0px_20px_25px_-5px_rgba(0,0,0,0.1),0px_10px_10px_-5px_rgba(0,0,0,0.04)] overflow-hidden">

@@ -10,13 +10,21 @@ import { toast } from 'sonner';
 import Modal from '../components/common/Modal';
 import Button from '../components/common/Button';
 
+/**
+ * Página de Nova Simulação.
+ * Permite configurar parâmetros, executar a simulação e gravar os resultados.
+ */
 export default function NewSimulation() {
     const navigate = useNavigate();
     const auth = useAuth();
+
+    // Estados da simulação (idle, loading, success, error)
     const [status, setStatus] = useState('idle');
     const [results, setResults] = useState(null);
     const [steps, setSteps] = useState(null);
     const [seed, setSeed] = useState(null);
+
+    // Estado inicial dos parâmetros
     const [params, setParams] = useState({
         parameters: {
             population_total: 1,
@@ -29,6 +37,7 @@ export default function NewSimulation() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [simulationName, setSimulationName] = useState('');
 
+    // Atualizar parâmetro individual
     const handleParamChange = (key, value) => {
         setParams(prev => ({
             ...prev,
@@ -39,6 +48,7 @@ export default function NewSimulation() {
         }));
     };
 
+    // Executar simulação via API
     const handleRunSimulation = async () => {
         setStatus('loading');
 

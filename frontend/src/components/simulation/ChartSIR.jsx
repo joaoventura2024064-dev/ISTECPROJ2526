@@ -21,7 +21,14 @@ const chartConfig = {
 }
 
 
+/**
+ * Componente de Gráfico SIR (Line Chart).
+ * Utiliza a biblioteca Recharts para visualizar a evolução das curvas SIR e Rt ao longo do tempo.
+ * 
+ * @param {Array} chartData - Array de objetos com os passos da simulação ({ step, S, I, R, Rt }).
+ */
 export default function ChartLineMultiple({ chartData }) {
+    // Formatar dados para garantir inteiros nas curvas SIR
     const data = chartData.map(item => ({
         ...item,
         S: Math.round(item.S),

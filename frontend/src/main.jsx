@@ -5,6 +5,8 @@ import { Toaster } from 'sonner';
 import App from './App.jsx'
 import { ThemeProvider } from "@material-tailwind/react";
 
+// Ponto de entrada da aplicação React.
+// Envolve a App com Providers globais (Theme, Toaster).
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ThemeProvider>

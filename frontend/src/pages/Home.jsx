@@ -7,6 +7,10 @@ import { getUserSimulationsService, deleteSimulationService, downloadSimulationC
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'sonner';
 
+/**
+ * Página Inicial (Dashboard).
+ * Mostra a tabela de histórico de simulações do utilizador.
+ */
 export default function Home() {
     const navigate = useNavigate();
     const { user } = useAuth();
@@ -21,6 +25,7 @@ export default function Home() {
         navigate('/simulador');
     };
 
+    // Buscar simulações à API
     const fetchSimulations = async () => {
         if (user?.id) {
             try {
@@ -46,6 +51,7 @@ export default function Home() {
         }
     };
 
+    // Exportar dados para CSV
     const exportCSV = async () => {
         //console.log(simulations.map(sim => sim.id));
         try {

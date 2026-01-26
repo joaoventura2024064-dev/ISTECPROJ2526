@@ -6,6 +6,11 @@ import { useAuth } from '../context/AuthContext';
 import { toast } from 'sonner';
 import { getUsersService, changeUserStatusService, changeUserRoleService } from '../services/api';
 
+/**
+ * Página de Gestão de Utilizadores (Backoffice).
+ * Lista utilizadores e permite ações administrativas.
+ * Exclusivo para administradores.
+ */
 export default function UsersManagement() {
     const navigate = useNavigate();
     const { user } = useAuth();
@@ -13,6 +18,7 @@ export default function UsersManagement() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        // Redirecionar se não for admin
         if (user && user.role !== 'admin') {
             toast.error("Não tem permissão para aceder a esta página.");
             navigate('/');

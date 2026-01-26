@@ -1,5 +1,9 @@
 import LoginCard from '../components/auth/LoginCard';
 
+/**
+ * Página de Login.
+ * Renderiza o Cartão de Login e o logótipo.
+ */
 export default function Login() {
     return (
         <div className="flex flex-col items-center justify-center gap-10 w-full max-w-[550px] select-none">

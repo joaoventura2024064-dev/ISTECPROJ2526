@@ -1,5 +1,9 @@
 import RecoverPasswordCard from '../components/auth/RecoverPasswordCard';
 
+/**
+ * Página de Recuperação de Password.
+ * Renderiza o Cartão de Recuperação e o logótipo.
+ */
 export default function RecoverPassword() {
     return (
         <div className="flex flex-col items-center justify-center gap-10 w-full max-w-[550px] select-none">

@@ -8,10 +8,17 @@ import { useAuth } from '../context/AuthContext';
 import { getUserService, updateUserService } from '../services/api';
 import Button from '../components/common/Button';
 
+/**
+ * Página de Detalhe de Utilizador (Perfil).
+ * Permite visualizar e editar dados pessoais e alterar password.
+ * Protegido: Apenas o próprio utilizador ou Admins podem aceder.
+ */
 export default function UserDetail() {
     const { id } = useParams();
     const { user, updateUser, logout } = useAuth();
     const navigate = useNavigate();
+
+    // Estados para dados do utilizador e formulários
     const [userData, setUserData] = useState({
         name: '',
         cargo: '',
@@ -42,6 +49,7 @@ export default function UserDetail() {
 
     const userInitial = userData.name ? userData.name.charAt(0).toUpperCase() : '?';
 
+    // Verificar se existem alterações não guardadas
     const hasPersonalChanges = JSON.stringify({
         name: userData.name || '',
         cargo: userData.cargo || '',
@@ -62,6 +70,7 @@ export default function UserDetail() {
 
     useEffect(() => {
         if (user) {
+            // Apenas Admin ou o próprio dono podem ver esta página
             if (user.role !== 'admin' && user.id.toString() !== id.toString()) {
                 toast.error("Não tem permissão para aceder a este perfil.");
                 navigate('/');
@@ -75,7 +84,7 @@ export default function UserDetail() {
     const fetchUser = async () => {
         try {
             setLoading(true);
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            //await new Promise(resolve => setTimeout(resolve, 2000));
             const data = await getUserService(id);
             setUserData(data);
             setFormData({
@@ -211,7 +220,7 @@ export default function UserDetail() {
                         className="h-fit"
                     >
                         <div className="flex flex-col items-center gap-4 mb-4">
-                            <div className="w-35 h-35 rounded-full bg-primary-50 border border-5 border-primary-200 flex items-center justify-center text-primary-700 font-roboto font-bold text-[60px]">
+                            <div className="ui-profile-initial-l w-35 h-35 rounded-full bg-primary-50 border border-5 border-primary-200 flex items-center justify-center text-primary-700">
                                 {userInitial}
                             </div>
                         </div>

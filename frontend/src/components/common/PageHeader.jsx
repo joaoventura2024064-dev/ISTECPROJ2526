@@ -4,6 +4,17 @@ import Button from './Button';
 
 import { memo } from 'react';
 
+/**
+ * Cabeçalho de página padrão.
+ * Inclui título, subtítulo, botão de voltar opcional e botões de ação (primário/secundário).
+ * 
+ * @param {string} title - Título H1.
+ * @param {string} subTitle - Subtítulo H2.
+ * @param {boolean} backButton - Se mostra seta para voltar atrás.
+ * @param {object|null} primaryActionButton - Configuração do botão principal ({ text, onClick, icon }).
+ * @param {object|null} secondaryActionButton - Configuração do botão secundário.
+ * @param {string} align - Alinhamento do texto ('left', 'right').
+ */
 function PageHeader({ title, subTitle, backButton = false, primaryActionButton = null, secondaryActionButton = null, align = 'left' }) {
     const navigate = useNavigate();
 
@@ -21,12 +32,12 @@ function PageHeader({ title, subTitle, backButton = false, primaryActionButton =
                 )}
                 <div className={`flex flex-col ${align === 'right' ? 'items-end flex-1' : 'items-start'}`}>
                     {title && (
-                        <h1 className="font-roboto font-bold text-2xl text-neutral-500">
+                        <h1 className="headings-h1 text-neutral-900">
                             {title}
                         </h1>
                     )}
                     {subTitle && (
-                        <h2 className="font-montserrat font-medium text-sm text-neutral-400">
+                        <h2 className="body-main text-neutral-300">
                             {subTitle}
                         </h2>
                     )}

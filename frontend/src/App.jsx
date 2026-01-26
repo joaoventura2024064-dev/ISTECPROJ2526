@@ -14,6 +14,11 @@ const SimulationView = lazy(() => import('./pages/SimulationView'));
 const UsersManagement = lazy(() => import('./pages/UsersManagement'));
 const UserDetail = lazy(() => import('./pages/UserDetail'));
 
+/**
+ * Componente Raiz da Aplicação.
+ * Define as rotas (Routes) e o Layout principal.
+ * Utiliza 'lazy' loading para carregar as páginas apenas quando necessárias.
+ */
 function App() {
   return (
     <AuthProvider>

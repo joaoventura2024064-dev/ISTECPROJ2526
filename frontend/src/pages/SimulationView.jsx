@@ -8,6 +8,10 @@ import { getSimulationService } from '../services/api';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 
+/**
+ * Página de Detalhe da Simulação.
+ * Visualiza uma simulação histórica guardada, carregando os dados por ID.
+ */
 export default function SimulationView() {
     const { id } = useParams();
     const [loading, setLoading] = useState(true);
@@ -24,6 +28,7 @@ export default function SimulationView() {
 
     const [simulationData, setSimulationData] = useState(null);
 
+    // Carregar dados da simulação ao montar
     useEffect(() => {
         const fetchSimulation = async () => {
             try {
