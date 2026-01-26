@@ -14,8 +14,15 @@ export default function SimulationParameters({
 }) {
 
     const handleChange = (paramName, event) => {
+        let value = event.target.value;
+        const max = event.target.max;
+
+        if (max && Number(value) > Number(max)) {
+            value = max;
+        }
+
         if (onChange) {
-            onChange(paramName, event.target.value);
+            onChange(paramName, value);
         }
     };
 
@@ -33,6 +40,7 @@ export default function SimulationParameters({
                             type="number"
                             name="population_total"
                             min="1"
+                            max="9999999999"
                             value={params.population_total}
                             onChange={(e) => handleChange('population_total', e)}
                             disabled={readOnly || loading}
@@ -48,6 +56,7 @@ export default function SimulationParameters({
                             type="number"
                             name="infected_initial"
                             min="1"
+                            max="9999999999"
                             value={params.infected_initial}
                             onChange={(e) => handleChange('infected_initial', e)}
                             disabled={readOnly || loading}
