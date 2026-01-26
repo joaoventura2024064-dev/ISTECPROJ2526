@@ -556,21 +556,26 @@ def export_simulation_csv(sim_id):
 
     # Criar CSV em memória
     si = io.StringIO()
-    cw = csv.writer(si)
+    cw = csv.writer(si, delimiter=';')
 
     # Cabeçalho
-    cw.writerow(['Day', 'Susceptible', 'Infected', 'Recovered', 'Rt'])
+    cw.writerow(['Population', 'Initial Infected', 'Beta', 'Gamma', 'Duration',
+                 'Day', 'Susceptible', 'Infected', 'Recovered', 'Rt'])
 
     # Dados
     # Ordenar por step_number para garantir ordem cronológica
     steps = sorted(sim.steps, key=lambda x: x.step_number)
+    params = sim.parameters
     for step in steps:
-        cw.writerow([step.step_number, step.susceptible,
+        cw.writerow([params.population_total, params.infected_initial,
+                    params.beta, params.gamma, params.duration,
+                    step.step_number, step.susceptible,
                     step.infected, step.recovered, step.rt_value])
 
     output = make_response(si.getvalue())
     output.headers["Content-Disposition"] = f"attachment; filename=simulation_{sim_id}.csv"
     output.headers["Content-type"] = "text/csv"
+    output.headers["Access-Control-Expose-Headers"] = "Content-Disposition"
     return output
 
 """ Exportar simulações em bulk- Página Historico """
@@ -637,19 +642,27 @@ def export_simulations_bulk():
 
     # Criar CSV
     si = io.StringIO()
-    cw = csv.writer(si)
+    cw = csv.writer(si, delimiter=';')
 
     # Cabeçalho (Inclui ID e Descrição para distinguir)
-    cw.writerow(['Simulation ID', 'Description', 'Day', 'Susceptible', 'Infected', 'Recovered', 'Rt'])
+    cw.writerow(['Simulation ID', 'Description',
+                 'Population', 'Initial Infected', 'Beta', 'Gamma', 'Duration',
+                 'Day', 'Susceptible', 'Infected', 'Recovered', 'Rt'])
 
     for sim in sims:
         # Ordenar passos
         steps = sorted(sim.steps, key=lambda x: x.step_number)
+        params = sim.parameters
         
         for step in steps:
             cw.writerow([
                 sim.id,
                 sim.description,
+                params.population_total,
+                params.infected_initial,
+                params.beta,
+                params.gamma,
+                params.duration,
                 step.step_number,
                 step.susceptible,
                 step.infected,
@@ -661,6 +674,7 @@ def export_simulations_bulk():
     filename = "simulations_export.csv"
     output.headers["Content-Disposition"] = f"attachment; filename={filename}"
     output.headers["Content-type"] = "text/csv"
+    output.headers["Access-Control-Expose-Headers"] = "Content-Disposition"
     return output
 
 
