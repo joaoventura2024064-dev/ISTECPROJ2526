@@ -15,10 +15,15 @@ export default function SimulationParameters({
 
     const handleChange = (paramName, event) => {
         let value = event.target.value;
-        const max = event.target.max;
+        const maxValue = event.target.max;
+        const minValue = event.target.min;
 
-        if (max && Number(value) > Number(max)) {
-            value = max;
+        if (maxValue && Number(value) > Number(maxValue)) {
+            value = maxValue;
+        }
+
+        if (minValue && Number(value) < Number(minValue)) {
+            value = minValue;
         }
 
         if (onChange) {
