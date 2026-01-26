@@ -49,9 +49,11 @@ def get_all_simulations():
                 properties:
                   population_total:
                     type: integer
-                    example: 1000
+                    format: int64
+                    example: 8000000000
                   infected_initial:
                     type: integer
+                    format: int64
                     example: 10
                   beta:
                     type: number
@@ -133,9 +135,11 @@ def create_simulation():
               properties:
                 population_total:
                   type: integer
-                  example: 1000
+                  format: int64
+                  example: 8000000000
                 infected_initial:
                   type: integer
+                  format: int64
                   example: 10
                 beta:
                   type: number
@@ -163,7 +167,8 @@ def create_simulation():
               properties:
                 population_total:
                   type: integer
-                  example: 1000
+                  format: int64
+                  example: 8000000000
             steps:
               type: array
               items:
@@ -174,12 +179,15 @@ def create_simulation():
                     example: 1
                   S:
                     type: integer
-                    example: 990
+                    format: int64
+                    example: 7999999990
                   I:
                     type: integer
+                    format: int64
                     example: 10
                   R:
                     type: integer
+                    format: int64
                     example: 0
                   Rt:
                     type: number
@@ -230,9 +238,11 @@ def preview_simulation():
               properties:
                 population_total:
                   type: integer
-                  example: 1000
+                  format: int64
+                  example: 8000000000
                 infected_initial:
                   type: integer
+                  format: int64
                   example: 10
                 beta:
                   type: number
@@ -262,12 +272,15 @@ def preview_simulation():
                     example: 1
                   S:
                     type: integer
-                    example: 990
+                    format: int64
+                    example: 7999999990
                   I:
                     type: integer
+                    format: int64
                     example: 10
                   R:
                     type: integer
+                    format: int64
                     example: 0
                   Rt:
                     type: number
@@ -448,7 +461,8 @@ def get_simulation_details(sim_id):
               properties:
                 population_total:
                   type: integer
-                  example: 1000
+                  format: int64
+                  example: 8000000000
             steps:
               type: array
               items:
@@ -459,12 +473,15 @@ def get_simulation_details(sim_id):
                     example: 1
                   S:
                     type: integer
-                    example: 990
+                    format: int64
+                    example: 7999999990
                   I:
                     type: integer
+                    format: int64
                     example: 10
                   R:
                     type: integer
+                    format: int64
                     example: 0
                   Rt:
                     type: number
