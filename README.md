@@ -4,7 +4,7 @@
 **Curso:** Engenharia Informática<br>
 **Cadeira:** Sistemas Multimédia I<br>
 
-**Fase:** Sprint C (Desenvolvimento)<br>
+**Fase:** Sprint C Completed<br>
 
 ## Índice
 - [Sobre o Projeto](#sobre-o-projeto)
