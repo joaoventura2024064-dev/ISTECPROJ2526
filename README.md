@@ -117,7 +117,7 @@ gantt
 
 | User Story | Descrição | Obrigatoriedade | Responsável | Conclusão | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **US_B001** | *Como Designer UI/UX, eu pretendo criar um protótipo (wireframes/mockups de alta fidelidade) da plataforma web com os ecrãs-chave, incluindo as páginas de registo, login, perfil do utilizador, configuração de simulação, visualização de resultados e histórico, respeitando os princípios de usabilidade e responsividade.* | 1 | João | 95% | Pending (Tabela de utilizadores) |
+| **US_B001** | *Como Designer UI/UX, eu pretendo criar um protótipo (wireframes/mockups de alta fidelidade) da plataforma web com os ecrãs-chave, incluindo as páginas de registo, login, perfil do utilizador, configuração de simulação, visualização de resultados e histórico, respeitando os princípios de usabilidade e responsividade.* | 1 | João | 100% | Completed |
 | **US_B002** | *Como Designer UI/UX, eu pretendo definir e detalhar as personas dos utilizadores (mínimo duas, ex: investigador, profissional de saúde pública) e especificar os seus objetivos ao usar o simulador.* | 3 | João | 100% | Completed |
 | **US_B003** | *Como Designer UI/UX, eu pretendo criar um guia de estilo web que especifique os elementos gráficos (paleta de cores, tipografia, iconografia, componentes de UI) para garantir a consistência visual da plataforma.* | 4 | João | 100% | Completed |
 | **US_B004** | *Como Programador Frontend, eu pretendo configurar o ambiente de desenvolvimento React.js e criar a estrutura inicial da aplicação, incluindo os componentes básicos de layout (cabeçalho, rodapé, navegação).* | 1 | João | 100% | Completed |
@@ -147,12 +147,12 @@ gantt
 | **US_C005** | *Como Utilizador Registado, eu pretendo visualizar graficamente a evolução das populações de Suscetíveis, Infetados e Recuperados ao longo do tempo (curva epidémica), com os resultados do modelo estocástico.* | 1 | João | 100% | Completed |
 | **US_C006** | *Como Utilizador Registado, eu pretendo poder guardar os parâmetros configurados e os resultados da simulação na base de dados para consulta posterior.* | 3 | Zé | 100% | Completed |
 | **US_C007** | *Como Utilizador Registado, eu pretendo aceder a um histórico das minhas simulações guardadas, podendo consultar os seus parâmetros e visualizar novamente os gráficos de resultados.* | 2 | João | 100% | Completed |
-| **US_C008** | *Como Administrador, eu pretendo poder aceder a uma área restrita (interface simples) para gerir utilizadores (exemplo: visualizar lista, alterar tipo de acesso, alterar estado).* | 3 | João | 70% | Working |
+| **US_C008** | *Como Administrador, eu pretendo poder aceder a uma área restrita (interface simples) para gerir utilizadores (exemplo: visualizar lista, alterar tipo de acesso, alterar estado).* | 3 | João | 100% | Completed |
 | **US_C009** | *Como QA, eu pretendo criar uma lista de testes para o motor de simulação (Python), validando a correção dos cálculos probabilísticos e as transições de estado.* | 3 | Zé | 100% | Completed |
 | **US_C010** | *Como QA, eu pretendo realizar testes às funcionalidades de configuração e execução de simulação, bem como à visualização de resultados, documentando os defeitos e a sua resolução.* | 3 | João | 100% | Completed |
 | **US_C011** | *Como Utilizador Registado, eu pretendo poder exportar os dados brutos da simulação num formato comum (exemplo: CSV) para que possa realizar análises externas mais detalhadas.* | 4 | Zé | 100% | Completed |
-| **US_C012** | *Como Gestor de Projeto, eu pretendo que a equipa prepare a apresentação final do projeto para a Sprint Review C, demonstrando todas as funcionalidades implementadas, os resultados dos testes e as aprendizagens obtidas.* | 1 | Zé | 50% | Working |
-| **US_C013** | *Como Gestor de Projeto, eu pretendo que a equipa atualize o plano de trabalho no Diagrama de Gantt para a Sprint C.* | 3 | João | 100% | Done |
+| **US_C012** | *Como Gestor de Projeto, eu pretendo que a equipa prepare a apresentação final do projeto para a Sprint Review C, demonstrando todas as funcionalidades implementadas, os resultados dos testes e as aprendizagens obtidas.* | 1 | Zé | 100% | Completed |
+| **US_C013** | *Como Gestor de Projeto, eu pretendo que a equipa atualize o plano de trabalho no Diagrama de Gantt para a Sprint C.* | 3 | João | 100% | Completed |
 | **US_C014** | *Como Gestor de Projeto, eu pretendo criar um poster de apresentação do projeto, destacando os objetivos, a metodologia (modelo SIR estocástico, uso de React/Flask/MySQL), os resultados da simulação e as conclusões principais, para a avaliação final.* | 4 | Zé | 100% | Completed |
 | **US_C015** | *Como Gestor de Projeto, eu pretendo compilar um relatório final abrangente que documente todas as fases do projeto (análise, design, implementação, testes), as decisões técnicas e os resultados alcançados.* | 1 | Zé | 100% | Completed |
 
